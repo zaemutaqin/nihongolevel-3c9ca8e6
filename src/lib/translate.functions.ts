@@ -67,22 +67,43 @@ Rules:
 - Handle ALL input types: formal, casual, everyday conversation (including questions like 'hari ini makan apa ya?')
 - kanji array: only kanji that actually appear in the sentence, max 4, can be empty []`;
 
-    const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { temperature: 0.3 },
-        }),
-      },
-    );
+    const MAX_RETRIES = 3;
+    let res: Response | null = null;
+    let lastErrText = "";
+    for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+      res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: { temperature: 0.3 },
+          }),
+        },
+      );
 
-    if (!res.ok) {
-      const errText = await res.text();
-      console.error("Gemini error:", res.status, errText);
+      if (res.ok) break;
+
+      lastErrText = await res.text();
+      console.error("Gemini error:", res.status, lastErrText);
+
+      if (res.status === 429 && attempt < MAX_RETRIES) {
+        const delay = 1000 * Math.pow(2, attempt);
+        await new Promise((r) => setTimeout(r, delay));
+        continue;
+      }
+
+      if (res.status === 429) {
+        throw new Error(
+          "Batas permintaan Gemini API terlampaui. Coba lagi dalam beberapa saat.",
+        );
+      }
       throw new Error(`Gemini API error (${res.status})`);
+    }
+
+    if (!res || !res.ok) {
+      throw new Error("Gemini API tidak tersedia. Coba lagi nanti.");
     }
 
     const json = await res.json();
