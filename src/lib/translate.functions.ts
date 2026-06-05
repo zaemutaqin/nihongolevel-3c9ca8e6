@@ -3,6 +3,8 @@ import { z } from "zod";
 
 const InputSchema = z.object({
   sentence: z.string().trim().min(1).max(500),
+  listener: z.string().trim().max(100).optional(),
+  mood: z.string().trim().max(100).optional(),
 });
 
 export interface KanjiInfo {
@@ -43,6 +45,13 @@ export interface IntentInfo {
   explanation: string;
 }
 
+export interface SocialAnalysis {
+  relationship: string;
+  emotion: string;
+  communication_goal: string;
+  wrong_context_risk: string;
+}
+
 export interface MostNatural {
   japanese: string;
   romaji: string;
@@ -50,9 +59,19 @@ export interface MostNatural {
   reason: string;
 }
 
+export interface AlternativeExpression {
+  context_label: string;
+  japanese: string;
+  romaji: string;
+  level: string;
+  explanation: string;
+}
+
 export interface TranslationResult {
   intent: IntentInfo;
+  social_analysis: SocialAnalysis;
   most_natural: MostNatural;
+  alternatives: AlternativeExpression[];
   n4: LevelBlock;
   n3: LevelBlock;
   n2: LevelBlock;
@@ -67,47 +86,62 @@ export const translateSentence = createServerFn({ method: "POST" })
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    const prompt = `You are a Japanese language expert who understands not just grammar but how Japanese people actually speak in real life.
+    const listener = data.listener && data.listener.length > 0 ? data.listener : "auto-detect";
+    const mood = data.mood && data.mood.length > 0 ? data.mood : "auto-detect";
 
-First, analyze the intent of this Indonesian input: ${data.sentence}
+    const prompt = `You are an expert in Japanese sociolinguistics — you understand not just grammar but how social relationships, emotions, and context shape how Japanese people actually speak.
 
-Detect one of these intents: monolog (thinking to themselves), asking_others (asking someone else), casual_conversation, professional_formal, joking_relaxed.
-
-Then provide translations at 4 JLPT levels that are appropriate for the detected intent — not just grammatically correct, but truly natural for that context.
+Analyze this input:
+- Indonesian sentence: ${data.sentence}
+- Target listener: ${listener}
+- Situation mood: ${mood}
 
 Return ONLY raw JSON, no markdown, no backticks:
 
 {
   "intent": {
     "type": "monolog|asking_others|casual_conversation|professional_formal|joking_relaxed",
-    "explanation": "1 sentence in Indonesian explaining why this intent was detected"
+    "explanation": "1 sentence in Indonesian"
+  },
+  "social_analysis": {
+    "relationship": "detected social relationship in Indonesian",
+    "emotion": "detected emotion/tone in Indonesian",
+    "communication_goal": "what speaker wants to achieve in Indonesian",
+    "wrong_context_risk": "what goes wrong if wrong form is used in Indonesian"
   },
   "most_natural": {
     "japanese": "...",
     "romaji": "...",
     "level": "N3",
-    "reason": "1 sentence in Indonesian explaining why this is the most natural expression"
+    "reason": "1 sentence in Indonesian"
   },
+  "alternatives": [
+    {"context_label": "Kalau bilang ke teman dekat", "japanese": "...", "romaji": "...", "level": "N3", "explanation": "in Indonesian"},
+    {"context_label": "Kalau tanya ke rekan kerja", "japanese": "...", "romaji": "...", "level": "N2", "explanation": "in Indonesian"},
+    {"context_label": "Kalau tanya ke atasan", "japanese": "...", "romaji": "...", "level": "N1", "explanation": "in Indonesian"}
+  ],
   "n4": {
     "japanese": "...",
     "romaji": "...",
-    "nuance": "1 sentence in Indonesian about when this level is used",
+    "nuance": "1 sentence in Indonesian",
     "naturalness": "native|stiff|textbook",
-    "naturalness_note": "1 sentence in Indonesian explaining the naturalness rating",
-    "why_this_level": "1-2 sentences in Indonesian explaining what grammar/vocab makes this N4 and difference vs lower level",
-    "grammar": [{"pattern": "...", "explanation": "... in Indonesian"}],
-    "kanji": [{"char": "...", "reading": "on: ... / kun: ...", "meaning": "... in Indonesian", "examples": "...", "jlpt": "N4"}]
+    "naturalness_note": "1 sentence in Indonesian",
+    "why_this_level": "1-2 sentences in Indonesian",
+    "grammar": [{"pattern": "...", "explanation": "in Indonesian"}],
+    "kanji": [{"char": "...", "reading": "on: ... / kun: ...", "meaning": "in Indonesian", "examples": "...", "jlpt": "N4"}]
   },
-  "n3": { ... same structure, why_this_level compares vs N4 ... },
-  "n2": { ... same structure, why_this_level compares vs N3 ... },
-  "n1": { ... same structure, why_this_level compares vs N2 ... }
+  "n3": { same structure, why_this_level compares vs N4 },
+  "n2": { same structure, why_this_level compares vs N3 },
+  "n1": { same structure, why_this_level compares vs N2 }
 }
 
 Critical rules:
-- For monolog intent: use 〜かな、〜よな、〜ようかな forms, NOT 〜ですか or 〜か question forms
+- social_analysis must be specific and insightful, not generic
+- alternatives must genuinely differ by social context, not just formality level
+- wrong_context_risk must explain a real mistake Japanese learners commonly make
+- For monolog intent: always use 〜かな、〜ようかな、〜よな, never 〜ですか
 - For asking_others: use appropriate question forms based on formality
 - Naturalness must be honest — most textbook translations are 'stiff', not 'native-like'
-- Handle all Indonesian input types: formal, casual, slang, questions, statements
 - kanji array: only kanji that actually appear in the sentence, max 4, can be empty []`;
 
     const MAX_RETRIES = 3;
