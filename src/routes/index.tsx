@@ -1,7 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useState, type KeyboardEvent } from "react";
-import { Loader2, ChevronDown, AlertCircle, Sparkles, Star } from "lucide-react";
+import {
+  Loader2,
+  ChevronDown,
+  AlertCircle,
+  Sparkles,
+  Star,
+  Users,
+  Heart,
+  Target,
+  AlertTriangle,
+} from "lucide-react";
 import {
   translateSentence,
   type TranslationResult,
@@ -10,6 +20,8 @@ import {
   type IntentType,
   type Naturalness,
   type MostNatural,
+  type SocialAnalysis,
+  type AlternativeExpression,
 } from "@/lib/translate.functions";
 import { cn } from "@/lib/utils";
 
@@ -20,7 +32,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Terjemahkan kalimat Bahasa Indonesia ke Bahasa Jepang dalam 4 tingkat JLPT (N4–N1) dengan deteksi intent, naturalness, dan penjelasan grammar.",
+          "Terjemahkan kalimat Bahasa Indonesia ke Bahasa Jepang dalam 4 tingkat JLPT (N4–N1) dengan analisis sosial dan alternatif sesuai konteks.",
       },
     ],
     links: [
@@ -68,9 +80,31 @@ const NATURALNESS_LABELS: Record<
   textbook: { emoji: "❌", label: "Textbook only", tone: "nat-textbook" },
 };
 
+const LISTENER_OPTIONS = [
+  { value: "", label: "Belum tahu / tidak relevan" },
+  { value: "Diri sendiri", label: "Diri sendiri" },
+  { value: "Teman dekat / sebaya", label: "Teman dekat / sebaya" },
+  { value: "Rekan kerja / kolega", label: "Rekan kerja / kolega" },
+  { value: "Atasan / senior", label: "Atasan / senior" },
+  { value: "Klien / orang baru", label: "Klien / orang baru" },
+  { value: "Orang yang lebih muda", label: "Orang yang lebih muda" },
+];
+
+const MOOD_OPTIONS = [
+  { value: "", label: "Percakapan biasa" },
+  { value: "Santai / sedang bercanda", label: "Santai / sedang bercanda" },
+  { value: "Serius / penting", label: "Serius / penting" },
+  { value: "Sedang emosi / kesal", label: "Sedang emosi / kesal" },
+  { value: "Senang / antusias", label: "Senang / antusias" },
+  { value: "Canggung / tidak nyaman", label: "Canggung / tidak nyaman" },
+];
+
 function Index() {
   const translate = useServerFn(translateSentence);
   const [input, setInput] = useState("");
+  const [listener, setListener] = useState("");
+  const [mood, setMood] = useState("");
+  const [contextOpen, setContextOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<TranslationResult | null>(null);
@@ -91,7 +125,9 @@ function Index() {
     setLoading(true);
     setResult(null);
     try {
-      const data = await translate({ data: { sentence } });
+      const data = await translate({
+        data: { sentence, listener: listener || undefined, mood: mood || undefined },
+      });
       setResult(data);
       setOpen({ n4: true, n3: false, n2: false, n1: false });
     } catch (e) {
@@ -145,6 +181,58 @@ function Index() {
             rows={3}
             className="w-full resize-none rounded-lg border border-input bg-background px-3 py-2.5 text-sm outline-none transition focus:border-ring focus:ring-2 focus:ring-ring/30"
           />
+
+          <div className="mt-4 rounded-lg border border-border overflow-hidden">
+            <button
+              onClick={() => setContextOpen((v) => !v)}
+              className="w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium hover:bg-muted/40 transition"
+              aria-expanded={contextOpen}
+            >
+              <span>Tambah konteks (opsional)</span>
+              <ChevronDown
+                className={cn(
+                  "w-4 h-4 text-muted-foreground transition-transform",
+                  contextOpen && "rotate-180",
+                )}
+              />
+            </button>
+            {contextOpen && (
+              <div className="px-3 pb-3 grid sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-medium mb-1 text-muted-foreground">
+                    Kepada siapa kamu berbicara?
+                  </label>
+                  <select
+                    value={listener}
+                    onChange={(e) => setListener(e.target.value)}
+                    className="w-full rounded-lg border border-input bg-background px-2.5 py-2 text-sm outline-none focus:border-ring focus:ring-2 focus:ring-ring/30"
+                  >
+                    {LISTENER_OPTIONS.map((o) => (
+                      <option key={o.label} value={o.value}>
+                        {o.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium mb-1 text-muted-foreground">
+                    Bagaimana suasananya?
+                  </label>
+                  <select
+                    value={mood}
+                    onChange={(e) => setMood(e.target.value)}
+                    className="w-full rounded-lg border border-input bg-background px-2.5 py-2 text-sm outline-none focus:border-ring focus:ring-2 focus:ring-ring/30"
+                  >
+                    {MOOD_OPTIONS.map((o) => (
+                      <option key={o.label} value={o.value}>
+                        {o.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            )}
+          </div>
 
           <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <p className="text-xs text-muted-foreground">
@@ -201,6 +289,7 @@ function Index() {
         {result && (
           <>
             <IntentBadge intent={result.intent} />
+            {result.social_analysis && <SocialAnalysisCard data={result.social_analysis} />}
             <div className="mt-6 space-y-4">
               {LEVELS.map(({ key, label, tone }) => (
                 <LevelCard
@@ -214,6 +303,9 @@ function Index() {
               ))}
             </div>
             <MostNaturalCard data={result.most_natural} />
+            {result.alternatives?.length > 0 && (
+              <AlternativesSection items={result.alternatives} />
+            )}
           </>
         )}
 
@@ -226,18 +318,12 @@ function Index() {
 }
 
 function IntentBadge({ intent }: { intent: IntentInfo }) {
-  const meta = INTENT_LABELS[intent.type] ?? {
-    emoji: "✨",
-    label: intent.type,
-  };
+  const meta = INTENT_LABELS[intent.type] ?? { emoji: "✨", label: intent.type };
   const color = `var(--intent-${intent.type})`;
   return (
     <div
       className="mt-8 rounded-2xl border p-4 sm:p-5"
-      style={{
-        borderColor: color + "55",
-        backgroundColor: color + "12",
-      }}
+      style={{ borderColor: color + "55", backgroundColor: color + "12" }}
     >
       <div
         className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold text-white"
@@ -247,6 +333,36 @@ function IntentBadge({ intent }: { intent: IntentInfo }) {
         <span>{meta.label}</span>
       </div>
       <p className="mt-2 text-sm text-foreground/80">{intent.explanation}</p>
+    </div>
+  );
+}
+
+function SocialAnalysisCard({ data }: { data: SocialAnalysis }) {
+  const rows: { icon: typeof Users; label: string; value: string }[] = [
+    { icon: Users, label: "Hubungan sosial", value: data.relationship },
+    { icon: Heart, label: "Emosi / tone", value: data.emotion },
+    { icon: Target, label: "Tujuan komunikasi", value: data.communication_goal },
+    { icon: AlertTriangle, label: "Risiko salah konteks", value: data.wrong_context_risk },
+  ];
+  return (
+    <div
+      className="mt-4 rounded-2xl border bg-card shadow-sm p-5"
+      style={{ borderLeft: "4px solid var(--intent-asking_others)" }}
+    >
+      <h2 className="text-sm font-bold uppercase tracking-wide mb-3 text-foreground/80">
+        Analisis Situasi
+      </h2>
+      <ul className="space-y-3">
+        {rows.map(({ icon: Icon, label, value }) => (
+          <li key={label} className="flex items-start gap-3">
+            <Icon className="w-4 h-4 mt-0.5 flex-shrink-0 text-muted-foreground" />
+            <div className="min-w-0">
+              <p className="text-xs font-semibold text-foreground">{label}</p>
+              <p className="text-sm text-muted-foreground">{value}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
@@ -407,7 +523,10 @@ function MostNaturalCard({ data }: { data: MostNatural }) {
     >
       <div className="flex items-center gap-2 mb-3">
         <Star className="w-4 h-4" style={{ color: `var(--${tone})` }} fill="currentColor" />
-        <h2 className="text-sm font-bold uppercase tracking-wide" style={{ color: `var(--${tone})` }}>
+        <h2
+          className="text-sm font-bold uppercase tracking-wide"
+          style={{ color: `var(--${tone})` }}
+        >
           Yang paling natural diucapkan orang Jepang
         </h2>
       </div>
@@ -425,5 +544,42 @@ function MostNaturalCard({ data }: { data: MostNatural }) {
       <p className="mt-1 italic text-sm text-muted-foreground">{data.romaji}</p>
       <p className="mt-3 text-sm text-foreground/80">{data.reason}</p>
     </div>
+  );
+}
+
+function AlternativesSection({ items }: { items: AlternativeExpression[] }) {
+  return (
+    <section className="mt-8">
+      <h2 className="text-sm font-bold uppercase tracking-wide mb-3 text-foreground/80">
+        Alternatif ekspresi sesuai situasi
+      </h2>
+      <div className="grid gap-3 sm:grid-cols-3">
+        {items.map((alt, i) => {
+          const tone = `level-${(alt.level || "N3").toLowerCase()}`;
+          return (
+            <div
+              key={i}
+              className="rounded-2xl border bg-card p-4 shadow-sm flex flex-col"
+              style={{ borderColor: `var(--${tone})` + "40" }}
+            >
+              <p className="text-xs font-semibold text-muted-foreground mb-2">
+                {alt.context_label}
+              </p>
+              <p className="font-jp text-xl leading-snug text-foreground">{alt.japanese}</p>
+              <p className="mt-1 italic text-xs text-muted-foreground">{alt.romaji}</p>
+              <div className="mt-2">
+                <span
+                  className="inline-flex items-center justify-center min-w-10 h-6 px-2 rounded-full text-[11px] font-bold text-white"
+                  style={{ backgroundColor: `var(--${tone})` }}
+                >
+                  {alt.level}
+                </span>
+              </div>
+              <p className="mt-2 text-xs text-foreground/80">{alt.explanation}</p>
+            </div>
+          );
+        })}
+      </div>
+    </section>
   );
 }
