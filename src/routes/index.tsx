@@ -1,8 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useEffect, useState, type KeyboardEvent } from "react";
-import { Loader2, ChevronDown, AlertCircle, Sparkles } from "lucide-react";
-import { translateSentence, type TranslationResult, type LevelBlock } from "@/lib/translate.functions";
+import { useState, type KeyboardEvent } from "react";
+import { Loader2, ChevronDown, AlertCircle, Sparkles, Star } from "lucide-react";
+import {
+  translateSentence,
+  type TranslationResult,
+  type LevelBlock,
+  type IntentInfo,
+  type IntentType,
+  type Naturalness,
+  type MostNatural,
+} from "@/lib/translate.functions";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/")({
@@ -12,13 +20,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Terjemahkan kalimat Bahasa Indonesia ke Bahasa Jepang dalam 4 tingkat JLPT (N4–N1) dengan penjelasan tata bahasa dan kanji.",
-      },
-      { property: "og:title", content: "NihongoLevel — Belajar Bahasa Jepang per Level JLPT" },
-      {
-        property: "og:description",
-        content:
-          "Terjemahkan kalimat Bahasa Indonesia ke Bahasa Jepang dalam 4 tingkat JLPT (N4–N1).",
+          "Terjemahkan kalimat Bahasa Indonesia ke Bahasa Jepang dalam 4 tingkat JLPT (N4–N1) dengan deteksi intent, naturalness, dan penjelasan grammar.",
       },
     ],
     links: [
@@ -48,6 +50,23 @@ const LEVELS: { key: Level; label: string; tone: string }[] = [
   { key: "n2", label: "N2", tone: "level-n2" },
   { key: "n1", label: "N1", tone: "level-n1" },
 ];
+
+const INTENT_LABELS: Record<IntentType, { emoji: string; label: string }> = {
+  monolog: { emoji: "🧠", label: "Monolog / berpikir sendiri" },
+  asking_others: { emoji: "💬", label: "Tanya ke orang lain" },
+  casual_conversation: { emoji: "🤝", label: "Percakapan kasual / akrab" },
+  professional_formal: { emoji: "💼", label: "Konteks profesional / formal" },
+  joking_relaxed: { emoji: "😄", label: "Bercanda / santai" },
+};
+
+const NATURALNESS_LABELS: Record<
+  Naturalness,
+  { emoji: string; label: string; tone: string }
+> = {
+  native: { emoji: "✅", label: "Native-like", tone: "nat-native" },
+  stiff: { emoji: "⚠️", label: "Correct but stiff", tone: "nat-stiff" },
+  textbook: { emoji: "❌", label: "Textbook only", tone: "nat-textbook" },
+};
 
 function Index() {
   const translate = useServerFn(translateSentence);
@@ -110,9 +129,7 @@ function Index() {
           <h1 className="text-4xl sm:text-5xl font-bold tracking-tight">
             Nihongo<span className="text-primary">Level</span>
           </h1>
-          <p className="mt-3 text-muted-foreground">
-            Belajar Bahasa Jepang per Level JLPT
-          </p>
+          <p className="mt-3 text-muted-foreground">Belajar Bahasa Jepang per Level JLPT</p>
         </header>
 
         <section className="rounded-2xl border border-border bg-card p-5 sm:p-6 shadow-sm">
@@ -182,18 +199,22 @@ function Index() {
         )}
 
         {result && (
-          <div className="mt-8 space-y-4">
-            {LEVELS.map(({ key, label, tone }) => (
-              <LevelCard
-                key={key}
-                level={label}
-                tone={tone}
-                data={result[key]}
-                open={open[key]}
-                onToggle={() => setOpen((s) => ({ ...s, [key]: !s[key] }))}
-              />
-            ))}
-          </div>
+          <>
+            <IntentBadge intent={result.intent} />
+            <div className="mt-6 space-y-4">
+              {LEVELS.map(({ key, label, tone }) => (
+                <LevelCard
+                  key={key}
+                  level={label}
+                  tone={tone}
+                  data={result[key]}
+                  open={open[key]}
+                  onToggle={() => setOpen((s) => ({ ...s, [key]: !s[key] }))}
+                />
+              ))}
+            </div>
+            <MostNaturalCard data={result.most_natural} />
+          </>
         )}
 
         <footer className="mt-16 pb-6 text-center text-xs text-muted-foreground">
@@ -201,6 +222,45 @@ function Index() {
         </footer>
       </div>
     </div>
+  );
+}
+
+function IntentBadge({ intent }: { intent: IntentInfo }) {
+  const meta = INTENT_LABELS[intent.type] ?? {
+    emoji: "✨",
+    label: intent.type,
+  };
+  const color = `var(--intent-${intent.type})`;
+  return (
+    <div
+      className="mt-8 rounded-2xl border p-4 sm:p-5"
+      style={{
+        borderColor: color + "55",
+        backgroundColor: color + "12",
+      }}
+    >
+      <div
+        className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold text-white"
+        style={{ backgroundColor: color }}
+      >
+        <span>{meta.emoji}</span>
+        <span>{meta.label}</span>
+      </div>
+      <p className="mt-2 text-sm text-foreground/80">{intent.explanation}</p>
+    </div>
+  );
+}
+
+function NaturalnessChip({ value }: { value: Naturalness }) {
+  const meta = NATURALNESS_LABELS[value] ?? NATURALNESS_LABELS.stiff;
+  return (
+    <span
+      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold text-white"
+      style={{ backgroundColor: `var(--${meta.tone})` }}
+    >
+      <span>{meta.emoji}</span>
+      <span>{meta.label}</span>
+    </span>
   );
 }
 
@@ -217,8 +277,10 @@ function LevelCard({
   open: boolean;
   onToggle: () => void;
 }) {
+  const [whyOpen, setWhyOpen] = useState(false);
   return (
-    <div className={cn("rounded-2xl border bg-card shadow-sm overflow-hidden", `border-${tone}/30`)}
+    <div
+      className="rounded-2xl border bg-card shadow-sm overflow-hidden"
       style={{ borderColor: `var(--${tone})` + "40" }}
     >
       <button
@@ -226,7 +288,7 @@ function LevelCard({
         className="w-full flex items-center justify-between px-5 py-4 hover:bg-muted/40 transition"
         aria-expanded={open}
       >
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 min-w-0">
           <span
             className="inline-flex items-center justify-center min-w-12 h-7 px-2.5 rounded-full text-xs font-bold text-white"
             style={{ backgroundColor: `var(--${tone})` }}
@@ -249,6 +311,12 @@ function LevelCard({
               {data.japanese}
             </p>
             <p className="mt-2 italic text-sm text-muted-foreground">{data.romaji}</p>
+            <div className="mt-3">
+              <NaturalnessChip value={data.naturalness} />
+              {data.naturalness_note && (
+                <p className="mt-1.5 text-xs text-muted-foreground">{data.naturalness_note}</p>
+              )}
+            </div>
           </div>
 
           <div className="rounded-lg bg-muted/60 p-3 text-sm text-foreground/80">
@@ -261,15 +329,33 @@ function LevelCard({
               <h3 className="text-sm font-semibold mb-2">Tata Bahasa</h3>
               <ul className="space-y-2">
                 {data.grammar.map((g, i) => (
-                  <li
-                    key={i}
-                    className="rounded-lg border border-border p-3 text-sm"
-                  >
+                  <li key={i} className="rounded-lg border border-border p-3 text-sm">
                     <p className="font-jp font-medium text-foreground">{g.pattern}</p>
                     <p className="mt-1 text-muted-foreground">{g.explanation}</p>
                   </li>
                 ))}
               </ul>
+            </div>
+          )}
+
+          {data.why_this_level && (
+            <div className="rounded-lg border border-border overflow-hidden">
+              <button
+                onClick={() => setWhyOpen((v) => !v)}
+                className="w-full flex items-center justify-between px-3 py-2.5 text-sm font-semibold hover:bg-muted/40 transition"
+                aria-expanded={whyOpen}
+              >
+                <span>Kenapa level ini?</span>
+                <ChevronDown
+                  className={cn(
+                    "w-4 h-4 text-muted-foreground transition-transform",
+                    whyOpen && "rotate-180",
+                  )}
+                />
+              </button>
+              {whyOpen && (
+                <p className="px-3 pb-3 text-sm text-muted-foreground">{data.why_this_level}</p>
+              )}
             </div>
           )}
 
@@ -305,6 +391,39 @@ function LevelCard({
           )}
         </div>
       )}
+    </div>
+  );
+}
+
+function MostNaturalCard({ data }: { data: MostNatural }) {
+  const tone = `level-${(data.level || "N3").toLowerCase()}`;
+  return (
+    <div
+      className="mt-8 rounded-2xl border-2 p-5 sm:p-6 shadow-md"
+      style={{
+        borderColor: `var(--${tone})`,
+        background: `linear-gradient(135deg, color-mix(in oklab, var(--${tone}) 12%, transparent), color-mix(in oklab, var(--${tone}) 4%, transparent))`,
+      }}
+    >
+      <div className="flex items-center gap-2 mb-3">
+        <Star className="w-4 h-4" style={{ color: `var(--${tone})` }} fill="currentColor" />
+        <h2 className="text-sm font-bold uppercase tracking-wide" style={{ color: `var(--${tone})` }}>
+          Yang paling natural diucapkan orang Jepang
+        </h2>
+      </div>
+      <div className="flex items-center gap-3 flex-wrap">
+        <span
+          className="inline-flex items-center justify-center min-w-12 h-7 px-2.5 rounded-full text-xs font-bold text-white"
+          style={{ backgroundColor: `var(--${tone})` }}
+        >
+          {data.level}
+        </span>
+      </div>
+      <p className="mt-3 font-jp text-2xl sm:text-3xl leading-snug text-foreground">
+        {data.japanese}
+      </p>
+      <p className="mt-1 italic text-sm text-muted-foreground">{data.romaji}</p>
+      <p className="mt-3 text-sm text-foreground/80">{data.reason}</p>
     </div>
   );
 }
