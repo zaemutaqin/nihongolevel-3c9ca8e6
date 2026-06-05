@@ -36,9 +36,9 @@ export interface TranslationResult {
 export const translateSentence = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => InputSchema.parse(data))
   .handler(async ({ data }): Promise<TranslationResult> => {
-    const apiKey = process.env.GEMINI_API_KEY;
+    const apiKey = process.env.LOVABLE_API_KEY;
     if (!apiKey) {
-      throw new Error("GEMINI_API_KEY is not configured");
+      throw new Error("LOVABLE_API_KEY is not configured");
     }
 
     const prompt = `You are a Japanese language expert. Translate this Indonesian sentence into Japanese at 4 JLPT levels. Return ONLY raw JSON, no markdown, no backticks, no explanation outside the JSON.
@@ -69,24 +69,24 @@ Rules:
 
     const MAX_RETRIES = 3;
     let res: Response | null = null;
-    let lastErrText = "";
     for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
-      res = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: { temperature: 0.3 },
-          }),
+      res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${apiKey}`,
         },
-      );
+        body: JSON.stringify({
+          model: "google/gemini-2.5-flash",
+          messages: [{ role: "user", content: prompt }],
+          temperature: 0.3,
+        }),
+      });
 
       if (res.ok) break;
 
-      lastErrText = await res.text();
-      console.error("Gemini error:", res.status, lastErrText);
+      const errText = await res.text();
+      console.error("AI Gateway error:", res.status, errText);
 
       if (res.status === 429 && attempt < MAX_RETRIES) {
         const delay = 1000 * Math.pow(2, attempt);
@@ -95,21 +95,22 @@ Rules:
       }
 
       if (res.status === 429) {
-        throw new Error(
-          "Batas permintaan Gemini API terlampaui. Coba lagi dalam beberapa saat.",
-        );
+        throw new Error("Terlalu banyak permintaan. Coba lagi dalam beberapa saat.");
       }
-      throw new Error(`Gemini API error (${res.status})`);
+      if (res.status === 402) {
+        throw new Error("Kredit AI habis. Silakan tambahkan kredit di workspace settings.");
+      }
+      throw new Error(`AI Gateway error (${res.status})`);
     }
 
     if (!res || !res.ok) {
-      throw new Error("Gemini API tidak tersedia. Coba lagi nanti.");
+      throw new Error("AI Gateway tidak tersedia. Coba lagi nanti.");
     }
 
     const json = await res.json();
-    const text: string | undefined = json?.candidates?.[0]?.content?.parts?.[0]?.text;
+    const text: string | undefined = json?.choices?.[0]?.message?.content;
     if (!text) {
-      throw new Error("Empty response from Gemini");
+      throw new Error("Empty response from AI Gateway");
     }
 
     // Strip markdown fences if present
