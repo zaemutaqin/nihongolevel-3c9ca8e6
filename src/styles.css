@@ -91,6 +91,14 @@
   --level-n3: oklch(0.58 0.18 245);
   --level-n2: oklch(0.72 0.16 65);
   --level-n1: oklch(0.6 0.21 25);
+  --nat-native: oklch(0.62 0.17 152);
+  --nat-stiff: oklch(0.75 0.15 85);
+  --nat-textbook: oklch(0.62 0.2 25);
+  --intent-monolog: oklch(0.6 0.18 280);
+  --intent-asking_others: oklch(0.58 0.18 245);
+  --intent-casual_conversation: oklch(0.62 0.17 152);
+  --intent-professional_formal: oklch(0.5 0.1 250);
+  --intent-joking_relaxed: oklch(0.72 0.16 65);
   --sidebar: oklch(0.984 0.003 247.858);
   --sidebar-foreground: oklch(0.129 0.042 264.695);
   --sidebar-primary: oklch(0.208 0.042 265.755);
