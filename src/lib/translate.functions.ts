@@ -36,9 +36,9 @@ export interface TranslationResult {
 export const translateSentence = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => InputSchema.parse(data))
   .handler(async ({ data }): Promise<TranslationResult> => {
-    const apiKey = process.env.GEMINI_API_KEY;
+    const apiKey = process.env.LOVABLE_API_KEY;
     if (!apiKey) {
-      throw new Error("GEMINI_API_KEY is not configured");
+      throw new Error("LOVABLE_API_KEY is not configured");
     }
 
     const prompt = `You are a Japanese language expert. Translate this Indonesian sentence into Japanese at 4 JLPT levels. Return ONLY raw JSON, no markdown, no backticks, no explanation outside the JSON.
