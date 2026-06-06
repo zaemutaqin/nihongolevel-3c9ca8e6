@@ -164,17 +164,12 @@ function HistoryCard({ entry }: { entry: HistoryEntry }) {
           <SocialAnalysisCard data={entry.social_analysis} />
           <div className="space-y-3">
             {LEVELS.map(({ key, label }) => (
-              <LevelCard
+              <ExpandableLevel
                 key={key}
                 level={label}
-                data={entry.levels[key]}
-                open={false || key === "n3"}
-                onToggle={() => {}}
-                isFav={isFavorited(entry.id, "level", label)}
-                onFavorite={() => {
-                  addFavoriteFromLevel(entry, key);
-                  setTick((t) => t + 1);
-                }}
+                entry={entry}
+                levelKey={key}
+                onChange={() => setTick((t) => t + 1)}
               />
             ))}
           </div>
