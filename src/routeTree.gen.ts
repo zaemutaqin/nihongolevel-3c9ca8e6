@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as RiwayatRouteImport } from './routes/riwayat'
+import { Route as ReviewRouteImport } from './routes/review'
 import { Route as FavoritRouteImport } from './routes/favorit'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
@@ -17,6 +18,11 @@ import { Route as IndexRouteImport } from './routes/index'
 const RiwayatRoute = RiwayatRouteImport.update({
   id: '/riwayat',
   path: '/riwayat',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReviewRoute = ReviewRouteImport.update({
+  id: '/review',
+  path: '/review',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FavoritRoute = FavoritRouteImport.update({
@@ -39,12 +45,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/favorit': typeof FavoritRoute
+  '/review': typeof ReviewRoute
   '/riwayat': typeof RiwayatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/favorit': typeof FavoritRoute
+  '/review': typeof ReviewRoute
   '/riwayat': typeof RiwayatRoute
 }
 export interface FileRoutesById {
@@ -52,20 +60,22 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/favorit': typeof FavoritRoute
+  '/review': typeof ReviewRoute
   '/riwayat': typeof RiwayatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/favorit' | '/riwayat'
+  fullPaths: '/' | '/dashboard' | '/favorit' | '/review' | '/riwayat'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/favorit' | '/riwayat'
-  id: '__root__' | '/' | '/dashboard' | '/favorit' | '/riwayat'
+  to: '/' | '/dashboard' | '/favorit' | '/review' | '/riwayat'
+  id: '__root__' | '/' | '/dashboard' | '/favorit' | '/review' | '/riwayat'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRoute
   FavoritRoute: typeof FavoritRoute
+  ReviewRoute: typeof ReviewRoute
   RiwayatRoute: typeof RiwayatRoute
 }
 
@@ -76,6 +86,13 @@ declare module '@tanstack/react-router' {
       path: '/riwayat'
       fullPath: '/riwayat'
       preLoaderRoute: typeof RiwayatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/review': {
+      id: '/review'
+      path: '/review'
+      fullPath: '/review'
+      preLoaderRoute: typeof ReviewRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/favorit': {
@@ -106,6 +123,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
   FavoritRoute: FavoritRoute,
+  ReviewRoute: ReviewRoute,
   RiwayatRoute: RiwayatRoute,
 }
 export const routeTree = rootRouteImport
