@@ -196,3 +196,30 @@ function EmptyState({ title, desc }: { title: string; desc: string }) {
     </div>
   );
 }
+
+function ExpandableLevel({
+  level,
+  entry,
+  levelKey,
+  onChange,
+}: {
+  level: string;
+  entry: HistoryEntry;
+  levelKey: LevelKey;
+  onChange: () => void;
+}) {
+  const [open, setOpen] = useState(false);
+  return (
+    <LevelCard
+      level={level}
+      data={entry.levels[levelKey]}
+      open={open}
+      onToggle={() => setOpen((v) => !v)}
+      isFav={isFavorited(entry.id, "level", level)}
+      onFavorite={() => {
+        addFavoriteFromLevel(entry, levelKey);
+        onChange();
+      }}
+    />
+  );
+}
