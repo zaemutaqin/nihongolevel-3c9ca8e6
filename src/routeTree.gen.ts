@@ -9,20 +9,20 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
 import { Route as RiwayatRouteImport } from './routes/riwayat'
+import { Route as ReviewRouteImport } from './routes/review'
 import { Route as FavoritRouteImport } from './routes/favorit'
 import { Route as DashboardRouteImport } from './routes/dashboard'
-import { Route as ReviewRouteImport } from './routes/review'
+import { Route as IndexRouteImport } from './routes/index'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const RiwayatRoute = RiwayatRouteImport.update({
   id: '/riwayat',
   path: '/riwayat',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReviewRoute = ReviewRouteImport.update({
+  id: '/review',
+  path: '/review',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FavoritRoute = FavoritRouteImport.update({
@@ -35,64 +35,64 @@ const DashboardRoute = DashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ReviewRoute = ReviewRouteImport.update({
-  id: '/review',
-  path: '/review',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/riwayat': typeof RiwayatRoute
-  '/favorit': typeof FavoritRoute
   '/dashboard': typeof DashboardRoute
+  '/favorit': typeof FavoritRoute
   '/review': typeof ReviewRoute
+  '/riwayat': typeof RiwayatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/riwayat': typeof RiwayatRoute
-  '/favorit': typeof FavoritRoute
   '/dashboard': typeof DashboardRoute
+  '/favorit': typeof FavoritRoute
   '/review': typeof ReviewRoute
+  '/riwayat': typeof RiwayatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/riwayat': typeof RiwayatRoute
-  '/favorit': typeof FavoritRoute
   '/dashboard': typeof DashboardRoute
+  '/favorit': typeof FavoritRoute
   '/review': typeof ReviewRoute
+  '/riwayat': typeof RiwayatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/riwayat' | '/favorit' | '/dashboard' | '/review'
+  fullPaths: '/' | '/dashboard' | '/favorit' | '/review' | '/riwayat'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/riwayat' | '/favorit' | '/dashboard' | '/review'
-  id: '__root__' | '/' | '/riwayat' | '/favorit' | '/dashboard' | '/review'
+  to: '/' | '/dashboard' | '/favorit' | '/review' | '/riwayat'
+  id: '__root__' | '/' | '/dashboard' | '/favorit' | '/review' | '/riwayat'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  RiwayatRoute: typeof RiwayatRoute
-  FavoritRoute: typeof FavoritRoute
   DashboardRoute: typeof DashboardRoute
+  FavoritRoute: typeof FavoritRoute
   ReviewRoute: typeof ReviewRoute
+  RiwayatRoute: typeof RiwayatRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/riwayat': {
       id: '/riwayat'
       path: '/riwayat'
       fullPath: '/riwayat'
       preLoaderRoute: typeof RiwayatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/review': {
+      id: '/review'
+      path: '/review'
+      fullPath: '/review'
+      preLoaderRoute: typeof ReviewRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/favorit': {
@@ -109,11 +109,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/review': {
-      id: '/review'
-      path: '/review'
-      fullPath: '/review'
-      preLoaderRoute: typeof ReviewRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -121,21 +121,11 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  RiwayatRoute: RiwayatRoute,
-  FavoritRoute: FavoritRoute,
   DashboardRoute: DashboardRoute,
+  FavoritRoute: FavoritRoute,
   ReviewRoute: ReviewRoute,
+  RiwayatRoute: RiwayatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
