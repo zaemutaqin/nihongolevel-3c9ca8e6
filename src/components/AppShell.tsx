@@ -1,13 +1,14 @@
 import { Link, Outlet } from "@tanstack/react-router";
 import { Search, History, Star, BarChart3, RotateCw } from "lucide-react";
 
-const NAV = [
+type NavItem = { to: string; label: string; Icon: typeof Search; exact?: boolean };
+const NAV: NavItem[] = [
   { to: "/", label: "Cari", Icon: Search, exact: true },
   { to: "/riwayat", label: "Riwayat", Icon: History },
   { to: "/favorit", label: "Favorit", Icon: Star },
   { to: "/dashboard", label: "Dashboard", Icon: BarChart3 },
   { to: "/review", label: "Review", Icon: RotateCw },
-] as const;
+];
 
 export function AppShell() {
   return (
