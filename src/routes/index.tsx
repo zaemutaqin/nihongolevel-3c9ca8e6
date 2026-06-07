@@ -234,10 +234,10 @@ function Index() {
             {loading ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                Menerjemahkan...
+                Mencari...
               </>
             ) : (
-              "Terjemahkan"
+              "Cari ekspresi"
             )}
           </button>
         </div>
