@@ -7,6 +7,8 @@ import {
   useLocalCollection,
   type FavoriteEntry,
 } from "@/lib/storage";
+import { StylePill, JlptRef } from "@/components/result-parts";
+import { SpeakerButton } from "@/components/SpeakerButton";
 
 export const Route = createFileRoute("/review")({
   head: () => ({ meta: [{ title: "Review — NihongoLevel" }] }),
@@ -110,19 +112,20 @@ function ReviewPage() {
         ) : (
           <>
             <div className="mt-6 pt-5 border-t border-border">
-              <p className="font-jp text-3xl sm:text-4xl leading-snug text-foreground">
-                {current.japanese}
-              </p>
+              <div className="flex items-start gap-2">
+                <p className="font-jp text-3xl sm:text-4xl leading-snug text-foreground flex-1">
+                  {current.japanese}
+                </p>
+                <SpeakerButton text={current.japanese} />
+              </div>
               <p className="mt-2 italic text-sm text-muted-foreground">{current.romaji}</p>
               {current.meaning && (
                 <p className="mt-3 text-sm text-foreground/80">{current.meaning}</p>
               )}
-              <span
-                className="mt-3 inline-flex items-center justify-center min-w-10 h-6 px-2 rounded-full text-[11px] font-bold text-white"
-                style={{ backgroundColor: `var(--level-${current.level.toLowerCase()})` }}
-              >
-                {current.level}
-              </span>
+              <div className="mt-3 flex items-center gap-2 flex-wrap">
+                <StylePill level={current.level} size="sm" />
+                <JlptRef level={current.level} />
+              </div>
             </div>
 
             <div className="mt-6 grid grid-cols-2 gap-3">
