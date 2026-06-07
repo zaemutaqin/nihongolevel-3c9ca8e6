@@ -85,9 +85,12 @@ function FavoriteCard({ fav }: { fav: FavoriteEntry }) {
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
-          <p className="font-jp text-2xl sm:text-3xl leading-snug text-foreground">
-            {fav.japanese}
-          </p>
+          <div className="flex items-start gap-2">
+            <p className="font-jp text-2xl sm:text-3xl leading-snug text-foreground flex-1">
+              {fav.japanese}
+            </p>
+            <SpeakerButton text={fav.japanese} size="sm" />
+          </div>
           <p className="mt-1 italic text-sm text-muted-foreground">{fav.romaji}</p>
           <p className="mt-2 text-sm text-foreground/80">{fav.meaning}</p>
         </div>
@@ -103,12 +106,8 @@ function FavoriteCard({ fav }: { fav: FavoriteEntry }) {
       </div>
 
       <div className="mt-3 flex flex-wrap gap-2 items-center">
-        <span
-          className="inline-flex items-center justify-center min-w-10 h-6 px-2 rounded-full text-[11px] font-bold text-white"
-          style={{ backgroundColor: `var(--${tone})` }}
-        >
-          {fav.level}
-        </span>
+        <StylePill level={fav.level} size="sm" />
+        <JlptRef level={fav.level} />
         {fav.naturalness && <NaturalnessChip value={fav.naturalness} />}
         <span className="text-[11px] text-muted-foreground">
           {intentMeta?.emoji} {intentMeta?.short ?? fav.intent.type}
