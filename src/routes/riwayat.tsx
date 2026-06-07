@@ -18,7 +18,10 @@ import {
   LevelCard,
   MostNaturalCard,
   AlternativesSection,
+  StylePill,
+  JlptRef,
 } from "@/components/result-parts";
+import { SpeakerButton } from "@/components/SpeakerButton";
 import { cn } from "@/lib/utils";
 import {
   addFavoriteFromLevel,
