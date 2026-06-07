@@ -269,30 +269,17 @@ function Index() {
       {loading && !result && (
         <div className="mt-10 flex flex-col items-center justify-center gap-3 text-muted-foreground">
           <Loader2 className="w-8 h-8 animate-spin" />
-          <p className="text-sm">Sedang menerjemahkan ke 4 level JLPT...</p>
+          <p className="text-sm">Sedang mencari ekspresi yang tepat...</p>
         </div>
       )}
 
       {result && historyEntry && (
         <div className="mt-8 space-y-6" key={favTick}>
+          <h2 className="text-base font-bold text-foreground">
+            Bagaimana orang Jepang mengatakannya
+          </h2>
           <IntentBadge intent={result.intent} />
           {result.social_analysis && <SocialAnalysisCard data={result.social_analysis} />}
-          <div className="space-y-4">
-            {LEVELS.map(({ key, label }) => (
-              <LevelCard
-                key={key}
-                level={label}
-                data={result[key]}
-                open={open[key]}
-                onToggle={() => setOpen((s) => ({ ...s, [key]: !s[key] }))}
-                isFav={isFavorited(historyEntry.id, "level", label)}
-                onFavorite={() => {
-                  addFavoriteFromLevel(historyEntry, key);
-                  setFavTick((t) => t + 1);
-                }}
-              />
-            ))}
-          </div>
           <MostNaturalCard
             data={result.most_natural}
             isFav={favMostNatural}
@@ -301,6 +288,27 @@ function Index() {
               setFavTick((t) => t + 1);
             }}
           />
+          <section>
+            <h3 className="text-sm font-bold uppercase tracking-wide mb-3 text-foreground/80">
+              Pilihan ekspresi berdasarkan gaya komunikasi
+            </h3>
+            <div className="space-y-4">
+              {LEVELS.map(({ key, label }) => (
+                <LevelCard
+                  key={key}
+                  level={label}
+                  data={result[key]}
+                  open={open[key]}
+                  onToggle={() => setOpen((s) => ({ ...s, [key]: !s[key] }))}
+                  isFav={isFavorited(historyEntry.id, "level", label)}
+                  onFavorite={() => {
+                    addFavoriteFromLevel(historyEntry, key);
+                    setFavTick((t) => t + 1);
+                  }}
+                />
+              ))}
+            </div>
+          </section>
           {result.alternatives?.length > 0 && (
             <AlternativesSection items={result.alternatives} />
           )}
