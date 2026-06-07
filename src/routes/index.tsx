@@ -152,7 +152,7 @@ function Index() {
         <h1 className="text-3xl sm:text-4xl font-bold tracking-tight sm:hidden">
           Nihongo<span className="text-primary">Level</span>
         </h1>
-        <p className="mt-2 text-sm text-muted-foreground">Belajar Bahasa Jepang per Level JLPT</p>
+        <p className="mt-2 text-sm text-muted-foreground">Belajar berbicara seperti orang Jepang</p>
       </header>
 
       <section className="rounded-2xl border border-border bg-card p-5 sm:p-6 shadow-sm">
