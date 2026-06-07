@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Star, ChevronDown, Trash2 } from "lucide-react";
+import { ChevronDown, Trash2 } from "lucide-react";
 import {
   getFavorites,
   removeFavorite,
