@@ -91,13 +91,24 @@ export interface MostNatural {
   native_note?: string;
 }
 
+export type AlternativeRoleLabel =
+  | "Paling Umum Digunakan"
+  | "Lebih Sopan"
+  | "Untuk Monolog"
+  | "Untuk Situasi Formal"
+  | "Pilihan Kasual"
+  | "Paling Natural";
+
 export interface AlternativeExpression {
+  rank?: number;
+  role_label?: string;
   context_label: string;
   japanese: string;
   romaji: string;
   level: string;
   explanation: string;
 }
+
 
 export interface TranslationResult {
   intent: IntentInfo;
