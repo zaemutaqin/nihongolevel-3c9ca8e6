@@ -86,10 +86,10 @@ function FavoriteCard({ fav }: { fav: FavoriteEntry }) {
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <div className="flex items-start gap-2">
-            <p className="font-jp text-2xl sm:text-3xl leading-snug text-foreground flex-1">
-              {fav.japanese}
+            <p className="font-jp text-2xl sm:text-3xl leading-snug text-foreground flex-1 break-words">
+              {cleanJapanese(fav.japanese)}
             </p>
-            <SpeakerButton text={fav.japanese} size="sm" />
+            <SpeakerButton text={cleanJapanese(fav.japanese)} size="sm" />
           </div>
           <p className="mt-1 italic text-sm text-muted-foreground">{fav.romaji}</p>
           <p className="mt-2 text-sm text-foreground/80">{fav.meaning}</p>
@@ -108,11 +108,17 @@ function FavoriteCard({ fav }: { fav: FavoriteEntry }) {
       <div className="mt-3 flex flex-wrap gap-2 items-center">
         <StylePill level={fav.level} size="sm" />
         <JlptRef level={fav.level} />
-        {fav.naturalness && <NaturalnessChip value={fav.naturalness} />}
         <span className="text-[11px] text-muted-foreground">
           {intentMeta?.emoji} {intentMeta?.short ?? fav.intent.type}
         </span>
       </div>
+
+      {fav.naturalness && (
+        <div className="mt-3">
+          <NaturalnessBar value={fav.naturalness} />
+        </div>
+      )}
+
 
       <p className="mt-3 text-xs text-muted-foreground">
         Dari: <span className="text-foreground/80">"{fav.input}"</span>
