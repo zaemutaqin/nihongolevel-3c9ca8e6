@@ -7,7 +7,7 @@ import {
   useLocalCollection,
   type FavoriteEntry,
 } from "@/lib/storage";
-import { INTENT_LABELS, NaturalnessChip, StylePill, JlptRef } from "@/components/result-parts";
+import { INTENT_LABELS, NaturalnessBar, StylePill, JlptRef, KanjiCard, cleanJapanese } from "@/components/result-parts";
 import { SpeakerButton } from "@/components/SpeakerButton";
 import { cn } from "@/lib/utils";
 import type { IntentType } from "@/lib/translate.functions";
