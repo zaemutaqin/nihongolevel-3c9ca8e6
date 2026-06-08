@@ -7,13 +7,24 @@ const InputSchema = z.object({
   mood: z.string().trim().max(100).optional(),
 });
 
+export interface KanjiExampleWord {
+  word: string;
+  reading: string;
+  meaning: string;
+}
+
+export type KanjiFrequency = "sangat_umum" | "umum" | "khusus";
+
 export interface KanjiInfo {
   char: string;
   reading: string;
   meaning: string;
   examples: string;
   jlpt: string;
+  example_words?: KanjiExampleWord[];
+  frequency?: KanjiFrequency;
 }
+
 
 export interface GrammarInfo {
   pattern: string;
