@@ -90,11 +90,12 @@ function Index() {
   const [historyEntry, setHistoryEntry] = useState<HistoryEntry | null>(null);
   const [favTick, setFavTick] = useState(0);
   const [open, setOpen] = useState<Record<LevelKey, boolean>>({
-    n4: true,
+    n4: false,
     n3: false,
     n2: false,
     n1: false,
   });
+
 
   const handleTranslate = async (text?: string) => {
     const sentence = (text ?? input).trim();
