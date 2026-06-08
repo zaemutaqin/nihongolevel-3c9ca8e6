@@ -119,11 +119,12 @@ function HistoryCard({ entry }: { entry: HistoryEntry }) {
 
       <div className="mt-3">
         <div className="flex items-start gap-2">
-          <p className="font-jp text-2xl leading-snug text-foreground flex-1">
-            {entry.most_natural.japanese}
+          <p className="font-jp text-2xl leading-snug text-foreground flex-1 break-words">
+            {cleanJapanese(entry.most_natural.japanese)}
           </p>
-          <SpeakerButton text={entry.most_natural.japanese} size="sm" />
+          <SpeakerButton text={cleanJapanese(entry.most_natural.japanese)} size="sm" />
         </div>
+
         <p className="mt-0.5 italic text-sm text-muted-foreground">{entry.most_natural.romaji}</p>
         <div className="mt-2 flex items-center gap-2 flex-wrap">
           <StylePill level={entry.most_natural.level} size="sm" />
