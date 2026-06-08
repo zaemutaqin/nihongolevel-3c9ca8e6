@@ -7,13 +7,24 @@ const InputSchema = z.object({
   mood: z.string().trim().max(100).optional(),
 });
 
+export interface KanjiExampleWord {
+  word: string;
+  reading: string;
+  meaning: string;
+}
+
+export type KanjiFrequency = "sangat_umum" | "umum" | "khusus";
+
 export interface KanjiInfo {
   char: string;
   reading: string;
   meaning: string;
   examples: string;
   jlpt: string;
+  example_words?: KanjiExampleWord[];
+  frequency?: KanjiFrequency;
 }
+
 
 export interface GrammarInfo {
   pattern: string;
@@ -80,13 +91,24 @@ export interface MostNatural {
   native_note?: string;
 }
 
+export type AlternativeRoleLabel =
+  | "Paling Umum Digunakan"
+  | "Lebih Sopan"
+  | "Untuk Monolog"
+  | "Untuk Situasi Formal"
+  | "Pilihan Kasual"
+  | "Paling Natural";
+
 export interface AlternativeExpression {
+  rank?: number;
+  role_label?: string;
   context_label: string;
   japanese: string;
   romaji: string;
   level: string;
   explanation: string;
 }
+
 
 export interface TranslationResult {
   intent: IntentInfo;
@@ -108,8 +130,14 @@ interface RawResult {
   social_analysis: SocialAnalysis;
   most_natural: MostNatural;
   styles: Record<StyleKey, RawStyleBlock>;
-  alternatives: (Omit<AlternativeExpression, "level"> & { style?: StyleKey; level?: string })[];
+  alternatives: (Omit<AlternativeExpression, "level"> & {
+    style?: StyleKey;
+    level?: string;
+    rank?: number;
+    role_label?: string;
+  })[];
 }
+
 
 const STYLE_TO_LEVEL: Record<StyleKey, "N4" | "N3" | "N2" | "N1"> = {
   dasar: "N4",
@@ -118,21 +146,46 @@ const STYLE_TO_LEVEL: Record<StyleKey, "N4" | "N3" | "N2" | "N1"> = {
   mendekati_native: "N1",
 };
 
+export function cleanJapanese(text: string | undefined | null): string {
+  if (!text) return "";
+  return String(text)
+    .split("/")[0]
+    .replace(/\(monolog\)/gi, "")
+    .replace(/（[^）]*）/g, "")
+    .trim();
+}
+
+function jlptToFrequency(jlpt: string | undefined): KanjiFrequency {
+  const j = (jlpt || "").toUpperCase();
+  if (j === "N5" || j === "N4") return "sangat_umum";
+  if (j === "N3") return "umum";
+  return "khusus";
+}
+
+function normalizeKanji(k: KanjiInfo): KanjiInfo {
+  return {
+    ...k,
+    frequency: k.frequency ?? jlptToFrequency(k.jlpt),
+    example_words: k.example_words ?? [],
+  };
+}
+
 function styleToLevelBlock(s: RawStyleBlock): LevelBlock {
   return {
-    japanese: s.japanese,
+    japanese: cleanJapanese(s.japanese),
     romaji: s.romaji,
     naturalness: s.naturalness,
     naturalness_note: s.naturalness_note,
     nuance: s.impression ?? "",
     why_this_level: s.why_this_style ?? "",
     grammar: s.grammar ?? [],
-    kanji: s.kanji ?? [],
+    kanji: (s.kanji ?? []).map(normalizeKanji),
     when_to_use: s.when_to_use,
     suitable_for: s.suitable_for,
     impression: s.impression,
   };
 }
+
 
 export const translateSentence = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => InputSchema.parse(data))
@@ -158,25 +211,30 @@ Return ONLY raw JSON, no markdown, no backticks:
   "social_analysis": { "relationship": "in Indonesian", "emotion": "in Indonesian", "communication_goal": "in Indonesian", "wrong_context_risk": "in Indonesian" },
   "most_natural": { "japanese": "...", "romaji": "...", "reason": "in Indonesian", "native_note": "in Indonesian" },
   "styles": {
-    "dasar": { "japanese": "...", "romaji": "...", "naturalness": "native|stiff|textbook", "naturalness_note": "in Indonesian", "when_to_use": "in Indonesian", "suitable_for": "in Indonesian", "impression": "in Indonesian", "why_this_style": "in Indonesian", "grammar": [{"pattern": "...", "explanation": "in Indonesian"}], "kanji": [{"char": "...", "reading": "on: ... / kun: ...", "meaning": "in Indonesian", "examples": "...", "jlpt": "N4"}], "jlpt_reference": "N4" },
+    "dasar": { "japanese": "...", "romaji": "...", "naturalness": "native|stiff|textbook", "naturalness_note": "in Indonesian", "when_to_use": "in Indonesian", "suitable_for": "in Indonesian", "impression": "in Indonesian", "why_this_style": "in Indonesian", "grammar": [{"pattern": "...", "explanation": "in Indonesian"}], "kanji": [{"char": "...", "reading": "on: ... / kun: ...", "meaning": "in Indonesian", "examples": "...", "jlpt": "N4", "frequency": "sangat_umum|umum|khusus", "example_words": [{"word": "...", "reading": "...", "meaning": "in Indonesian"}]}], "jlpt_reference": "N4" },
     "sehari_hari": { same structure, jlpt_reference: "N3" },
     "ekspresif": { same structure, jlpt_reference: "N2" },
     "mendekati_native": { same structure, jlpt_reference: "N1" }
   },
   "alternatives": [
-    {"context_label": "Kalau bilang ke teman dekat", "japanese": "...", "romaji": "...", "style": "sehari_hari", "explanation": "in Indonesian"},
-    {"context_label": "Kalau tanya ke rekan kerja", "japanese": "...", "romaji": "...", "style": "ekspresif", "explanation": "in Indonesian"},
-    {"context_label": "Kalau tanya ke atasan", "japanese": "...", "romaji": "...", "style": "mendekati_native", "explanation": "in Indonesian"}
+    {"rank": 1, "role_label": "Paling Umum Digunakan", "context_label": "cocok untuk teman dekat", "japanese": "...", "romaji": "...", "style": "sehari_hari", "explanation": "in Indonesian"},
+    {"rank": 2, "role_label": "Lebih Sopan", "context_label": "cocok untuk rekan kerja", "japanese": "...", "romaji": "...", "style": "ekspresif", "explanation": "in Indonesian"},
+    {"rank": 3, "role_label": "Untuk Situasi Formal", "context_label": "cocok untuk atasan / klien", "japanese": "...", "romaji": "...", "style": "mendekati_native", "explanation": "in Indonesian"}
   ]
 }
 
 Rules:
 - most_natural = what a real Japanese person would naturally say
+- Each Japanese field must contain EXACTLY ONE expression. Never include alternatives separated by "/", "(monolog)/", or parentheses. Pick one.
 - impression = real social/emotional reaction, not just "sounds polite"
 - For monolog: always use 〜かな、〜ようかな, never 〜ですか
 - Be honest about naturalness — most textbook sentences are stiff
 - kanji array: only kanji that actually appear in the sentence, max 4, can be empty []
+- kanji.example_words: 2 common compound words using this kanji (NOT necessarily in the input sentence)
+- kanji.frequency: derive from jlpt — N5/N4 → sangat_umum, N3 → umum, N2/N1 → khusus
+- For alternatives: rank 1 is the MOST commonly used in real daily life. role_label MUST be one of: "Paling Umum Digunakan" / "Lebih Sopan" / "Untuk Monolog" / "Untuk Situasi Formal" / "Pilihan Kasual" / "Paling Natural". context_label is a short Indonesian sub-label (e.g., "cocok untuk teman dekat").
 - ROMAJI RULE: Never use Arabic numerals (1,2,3...) in any romaji field. Always write numbers in full romaji. Examples: 3時に会います → "san-ji ni aimasu" NOT "3-ji ni aimasu"; 2人 → "futari"; 8時半 → "hachi-ji han". Apply to EVERY romaji field (most_natural.romaji, styles.*.romaji, alternatives[].romaji).`;
+
 
     const MAX_RETRIES = 3;
     let res: Response | null = null;
@@ -249,9 +307,11 @@ Rules:
       }
     }
 
-    const alternatives: AlternativeExpression[] = (raw.alternatives ?? []).map((a) => ({
+    const alternatives: AlternativeExpression[] = (raw.alternatives ?? []).map((a, i) => ({
+      rank: a.rank ?? i + 1,
+      role_label: a.role_label,
       context_label: a.context_label,
-      japanese: a.japanese,
+      japanese: cleanJapanese(a.japanese),
       romaji: a.romaji,
       explanation: a.explanation,
       level: a.style ? STYLE_TO_LEVEL[a.style] : a.level ?? "N3",
@@ -260,8 +320,13 @@ Rules:
     return {
       intent: raw.intent,
       social_analysis: raw.social_analysis,
-      most_natural: { ...raw.most_natural, level: raw.most_natural.level ?? mostLevel },
+      most_natural: {
+        ...raw.most_natural,
+        japanese: cleanJapanese(raw.most_natural?.japanese),
+        level: raw.most_natural.level ?? mostLevel,
+      },
       alternatives,
+
       n4: styleToLevelBlock(styles.dasar),
       n3: styleToLevelBlock(styles.sehari_hari),
       n2: styleToLevelBlock(styles.ekspresif),

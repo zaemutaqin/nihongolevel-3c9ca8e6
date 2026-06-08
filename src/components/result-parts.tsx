@@ -7,11 +7,15 @@ import type {
   MostNatural,
   AlternativeExpression,
   SocialAnalysis,
+  KanjiInfo,
 } from "@/lib/translate.functions";
+import { cleanJapanese } from "@/lib/translate.functions";
 import { useState } from "react";
 import { ChevronDown, Users, Heart, Target, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SpeakerButton } from "@/components/SpeakerButton";
+
+export { cleanJapanese };
 
 export const INTENT_LABELS: Record<IntentType, { emoji: string; label: string; short: string }> = {
   monolog: { emoji: "🧠", label: "Monolog / berpikir sendiri", short: "Monolog" },
@@ -30,7 +34,6 @@ export const NATURALNESS_LABELS: Record<
   textbook: { emoji: "❌", label: "Textbook only", tone: "nat-textbook" },
 };
 
-// Communication style mapping (level letter → category)
 export const STYLE_BY_LEVEL: Record<string, { name: string; tone: string }> = {
   N4: { name: "Dasar", tone: "level-n4" },
   N3: { name: "Sehari-hari", tone: "level-n3" },
@@ -131,6 +134,63 @@ export function SocialAnalysisCard({ data }: { data: SocialAnalysis }) {
   );
 }
 
+// ============= Naturalness =============
+const NATURALNESS_BAR: Record<
+  Naturalness,
+  { filled: 1 | 2 | 3; label: string; color: string; track: string }
+> = {
+  native: {
+    filled: 3,
+    label: "Sangat Umum",
+    color: "bg-green-500",
+    track: "bg-green-500/15",
+  },
+  stiff: {
+    filled: 2,
+    label: "Cukup Umum",
+    color: "bg-amber-500",
+    track: "bg-amber-500/15",
+  },
+  textbook: {
+    filled: 1,
+    label: "Jarang Digunakan",
+    color: "bg-red-400",
+    track: "bg-red-400/15",
+  },
+};
+
+export function NaturalnessBar({
+  value,
+  compact = false,
+}: {
+  value: Naturalness;
+  compact?: boolean;
+}) {
+  const meta = NATURALNESS_BAR[value] ?? NATURALNESS_BAR.stiff;
+  return (
+    <div className="w-full">
+      {!compact && (
+        <p className="text-[11px] font-medium text-muted-foreground mb-1">
+          Seberapa sering diucapkan:
+        </p>
+      )}
+      <div className={cn("flex gap-1 w-full rounded-full overflow-hidden", "h-1.5")}>
+        {[1, 2, 3].map((seg) => (
+          <div
+            key={seg}
+            className={cn(
+              "flex-1 rounded-full",
+              seg <= meta.filled ? meta.color : meta.track,
+            )}
+          />
+        ))}
+      </div>
+      <p className="mt-1 text-[11px] font-semibold text-foreground/80">{meta.label}</p>
+    </div>
+  );
+}
+
+// Deprecated text chip — kept exported for backward-compat (favorit page uses it)
 export function NaturalnessChip({ value }: { value: Naturalness }) {
   const meta = NATURALNESS_LABELS[value] ?? NATURALNESS_LABELS.stiff;
   return (
@@ -144,6 +204,71 @@ export function NaturalnessChip({ value }: { value: Naturalness }) {
   );
 }
 
+// ============= Kanji =============
+const FREQ_LABEL: Record<string, string> = {
+  sangat_umum: "Sangat Umum",
+  umum: "Umum",
+  khusus: "Khusus",
+};
+
+function kanjiFrequency(k: KanjiInfo): "sangat_umum" | "umum" | "khusus" {
+  if (k.frequency) return k.frequency;
+  const j = (k.jlpt || "").toUpperCase();
+  if (j === "N5" || j === "N4") return "sangat_umum";
+  if (j === "N3") return "umum";
+  return "khusus";
+}
+
+export function KanjiCard({ k }: { k: KanjiInfo }) {
+  const freq = kanjiFrequency(k);
+  const jlpt = (k.jlpt || "N4").toUpperCase();
+  return (
+    <div className="rounded-xl border border-border bg-background p-4 flex flex-col">
+      <div className="flex items-start justify-between gap-2">
+        <span
+          className="font-jp font-bold text-foreground leading-none"
+          style={{ fontSize: "36px" }}
+        >
+          {k.char}
+        </span>
+        <div className="flex flex-col items-end gap-1">
+          <span
+            className="text-[10px] font-bold text-white px-1.5 py-0.5 rounded"
+            style={{ backgroundColor: `var(--level-${jlpt.toLowerCase()})` }}
+          >
+            {jlpt}
+          </span>
+          <span className="text-[10px] text-muted-foreground">{FREQ_LABEL[freq]}</span>
+        </div>
+      </div>
+      <p className="mt-3 text-[11px] text-muted-foreground font-jp leading-snug">{k.reading}</p>
+      <p className="mt-1 text-sm font-semibold text-foreground">{k.meaning}</p>
+
+      {k.example_words && k.example_words.length > 0 && (
+        <div className="mt-3 pt-3 border-t border-border">
+          <p className="text-[10px] uppercase font-semibold text-muted-foreground mb-1.5">
+            Kanji ini juga muncul dalam:
+          </p>
+          <ul className="space-y-1.5">
+            {k.example_words.slice(0, 2).map((w, i) => (
+              <li key={i} className="text-xs">
+                <span className="font-jp font-medium text-foreground">{w.word}</span>
+                <span className="font-jp text-muted-foreground ml-1.5">({w.reading})</span>
+                <span className="text-muted-foreground"> — {w.meaning}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {(!k.example_words || k.example_words.length === 0) && k.examples && (
+        <p className="mt-3 text-[11px] text-muted-foreground font-jp">{k.examples}</p>
+      )}
+    </div>
+  );
+}
+
+// ============= Level / Style card =============
 export function LevelCard({
   level,
   data,
@@ -162,70 +287,83 @@ export function LevelCard({
   const meta = styleMeta(level);
   const tone = meta.tone;
   const [grammarOpen, setGrammarOpen] = useState(false);
+  const japanese = cleanJapanese(data.japanese);
+
   return (
     <div
       className="rounded-2xl border bg-card shadow-sm overflow-hidden"
       style={{ borderColor: `var(--${tone})` + "40" }}
     >
-      <button
-        onClick={onToggle}
-        className="w-full flex items-center justify-between px-5 py-4 hover:bg-muted/40 transition gap-3"
-        aria-expanded={open}
-      >
-        <div className="flex items-center gap-3 min-w-0 flex-1">
+      {/* DEFAULT (always visible) */}
+      <div className="px-5 pt-5 pb-4">
+        <div className="flex items-center gap-2 mb-3 flex-wrap">
           <StylePill level={level} />
-          <span className="font-jp text-lg sm:text-xl text-foreground line-clamp-1 text-left">
-            {data.japanese}
-          </span>
+          <JlptRef level={level} />
         </div>
-        <ChevronDown
-          className={cn(
-            "w-5 h-5 text-muted-foreground transition-transform flex-shrink-0",
-            open && "rotate-180",
-          )}
-        />
-      </button>
 
-      {open && (
-        <div className="px-5 pb-5 pt-1 space-y-5">
-          <div>
-            <div className="flex items-start gap-2">
-              <p className="font-jp text-2xl sm:text-3xl leading-snug text-foreground flex-1">
-                {data.japanese}
-              </p>
-              <SpeakerButton text={data.japanese} />
-            </div>
-            <p className="mt-2 italic text-sm text-muted-foreground">{data.romaji}</p>
-            <div className="mt-3 flex items-center gap-2 flex-wrap">
-              <NaturalnessChip value={data.naturalness} />
-              {onFavorite && (
-                <button
-                  onClick={onFavorite}
-                  className={cn(
-                    "inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold border transition",
-                    isFav
-                      ? "bg-amber-100 border-amber-300 text-amber-800"
-                      : "bg-background border-border text-foreground hover:bg-muted",
-                  )}
-                >
-                  <Star className="w-3 h-3" fill={isFav ? "currentColor" : "none"} />
-                  {isFav ? "Tersimpan" : "Simpan favorit"}
-                </button>
+        <div className="flex items-start gap-2">
+          <p className="font-jp text-2xl sm:text-3xl leading-snug text-foreground flex-1 break-words">
+            {japanese}
+          </p>
+          <SpeakerButton text={japanese} />
+        </div>
+
+        <div className="mt-4">
+          <NaturalnessBar value={data.naturalness} />
+        </div>
+
+        {data.when_to_use && (
+          <p className="mt-3 text-sm text-foreground/80 line-clamp-1">
+            <span className="text-xs font-semibold text-foreground/60">Kapan dipakai: </span>
+            {data.when_to_use}
+          </p>
+        )}
+
+        <div className="mt-4 flex items-center gap-2 flex-wrap">
+          <button
+            onClick={onToggle}
+            aria-expanded={open}
+            className="inline-flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-lg border border-border hover:bg-muted transition"
+          >
+            <ChevronDown
+              className={cn("w-3.5 h-3.5 transition-transform", open && "rotate-180")}
+            />
+            {open ? "Sembunyikan" : "Lihat detail"}
+          </button>
+          {onFavorite && (
+            <button
+              onClick={onFavorite}
+              className={cn(
+                "inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold border transition",
+                isFav
+                  ? "bg-amber-100 border-amber-300 text-amber-800"
+                  : "bg-background border-border text-foreground hover:bg-muted",
               )}
-            </div>
-            {data.naturalness_note && (
-              <p className="mt-1.5 text-xs text-muted-foreground">{data.naturalness_note}</p>
-            )}
-          </div>
-
-          {data.when_to_use && (
-            <InfoRow label="Kapan dipakai" value={data.when_to_use} />
+            >
+              <Star className="w-3 h-3" fill={isFav ? "currentColor" : "none"} />
+              {isFav ? "Tersimpan" : "Simpan favorit"}
+            </button>
           )}
+        </div>
+      </div>
+
+      {/* EXPANDED */}
+      {open && (
+        <div className="px-5 pb-5 pt-1 space-y-4 border-t border-border/60">
+          <p className="mt-4 italic text-sm text-muted-foreground">{data.romaji}</p>
+
+          {data.naturalness_note && (
+            <p className="text-xs text-muted-foreground">{data.naturalness_note}</p>
+          )}
+
           {data.suitable_for && (
             <InfoRow label="Cocok diucapkan kepada" value={data.suitable_for} />
           )}
           {data.impression && (
             <InfoRow label="Kesan yang diterima lawan bicara" value={data.impression} />
+          )}
+          {data.why_this_level && (
+            <InfoRow label="Kenapa level ini?" value={data.why_this_level} />
           )}
 
           {data.grammar?.length > 0 && (
@@ -259,30 +397,20 @@ export function LevelCard({
           {data.kanji?.length > 0 && (
             <div>
               <h3 className="text-sm font-semibold mb-2">Kanji</h3>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {data.kanji.map((k, i) => (
-                  <div
-                    key={i}
-                    className="rounded-xl border border-border bg-background p-3 flex flex-col"
-                  >
-                    <div className="flex items-start justify-between">
-                      <span className="font-jp text-4xl font-bold text-foreground leading-none">
-                        {k.char}
-                      </span>
-                      <span className="text-[10px] text-muted-foreground">{k.jlpt}</span>
-                    </div>
-                    <p className="mt-2 text-[11px] text-muted-foreground font-jp">{k.reading}</p>
-                    <p className="mt-1 text-xs font-medium text-foreground">{k.meaning}</p>
-                    <p className="mt-1 text-[11px] text-muted-foreground font-jp">{k.examples}</p>
-                  </div>
+                  <KanjiCard key={i} k={k} />
                 ))}
               </div>
             </div>
           )}
 
-          <p className="text-[11px] text-muted-foreground pt-1 border-t border-border">
-            setara {level.toUpperCase()} · JLPT referensi
-          </p>
+          <button
+            onClick={onToggle}
+            className="w-full text-xs font-medium text-muted-foreground hover:text-foreground py-2 transition"
+          >
+            ▴ Sembunyikan
+          </button>
         </div>
       )}
     </div>
@@ -308,6 +436,7 @@ export function MostNaturalCard({
   isFav?: boolean;
 }) {
   const tone = "level-n3";
+  const japanese = cleanJapanese(data.japanese);
   return (
     <div
       className="rounded-2xl border-2 p-6 sm:p-8 shadow-md"
@@ -335,12 +464,15 @@ export function MostNaturalCard({
         </span>
       </div>
       <div className="flex items-start gap-3">
-        <p className="font-jp text-3xl sm:text-4xl leading-snug text-foreground flex-1">
-          {data.japanese}
+        <p className="font-jp text-3xl sm:text-4xl leading-snug text-foreground flex-1 break-words">
+          {japanese}
         </p>
-        <SpeakerButton text={data.japanese} />
+        <SpeakerButton text={japanese} />
       </div>
       <p className="mt-2 italic text-sm text-muted-foreground">{data.romaji}</p>
+      <div className="mt-4">
+        <NaturalnessBar value="native" />
+      </div>
       <p className="mt-4 text-sm text-foreground/80">{data.reason}</p>
       {data.native_note && (
         <p className="mt-2 text-sm text-foreground/70 italic">{data.native_note}</p>
@@ -365,32 +497,67 @@ export function MostNaturalCard({
   );
 }
 
+// ============= Alternatives =============
+const RANK_CIRCLE = ["①", "②", "③", "④", "⑤"];
+
+function naturalnessFromRank(rank: number | undefined): Naturalness {
+  if (rank === 1) return "native";
+  if (rank === 2) return "stiff";
+  return "textbook";
+}
+
 export function AlternativesSection({ items }: { items: AlternativeExpression[] }) {
+  // Sort by rank so ① always shows first
+  const sorted = [...items].sort((a, b) => (a.rank ?? 99) - (b.rank ?? 99));
   return (
     <section>
       <h2 className="text-sm font-bold uppercase tracking-wide mb-3 text-foreground/80">
         Alternatif berdasarkan situasi
       </h2>
       <div className="grid gap-3 sm:grid-cols-3">
-        {items.map((alt, i) => {
+        {sorted.map((alt, i) => {
           const meta = styleMeta(alt.level);
+          const rank = alt.rank ?? i + 1;
+          const japanese = cleanJapanese(alt.japanese);
           return (
             <div
               key={i}
               className="rounded-2xl border bg-card p-4 shadow-sm flex flex-col"
               style={{ borderColor: `var(--${meta.tone})` + "40" }}
             >
-              <p className="text-xs font-semibold text-muted-foreground mb-2">
-                {alt.context_label}
-              </p>
+              <div className="flex items-start gap-2 mb-2">
+                <span
+                  className="text-lg leading-none font-bold"
+                  style={{ color: `var(--${meta.tone})` }}
+                  aria-label={`Peringkat ${rank}`}
+                >
+                  {RANK_CIRCLE[rank - 1] ?? `(${rank})`}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs font-bold text-foreground leading-tight">
+                    {alt.role_label ?? "Pilihan"}
+                  </p>
+                  {alt.context_label && (
+                    <p className="text-[11px] text-muted-foreground mt-0.5">
+                      {alt.context_label}
+                    </p>
+                  )}
+                </div>
+              </div>
+
               <div className="flex items-start gap-2">
-                <p className="font-jp text-xl leading-snug text-foreground flex-1">
-                  {alt.japanese}
+                <p className="font-jp text-xl leading-snug text-foreground flex-1 break-words">
+                  {japanese}
                 </p>
-                <SpeakerButton text={alt.japanese} size="sm" />
+                <SpeakerButton text={japanese} size="sm" />
               </div>
               <p className="mt-1 italic text-xs text-muted-foreground">{alt.romaji}</p>
-              <div className="mt-2 flex items-center gap-2 flex-wrap">
+
+              <div className="mt-3">
+                <NaturalnessBar value={naturalnessFromRank(rank)} compact />
+              </div>
+
+              <div className="mt-3 flex items-center gap-2 flex-wrap">
                 <StylePill level={alt.level} size="sm" />
                 <JlptRef level={alt.level} />
               </div>
