@@ -20,7 +20,9 @@ import {
   AlternativesSection,
   StylePill,
   JlptRef,
+  cleanJapanese,
 } from "@/components/result-parts";
+
 import { SpeakerButton } from "@/components/SpeakerButton";
 import { cn } from "@/lib/utils";
 import {
