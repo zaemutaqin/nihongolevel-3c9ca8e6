@@ -7,7 +7,7 @@ import {
   useLocalCollection,
   type FavoriteEntry,
 } from "@/lib/storage";
-import { StylePill, JlptRef } from "@/components/result-parts";
+import { StylePill, JlptRef, cleanJapanese } from "@/components/result-parts";
 import { SpeakerButton } from "@/components/SpeakerButton";
 
 export const Route = createFileRoute("/review")({
