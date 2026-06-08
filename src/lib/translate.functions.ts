@@ -130,8 +130,14 @@ interface RawResult {
   social_analysis: SocialAnalysis;
   most_natural: MostNatural;
   styles: Record<StyleKey, RawStyleBlock>;
-  alternatives: (Omit<AlternativeExpression, "level"> & { style?: StyleKey; level?: string })[];
+  alternatives: (Omit<AlternativeExpression, "level"> & {
+    style?: StyleKey;
+    level?: string;
+    rank?: number;
+    role_label?: string;
+  })[];
 }
+
 
 const STYLE_TO_LEVEL: Record<StyleKey, "N4" | "N3" | "N2" | "N1"> = {
   dasar: "N4",
