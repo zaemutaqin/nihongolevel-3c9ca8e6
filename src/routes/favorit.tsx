@@ -165,32 +165,14 @@ function FavoriteCard({ fav }: { fav: FavoriteEntry }) {
               {fav.kanji && fav.kanji.length > 0 && (
                 <div>
                   <h3 className="text-sm font-semibold mb-2">Kanji</h3>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {fav.kanji.map((k, i) => (
-                      <div
-                        key={i}
-                        className="rounded-xl border border-border bg-background p-3"
-                      >
-                        <div className="flex items-start justify-between">
-                          <span className="font-jp text-3xl font-bold leading-none">{k.char}</span>
-                          <span
-                            className="text-[10px] font-bold text-white px-1.5 py-0.5 rounded"
-                            style={{
-                              backgroundColor: `var(--level-${(k.jlpt || "N4").toLowerCase()})`,
-                            }}
-                          >
-                            {k.jlpt}
-                          </span>
-                        </div>
-                        <p className="mt-2 text-[11px] text-muted-foreground font-jp">
-                          {k.reading}
-                        </p>
-                        <p className="mt-1 text-xs font-medium">{k.meaning}</p>
-                      </div>
+                      <KanjiCard key={i} k={k} />
                     ))}
                   </div>
                 </div>
               )}
+
             </div>
           )}
         </>
