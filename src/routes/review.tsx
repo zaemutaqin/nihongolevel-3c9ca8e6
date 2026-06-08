@@ -113,11 +113,12 @@ function ReviewPage() {
           <>
             <div className="mt-6 pt-5 border-t border-border">
               <div className="flex items-start gap-2">
-                <p className="font-jp text-3xl sm:text-4xl leading-snug text-foreground flex-1">
-                  {current.japanese}
+                <p className="font-jp text-3xl sm:text-4xl leading-snug text-foreground flex-1 break-words">
+                  {cleanJapanese(current.japanese)}
                 </p>
-                <SpeakerButton text={current.japanese} />
+                <SpeakerButton text={cleanJapanese(current.japanese)} />
               </div>
+
               <p className="mt-2 italic text-sm text-muted-foreground">{current.romaji}</p>
               {current.meaning && (
                 <p className="mt-3 text-sm text-foreground/80">{current.meaning}</p>
