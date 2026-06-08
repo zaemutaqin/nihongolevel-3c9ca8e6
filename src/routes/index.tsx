@@ -114,7 +114,7 @@ function Index() {
       setResult(data);
       const entry = addHistory(sentence, data);
       setHistoryEntry(entry);
-      setOpen({ n4: true, n3: false, n2: false, n1: false });
+      setOpen({ n4: false, n3: false, n2: false, n1: false });
     } catch (e) {
       console.error(e);
       setError(
