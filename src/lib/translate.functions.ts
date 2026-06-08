@@ -140,21 +140,46 @@ const STYLE_TO_LEVEL: Record<StyleKey, "N4" | "N3" | "N2" | "N1"> = {
   mendekati_native: "N1",
 };
 
+export function cleanJapanese(text: string | undefined | null): string {
+  if (!text) return "";
+  return String(text)
+    .split("/")[0]
+    .replace(/\(monolog\)/gi, "")
+    .replace(/（[^）]*）/g, "")
+    .trim();
+}
+
+function jlptToFrequency(jlpt: string | undefined): KanjiFrequency {
+  const j = (jlpt || "").toUpperCase();
+  if (j === "N5" || j === "N4") return "sangat_umum";
+  if (j === "N3") return "umum";
+  return "khusus";
+}
+
+function normalizeKanji(k: KanjiInfo): KanjiInfo {
+  return {
+    ...k,
+    frequency: k.frequency ?? jlptToFrequency(k.jlpt),
+    example_words: k.example_words ?? [],
+  };
+}
+
 function styleToLevelBlock(s: RawStyleBlock): LevelBlock {
   return {
-    japanese: s.japanese,
+    japanese: cleanJapanese(s.japanese),
     romaji: s.romaji,
     naturalness: s.naturalness,
     naturalness_note: s.naturalness_note,
     nuance: s.impression ?? "",
     why_this_level: s.why_this_style ?? "",
     grammar: s.grammar ?? [],
-    kanji: s.kanji ?? [],
+    kanji: (s.kanji ?? []).map(normalizeKanji),
     when_to_use: s.when_to_use,
     suitable_for: s.suitable_for,
     impression: s.impression,
   };
 }
+
 
 export const translateSentence = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => InputSchema.parse(data))
