@@ -301,9 +301,11 @@ Rules:
       }
     }
 
-    const alternatives: AlternativeExpression[] = (raw.alternatives ?? []).map((a) => ({
+    const alternatives: AlternativeExpression[] = (raw.alternatives ?? []).map((a, i) => ({
+      rank: a.rank ?? i + 1,
+      role_label: a.role_label,
       context_label: a.context_label,
-      japanese: a.japanese,
+      japanese: cleanJapanese(a.japanese),
       romaji: a.romaji,
       explanation: a.explanation,
       level: a.style ? STYLE_TO_LEVEL[a.style] : a.level ?? "N3",
@@ -312,8 +314,13 @@ Rules:
     return {
       intent: raw.intent,
       social_analysis: raw.social_analysis,
-      most_natural: { ...raw.most_natural, level: raw.most_natural.level ?? mostLevel },
+      most_natural: {
+        ...raw.most_natural,
+        japanese: cleanJapanese(raw.most_natural?.japanese),
+        level: raw.most_natural.level ?? mostLevel,
+      },
       alternatives,
+
       n4: styleToLevelBlock(styles.dasar),
       n3: styleToLevelBlock(styles.sehari_hari),
       n2: styleToLevelBlock(styles.ekspresif),
