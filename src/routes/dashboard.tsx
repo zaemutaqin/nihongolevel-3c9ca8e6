@@ -18,6 +18,8 @@ import { StylePill, JlptRef, cleanJapanese, useIntentLabel } from "@/components/
 import { SpeakerButton } from "@/components/SpeakerButton";
 import { useT } from "@/lib/i18n";
 import type { IntentType } from "@/lib/translate.functions";
+import { useAuth } from "@/lib/auth";
+import { LockedFeature } from "@/components/LockedFeature";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({ meta: [{ title: "Perjalanan Belajarmu — NihongoLevel" }] }),
@@ -26,11 +28,14 @@ export const Route = createFileRoute("/dashboard")({
 
 function DashboardPage() {
   const { t } = useT();
+  const { user } = useAuth();
   const [history] = useLocalCollection<HistoryEntry>(getHistory);
   const [favs] = useLocalCollection<FavoriteEntry>(getFavorites);
   const [needsReview] = useLocalCollection<FavoriteEntry>(getFavoritesNeedsReview7d);
   const [oldest] = useLocalCollection(getOldestReviewedFavorites);
   const navigate = useNavigate();
+
+  if (!user) return <LockedFeature />;
 
   const streak = useMemo(() => getStreakDays(), [history]);
   const week = useMemo(() => getSearchesThisWeek(), [history]);

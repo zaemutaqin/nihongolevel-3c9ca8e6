@@ -12,6 +12,8 @@ import { SpeakerButton } from "@/components/SpeakerButton";
 import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import type { IntentType } from "@/lib/translate.functions";
+import { useAuth } from "@/lib/auth";
+import { LockedFeature } from "@/components/LockedFeature";
 
 export const Route = createFileRoute("/favorit")({
   head: () => ({ meta: [{ title: "Favorit — NihongoLevel" }] }),
@@ -20,8 +22,11 @@ export const Route = createFileRoute("/favorit")({
 
 function FavoritPage() {
   const { t } = useT();
+  const { user } = useAuth();
   const [favs] = useLocalCollection<FavoriteEntry>(getFavorites);
   const [filter, setFilter] = useState<IntentType | "all">("all");
+
+  if (!user) return <LockedFeature />;
 
   const FILTERS: { value: IntentType | "all"; label: string }[] = [
     { value: "all", label: t("fav.filter.all") },

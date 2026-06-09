@@ -43,8 +43,11 @@ const LEVELS: { key: LevelKey; label: string }[] = [
 
 function RiwayatPage() {
   const { t } = useT();
+  const { user } = useAuth();
   const [history] = useLocalCollection<HistoryEntry>(getHistory);
   const [query, setQuery] = useState("");
+
+  if (!user) return <LockedFeature />;
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
