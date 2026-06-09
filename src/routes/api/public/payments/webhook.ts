@@ -10,7 +10,7 @@ async function getSupabase() {
 async function setProStatus(userId: string, isPro: boolean) {
   const update: Record<string, unknown> = { is_pro: isPro };
   if (isPro) update.pro_activated_at = new Date().toISOString();
-  await getSupabase().from("profiles").update(update).eq("id", userId);
+  await (await getSupabase()).from("profiles").update(update).eq("id", userId);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -28,7 +28,7 @@ async function handleSubscriptionCreated(data: any, env: PaddleEnv) {
     console.warn("Skipping subscription: missing importMeta.externalId");
     return;
   }
-  await getSupabase().from("subscriptions").upsert(
+  await (await getSupabase()).from("subscriptions").upsert(
     {
       user_id: userId,
       paddle_subscription_id: id,
