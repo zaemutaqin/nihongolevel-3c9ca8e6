@@ -182,7 +182,7 @@ export type Database = {
     }
     Functions: {
       has_active_subscription: {
-        Args: { check_env?: string; user_uuid: string }
+        Args: { check_env?: string }
         Returns: boolean
       }
     }
