@@ -78,6 +78,21 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
+      {
+        httpEquiv: "Content-Security-Policy",
+        content:
+          "default-src 'self'; " +
+          "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com; " +
+          "connect-src 'self' https://*.lovable.app https://*.supabase.co https://www.google-analytics.com; " +
+          "img-src 'self' data: https: blob:; " +
+          "font-src 'self' https://fonts.gstatic.com data:; " +
+          "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
+          "frame-ancestors 'none'; " +
+          "base-uri 'self'; " +
+          "form-action 'self'",
+      },
+      { name: "referrer", content: "strict-origin-when-cross-origin" },
+
       { title: "NihongoLevel" },
       { name: "description", content: "Belajar berbicara seperti orang Jepang — bukan sekadar lulus JLPT" },
       { name: "author", content: "Lovable" },
