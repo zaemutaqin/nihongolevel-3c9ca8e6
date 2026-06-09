@@ -82,39 +82,39 @@ export function AppShell() {
       {/* Desktop top nav */}
       <nav className="hidden sm:block sticky top-0 z-30 border-b border-border bg-background/80 backdrop-blur">
         <div className="mx-auto max-w-5xl w-full px-4 py-2.5">
-          <div className="flex items-center justify-between">
-            {/* Left: logo + nav links in one row */}
-            <div className="flex items-center gap-5">
-              <Link to="/" className="font-extrabold text-xl inline-flex items-center gap-2 tracking-tight">
+          <div className="flex flex-col gap-1.5">
+            {/* Top row: logo (left) + lang + user (right) */}
+            <div className="flex items-center justify-between">
+              <Link to="/" className="font-extrabold text-2xl inline-flex items-center gap-2 tracking-tight">
                 <span>Nihongo<span className="text-primary">Level</span></span>
                 <ProBadgeInline />
               </Link>
-              <div className="flex items-center gap-0.5">
-                {NAV.map(({ to, key, Icon, exact, proOnly }) => {
-                  const locked = proOnly && !isPro;
-                  return (
-                    <Link
-                      key={to}
-                      to={to}
-                      activeOptions={{ exact: !!exact }}
-                      activeProps={{ className: "text-primary" }}
-                      inactiveProps={{ className: "text-muted-foreground hover:text-foreground" }}
-                      className="relative inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-sm font-medium transition"
-                    >
-                      <Icon className="w-4 h-4" />
-                      <span>{t(`nav.${key}_short`)}</span>
-                      {locked && (
-                        <Lock className="w-3 h-3 text-muted-foreground/70" aria-label="Pro" />
-                      )}
-                    </Link>
-                  );
-                })}
+              <div className="flex items-center gap-3">
+                <LangToggle lang={lang} size="sm" />
+                <UserMenu />
               </div>
             </div>
-            {/* Right: lang toggle + user menu */}
-            <div className="flex items-center gap-3">
-              <LangToggle lang={lang} size="sm" />
-              <UserMenu />
+            {/* Nav links below logo, left-aligned */}
+            <div className="flex items-center gap-0.5 -ml-2.5">
+              {NAV.map(({ to, key, Icon, exact, proOnly }) => {
+                const locked = proOnly && !isPro;
+                return (
+                  <Link
+                    key={to}
+                    to={to}
+                    activeOptions={{ exact: !!exact }}
+                    activeProps={{ className: "text-primary" }}
+                    inactiveProps={{ className: "text-muted-foreground hover:text-foreground" }}
+                    className="relative inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-sm font-medium transition"
+                  >
+                    <Icon className="w-4 h-4" />
+                    <span>{t(`nav.${key}_short`)}</span>
+                    {locked && (
+                      <Lock className="w-3 h-3 text-muted-foreground/70" aria-label="Pro" />
+                    )}
+                  </Link>
+                );
+              })}
             </div>
           </div>
         </div>
