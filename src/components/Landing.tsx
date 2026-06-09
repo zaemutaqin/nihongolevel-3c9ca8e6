@@ -67,7 +67,15 @@ export function Landing() {
         <div className="font-bold text-lg">
           Nihongo<span className="text-primary">Level</span>
         </div>
-        <LangToggle />
+        <div className="flex items-center gap-4">
+          <Link to="/pricing" className="hidden sm:inline text-sm font-semibold text-muted-foreground hover:text-foreground transition">
+            Pricing
+          </Link>
+          <Link to="/privacy-policy" className="hidden sm:inline text-sm font-semibold text-muted-foreground hover:text-foreground transition">
+            Privacy Policy
+          </Link>
+          <LangToggle />
+        </div>
       </header>
 
       <main className="mx-auto max-w-2xl px-6 pt-8 pb-16 text-center">
