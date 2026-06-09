@@ -178,7 +178,13 @@ export function UpgradeModal({ open, onClose }: UpgradeModalProps) {
   );
 }
 
-function GiftCodeCard() {
+function GiftCodeCard({
+  onNeedSignIn,
+  hasUser,
+}: {
+  onNeedSignIn: () => void | Promise<void>;
+  hasUser: boolean;
+}) {
   const lang = useLang();
   const [open, setOpen] = useState(false);
   const [code, setCode] = useState("");
@@ -187,6 +193,10 @@ function GiftCodeCard() {
 
   const submit = async () => {
     if (!code.trim() || busy) return;
+    if (!hasUser) {
+      await onNeedSignIn();
+      return;
+    }
     setBusy(true);
     setMsg(null);
     try {
