@@ -100,11 +100,50 @@ export const Route = createFileRoute("/api/translate")({
         const parsed = InputSchema.safeParse(body);
         if (!parsed.success) return errorResponse("INVALID_RESPONSE", 400);
 
+        // Auth + IP rate limit (guests: 3 / IP / 24h; logged in: unlimited)
+        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+        const authHeader = request.headers.get("authorization") ?? "";
+        const token = authHeader.toLowerCase().startsWith("bearer ")
+          ? authHeader.slice(7).trim()
+          : "";
+        let isAuthed = false;
+        if (token) {
+          const { data } = await supabaseAdmin.auth.getUser(token);
+          isAuthed = !!data.user;
+        }
+        if (!isAuthed) {
+          const fwd = request.headers.get("cf-connecting-ip")
+            ?? request.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
+            ?? request.headers.get("x-real-ip")
+            ?? "unknown";
+          const today = new Date().toISOString().slice(0, 10);
+          const { data: row } = await supabaseAdmin
+            .from("guest_rate_limits")
+            .select("count")
+            .eq("ip", fwd)
+            .eq("day", today)
+            .maybeSingle();
+          const current = row?.count ?? 0;
+          if (current >= 3) {
+            return new Response(JSON.stringify({ error: "limit_reached" }), {
+              status: 429,
+              headers: { "Content-Type": "application/json" },
+            });
+          }
+          await supabaseAdmin
+            .from("guest_rate_limits")
+            .upsert(
+              { ip: fwd, day: today, count: current + 1, updated_at: new Date().toISOString() },
+              { onConflict: "ip,day" },
+            );
+        }
+
         const apiKey = process.env.LOVABLE_API_KEY;
         if (!apiKey) {
           console.error("LOVABLE_API_KEY missing");
           return errorResponse("SERVER_MISCONFIGURED", 500);
         }
+
 
         const { sentence, listener, mood, lang } = parsed.data;
         const isEn = lang === "en";
