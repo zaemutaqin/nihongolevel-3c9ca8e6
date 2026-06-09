@@ -41,9 +41,9 @@ type Tab = "flashcard" | "situasi";
 
 function ReviewPage() {
   const { t } = useT();
-  const { user } = useAuth();
+  const { profile } = useAuth();
   const [tab, setTab] = useState<Tab>("flashcard");
-  if (!user) return <LockedFeature />;
+  if (!profile?.is_pro) return <LockedFeature />;
   return (
     <div className="mx-auto max-w-3xl px-4 py-8">
       <h1 className="text-2xl font-bold mb-4">{t("rev.title")}</h1>
