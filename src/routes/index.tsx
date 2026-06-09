@@ -457,17 +457,59 @@ function Index() {
       )}
 
       {loading && !result && (
-        <div className="mt-10 flex flex-col items-center justify-center gap-3 text-muted-foreground">
-          <Loader2 className="w-8 h-8 animate-spin" />
-          <p className="text-sm">Sedang mencari ekspresi yang tepat...</p>
+        <div className="mt-8 space-y-6">
+          <h2 className="text-base font-bold text-foreground">
+            Bagaimana orang Jepang mengatakannya
+          </h2>
+          {partialIntent ? <IntentBadge intent={partialIntent} /> : <IntentBadgeSkeleton />}
+          {partialSocial && <SocialAnalysisCard data={partialSocial} />}
+          {partialMostNatural ? (
+            <MostNaturalCard
+              data={{ ...partialMostNatural, level: partialMostNatural.level ?? "N3" }}
+              isFav={false}
+              onFavorite={() => {}}
+            />
+          ) : (
+            <MostNaturalSkeleton />
+          )}
+          <section>
+            <h3 className="text-sm font-bold uppercase tracking-wide mb-3 text-foreground/80">
+              Pilihan ekspresi berdasarkan gaya komunikasi
+            </h3>
+            <div className="space-y-4">
+              {LEVELS.map(({ key, label }) =>
+                partialLevels[key] ? (
+                  <LevelCard
+                    key={key}
+                    level={label}
+                    data={partialLevels[key]!}
+                    open={false}
+                    onToggle={() => {}}
+                    isFav={false}
+                    onFavorite={() => {}}
+                  />
+                ) : (
+                  <StyleCardSkeleton key={key} label={label} />
+                ),
+              )}
+            </div>
+          </section>
         </div>
       )}
 
       {result && historyEntry && (
         <div className="mt-8 space-y-6" key={favTick}>
-          <h2 className="text-base font-bold text-foreground">
-            Bagaimana orang Jepang mengatakannya
-          </h2>
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="text-base font-bold text-foreground">
+              Bagaimana orang Jepang mengatakannya
+            </h2>
+            {fromCache && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-[11px] font-medium text-muted-foreground">
+                <Zap className="w-3 h-3" />
+                Dari cache
+              </span>
+            )}
+          </div>
           <IntentBadge intent={result.intent} />
           {result.social_analysis && <SocialAnalysisCard data={result.social_analysis} />}
           <MostNaturalCard
