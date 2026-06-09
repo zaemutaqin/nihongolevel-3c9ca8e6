@@ -101,6 +101,12 @@ export function AppShell() {
             <Link to="/privacy-policy" className="text-xs font-semibold text-muted-foreground hover:text-foreground transition">
               Privacy Policy
             </Link>
+            <Link to="/terms-of-service" className="text-xs font-semibold text-muted-foreground hover:text-foreground transition">
+              Terms of Service
+            </Link>
+            <Link to="/refund-policy" className="text-xs font-semibold text-muted-foreground hover:text-foreground transition">
+              Refund Policy
+            </Link>
             <LangToggle lang={lang} />
             <UserMenu />
           </div>
