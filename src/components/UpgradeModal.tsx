@@ -16,6 +16,7 @@ export function UpgradeModal({ open, onClose }: UpgradeModalProps) {
   const lang = useLang();
   const { user } = useAuth();
   const { openCheckout, loading } = usePaddleCheckout();
+  const [signingIn, setSigningIn] = useState(false);
 
   useEffect(() => {
     if (!open) return;
@@ -54,8 +55,6 @@ export function UpgradeModal({ open, onClose }: UpgradeModalProps) {
           "Indonesian + English",
           "All future features included",
         ];
-
-  const [signingIn, setSigningIn] = useState(false);
 
   const triggerSignIn = async () => {
     setSigningIn(true);
