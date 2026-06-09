@@ -1,5 +1,24 @@
 import { createServerFn } from "@tanstack/react-start";
+import { getRequest } from "@tanstack/react-start/server";
 import { z } from "zod";
+
+// Safe, user-facing error codes. The client maps these to Indonesian
+// messages; raw server details (config, gateway internals) never leak.
+export const TRANSLATE_ERROR_CODES = {
+  FORBIDDEN_ORIGIN: "FORBIDDEN_ORIGIN",
+  RATE_LIMITED: "RATE_LIMITED",
+  CREDITS_EXHAUSTED: "CREDITS_EXHAUSTED",
+  AI_UNAVAILABLE: "AI_UNAVAILABLE",
+  INVALID_RESPONSE: "INVALID_RESPONSE",
+  SERVER_MISCONFIGURED: "SERVER_MISCONFIGURED",
+} as const;
+export type TranslateErrorCode =
+  (typeof TRANSLATE_ERROR_CODES)[keyof typeof TRANSLATE_ERROR_CODES];
+
+function safeError(code: TranslateErrorCode): Error {
+  // Message is the code itself — safe to surface to the client.
+  return new Error(code);
+}
 
 const InputSchema = z.object({
   sentence: z.string().trim().min(1).max(500),
@@ -190,9 +209,40 @@ function styleToLevelBlock(s: RawStyleBlock): LevelBlock {
 export const translateSentence = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => InputSchema.parse(data))
   .handler(async ({ data }): Promise<TranslationResult> => {
+    // Same-origin guard: reject calls that don't originate from our own
+    // front-end. Prevents trivial scripted abuse of the paid AI gateway.
+    try {
+      const req = getRequest();
+      const origin = req.headers.get("origin");
+      const referer = req.headers.get("referer");
+      const host = req.headers.get("host");
+      const source = origin ?? referer ?? "";
+      if (source && host) {
+        let sourceHost = "";
+        try {
+          sourceHost = new URL(source).host;
+        } catch {
+          sourceHost = "";
+        }
+        if (sourceHost && sourceHost !== host) {
+          throw safeError(TRANSLATE_ERROR_CODES.FORBIDDEN_ORIGIN);
+        }
+      } else if (!source) {
+        // No Origin/Referer at all — likely a non-browser caller.
+        throw safeError(TRANSLATE_ERROR_CODES.FORBIDDEN_ORIGIN);
+      }
+    } catch (e) {
+      if (e instanceof Error && e.message === TRANSLATE_ERROR_CODES.FORBIDDEN_ORIGIN) {
+        throw e;
+      }
+      // If request context is unavailable for any reason, fail closed.
+      throw safeError(TRANSLATE_ERROR_CODES.FORBIDDEN_ORIGIN);
+    }
+
     const apiKey = process.env.LOVABLE_API_KEY;
     if (!apiKey) {
-      throw new Error("LOVABLE_API_KEY is not configured");
+      console.error("LOVABLE_API_KEY is not configured");
+      throw safeError(TRANSLATE_ERROR_CODES.SERVER_MISCONFIGURED);
     }
 
     const listener = data.listener && data.listener.length > 0 ? data.listener : "auto-detect";
@@ -264,22 +314,23 @@ Rules:
       }
 
       if (res.status === 429) {
-        throw new Error("Terlalu banyak permintaan. Coba lagi dalam beberapa saat.");
+        throw safeError(TRANSLATE_ERROR_CODES.RATE_LIMITED);
       }
       if (res.status === 402) {
-        throw new Error("Kredit AI habis. Silakan tambahkan kredit di workspace settings.");
+        throw safeError(TRANSLATE_ERROR_CODES.CREDITS_EXHAUSTED);
       }
-      throw new Error(`AI Gateway error (${res.status})`);
+      throw safeError(TRANSLATE_ERROR_CODES.AI_UNAVAILABLE);
     }
 
     if (!res || !res.ok) {
-      throw new Error("AI Gateway tidak tersedia. Coba lagi nanti.");
+      throw safeError(TRANSLATE_ERROR_CODES.AI_UNAVAILABLE);
     }
 
     const json = await res.json();
     const text: string | undefined = json?.choices?.[0]?.message?.content;
     if (!text) {
-      throw new Error("Empty response from AI Gateway");
+      console.error("Empty response from AI Gateway");
+      throw safeError(TRANSLATE_ERROR_CODES.INVALID_RESPONSE);
     }
 
     const cleaned = text
@@ -293,7 +344,7 @@ Rules:
       raw = JSON.parse(cleaned) as RawResult;
     } catch (e) {
       console.error("Failed to parse Gemini JSON:", cleaned);
-      throw new Error("Format respons tidak valid dari AI");
+      throw safeError(TRANSLATE_ERROR_CODES.INVALID_RESPONSE);
     }
 
     const styles = raw.styles ?? ({} as Record<StyleKey, RawStyleBlock>);

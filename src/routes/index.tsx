@@ -4,8 +4,26 @@ import { useState, useEffect, type KeyboardEvent } from "react";
 import { Loader2, ChevronDown, AlertCircle, Sparkles } from "lucide-react";
 import {
   translateSentence,
+  TRANSLATE_ERROR_CODES,
+  type TranslateErrorCode,
   type TranslationResult,
 } from "@/lib/translate.functions";
+
+const ERROR_MESSAGES: Record<TranslateErrorCode, string> = {
+  FORBIDDEN_ORIGIN: "Permintaan tidak diizinkan. Buka aplikasi dari situs resmi.",
+  RATE_LIMITED: "Terlalu banyak permintaan. Coba lagi dalam beberapa saat.",
+  CREDITS_EXHAUSTED: "Layanan sedang tidak tersedia. Coba lagi nanti.",
+  AI_UNAVAILABLE: "Layanan AI tidak tersedia. Coba lagi nanti.",
+  INVALID_RESPONSE: "Gagal memproses respons. Coba lagi.",
+  SERVER_MISCONFIGURED: "Layanan belum siap. Coba lagi nanti.",
+};
+
+function friendlyError(e: unknown): string {
+  if (e instanceof Error && e.message in ERROR_MESSAGES) {
+    return ERROR_MESSAGES[e.message as TranslateErrorCode];
+  }
+  return "Gagal menerjemahkan kalimat. Coba lagi.";
+}
 import { cn } from "@/lib/utils";
 import {
   IntentBadge,
@@ -130,11 +148,7 @@ function Index() {
       setOpen({ n4: false, n3: false, n2: false, n1: false });
     } catch (e) {
       console.error(e);
-      setError(
-        e instanceof Error
-          ? `Gagal menerjemahkan: ${e.message}`
-          : "Gagal menerjemahkan kalimat. Coba lagi.",
-      );
+      setError(friendlyError(e));
     } finally {
       setLoading(false);
     }
