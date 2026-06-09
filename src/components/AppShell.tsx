@@ -51,7 +51,7 @@ function LangToggle({ lang }: { lang: Lang }) {
 
 export function AppShell() {
   const { t, lang } = useT();
-  const { user, loading } = useAuth();
+  const { loading } = useAuth();
 
   if (loading) {
     return (
@@ -61,7 +61,7 @@ export function AppShell() {
     );
   }
 
-  if (!user) return <Landing />;
+
 
   return (
     <div className="min-h-screen bg-background text-foreground font-sans">
