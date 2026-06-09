@@ -35,11 +35,13 @@ type Dict = Record<string, string | string[]>;
 const ID: Dict = {
   // Nav
   "nav.search": "Cari",
+  "nav.home": "Beranda",
   "nav.history": "Riwayat",
   "nav.favorites": "Favorit",
   "nav.dashboard": "Perjalanan Belajarmu",
   "nav.review": "Latihan Harian",
   "nav.search_short": "Cari",
+  "nav.home_short": "Beranda",
   "nav.history_short": "Riwayat",
   "nav.favorites_short": "Favorit",
   "nav.dashboard_short": "Perjalanan",
