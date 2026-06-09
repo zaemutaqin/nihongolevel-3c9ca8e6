@@ -14,8 +14,9 @@ import {
   type HistoryEntry,
   type FavoriteEntry,
 } from "@/lib/storage";
-import { INTENT_LABELS, StylePill, JlptRef, cleanJapanese, styleMeta } from "@/components/result-parts";
+import { StylePill, JlptRef, cleanJapanese, useIntentLabel } from "@/components/result-parts";
 import { SpeakerButton } from "@/components/SpeakerButton";
+import { useT } from "@/lib/i18n";
 import type { IntentType } from "@/lib/translate.functions";
 
 export const Route = createFileRoute("/dashboard")({
@@ -23,23 +24,8 @@ export const Route = createFileRoute("/dashboard")({
   component: DashboardPage,
 });
 
-const SUGGESTIONS: Record<IntentType, string> = {
-  monolog: "Aku lagi capek banget nih...",
-  asking_others: "Kamu mau makan apa nanti?",
-  casual_conversation: "Eh udah lama nggak ketemu!",
-  professional_formal: "Apakah laporan sudah selesai?",
-  joking_relaxed: "Eh kamu serius nggak sih?",
-};
-
-function daysAgo(iso: string | null): string {
-  if (!iso) return "belum pernah diulang";
-  const days = Math.floor((Date.now() - new Date(iso).getTime()) / (24 * 60 * 60 * 1000));
-  if (days <= 0) return "hari ini";
-  if (days === 1) return "1 hari lalu";
-  return `${days} hari lalu`;
-}
-
 function DashboardPage() {
+  const { t } = useT();
   const [history] = useLocalCollection<HistoryEntry>(getHistory);
   const [favs] = useLocalCollection<FavoriteEntry>(getFavorites);
   const [needsReview] = useLocalCollection<FavoriteEntry>(getFavoritesNeedsReview7d);
@@ -50,7 +36,22 @@ function DashboardPage() {
   const week = useMemo(() => getSearchesThisWeek(), [history]);
   const intentCounts = useMemo(() => getIntentCounts(), [history]);
 
-  // Most-used style from favorites
+  const SUGGESTIONS: Record<IntentType, string> = {
+    monolog: t("sugg.monolog"),
+    asking_others: t("sugg.asking_others"),
+    casual_conversation: t("sugg.casual_conversation"),
+    professional_formal: t("sugg.professional_formal"),
+    joking_relaxed: t("sugg.joking_relaxed"),
+  };
+
+  const daysAgo = (iso: string | null): string => {
+    if (!iso) return t("dash.daysAgo.never");
+    const days = Math.floor((Date.now() - new Date(iso).getTime()) / (24 * 60 * 60 * 1000));
+    if (days <= 0) return t("dash.daysAgo.today");
+    if (days === 1) return t("dash.daysAgo.oneDay");
+    return `${days} ${t("dash.daysAgo.suffix")}`;
+  };
+
   const styleCounts = useMemo(() => {
     const m = new Map<string, number>();
     for (const f of favs) {
@@ -62,10 +63,9 @@ function DashboardPage() {
   }, [favs]);
   const topStyle = styleCounts[0];
 
-  // Untried intent categories
   const triedIntents = new Set(history.map((h) => h.intent.type));
   const allIntents = Object.keys(SUGGESTIONS) as IntentType[];
-  const untried = allIntents.filter((t) => !triedIntents.has(t));
+  const untried = allIntents.filter((t2) => !triedIntents.has(t2));
 
   const [modalFav, setModalFav] = useState<FavoriteEntry | null>(null);
 
@@ -73,6 +73,7 @@ function DashboardPage() {
     sessionStorage.setItem("nihongo_prefill", text);
     navigate({ to: "/" });
   };
+
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-8">
