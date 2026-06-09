@@ -291,7 +291,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 
 function QuickReviewModal({ fav, onClose }: { fav: FavoriteEntry; onClose: () => void }) {
   const [revealed, setRevealed] = useState(false);
-  const meta = styleMeta(fav.level);
+  const { t } = useT();
 
   const handle = (correct: boolean) => {
     rateReview(fav.id, correct);
@@ -310,12 +310,12 @@ function QuickReviewModal({ fav, onClose }: { fav: FavoriteEntry; onClose: () =>
         <button
           onClick={onClose}
           className="absolute top-3 right-3 p-1.5 rounded-lg hover:bg-muted transition"
-          aria-label="Tutup"
+          aria-label={t("qrm.close")}
         >
           <X className="w-4 h-4" />
         </button>
         <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
-          Ingat ekspresi ini?
+          {t("qrm.q")}
         </p>
         <p className="text-lg font-semibold">{fav.input}</p>
 
@@ -324,7 +324,7 @@ function QuickReviewModal({ fav, onClose }: { fav: FavoriteEntry; onClose: () =>
             onClick={() => setRevealed(true)}
             className="mt-5 w-full rounded-lg bg-primary text-primary-foreground py-2.5 text-sm font-semibold hover:opacity-90 transition"
           >
-            Lihat jawaban
+            {t("qrm.show")}
           </button>
         ) : (
           <>
@@ -346,19 +346,17 @@ function QuickReviewModal({ fav, onClose }: { fav: FavoriteEntry; onClose: () =>
                 onClick={() => handle(false)}
                 className="rounded-lg border border-destructive/40 bg-destructive/10 text-destructive py-2.5 text-sm font-semibold hover:bg-destructive/15 transition"
               >
-                Lupa
+                {t("qrm.forgot")}
               </button>
               <button
                 onClick={() => handle(true)}
                 className="rounded-lg border border-green-500/40 bg-green-500/10 text-green-700 py-2.5 text-sm font-semibold hover:bg-green-500/15 transition"
               >
-                Ingat
+                {t("qrm.remember")}
               </button>
             </div>
           </>
         )}
-        {/* meta unused warning avoidance */}
-        <span className="sr-only">{meta.name}</span>
       </div>
     </div>
   );
