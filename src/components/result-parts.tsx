@@ -94,7 +94,7 @@ export function JlptRef({ level, className }: { level: string; className?: strin
 }
 
 export function IntentBadge({ intent }: { intent: IntentInfo }) {
-  const meta = INTENT_LABELS[intent.type] ?? { emoji: "✨", label: intent.type, short: intent.type };
+  const meta = useIntentLabel(intent.type);
   const color = `var(--intent-${intent.type})`;
   return (
     <div
@@ -114,7 +114,7 @@ export function IntentBadge({ intent }: { intent: IntentInfo }) {
 }
 
 export function IntentChip({ intent }: { intent: IntentInfo }) {
-  const meta = INTENT_LABELS[intent.type] ?? { emoji: "✨", label: intent.type, short: intent.type };
+  const meta = useIntentLabel(intent.type);
   const color = `var(--intent-${intent.type})`;
   return (
     <span
