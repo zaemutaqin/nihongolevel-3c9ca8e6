@@ -109,10 +109,14 @@ function Index() {
   const guestBlocked = !isPro && guestCount >= GUEST_LIMIT;
   const remaining = Math.max(0, GUEST_LIMIT - guestCount);
   const friendlyError = (e: unknown): string => {
-    if (e instanceof Error && (ERR_CODES as string[]).includes(e.message)) {
-      return t(`err.${e.message}`);
-    }
-    return t("err.generic");
+    const raw = e instanceof Error ? e.message : String(e);
+    const base =
+      e instanceof Error && (ERR_CODES as string[]).includes(e.message)
+        ? t(`err.${e.message}`)
+        : t("err.generic");
+    // Show technical code in dev/preview so we can actually debug
+    if (import.meta.env.DEV) return `${base} [${raw}]`;
+    return base;
   };
   const EXAMPLES = tList("examples");
   const LISTENER_OPTIONS = [
