@@ -110,7 +110,7 @@ export function UpgradeModal({ open, onClose }: UpgradeModalProps) {
             </table>
           </div>
 
-          <div className="mt-5 grid grid-cols-2 gap-3">
+          <div className="mt-6 grid grid-cols-2 gap-4">
             <PlanCard
               active={plan === "monthly"}
               onClick={() => setPlan("monthly")}
@@ -129,7 +129,7 @@ export function UpgradeModal({ open, onClose }: UpgradeModalProps) {
             />
           </div>
 
-          <div className="mt-5">
+          <div className="mt-8">
             {user ? (
               <button
                 onClick={handleUpgrade}
