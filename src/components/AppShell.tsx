@@ -102,8 +102,9 @@ export function AppShell() {
 
       {/* Mobile top bar */}
       <div className="sm:hidden sticky top-0 z-30 flex items-center justify-between px-4 py-2.5 border-b border-border bg-background/90 backdrop-blur">
-        <Link to="/" className="font-bold">
-          Nihongo<span className="text-primary">Level</span>
+        <Link to="/" className="font-bold inline-flex items-center gap-2">
+          <span>Nihongo<span className="text-primary">Level</span></span>
+          <ProBadgeInline />
         </Link>
         <div className="flex items-center gap-2">
           <LangToggle lang={lang} />
@@ -134,5 +135,15 @@ export function AppShell() {
         </div>
       </nav>
     </div>
+  );
+}
+
+function ProBadgeInline() {
+  const { profile } = useAuth();
+  if (!profile?.is_pro) return null;
+  return (
+    <span className="inline-flex items-center gap-0.5 rounded-full bg-yellow-400/15 text-yellow-700 dark:text-yellow-300 px-1.5 py-0.5 text-[10px] font-bold uppercase">
+      Pro ✓
+    </span>
   );
 }
