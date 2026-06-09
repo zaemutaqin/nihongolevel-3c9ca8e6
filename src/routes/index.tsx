@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect, useRef, type KeyboardEvent } from "react";
-import { AlertCircle, Sparkles, Zap } from "lucide-react";
+import { AlertCircle, Sparkles, Zap, Loader2, ChevronDown } from "lucide-react";
 import {
   styleBlockToLevelBlock,
   type TranslationResult,
