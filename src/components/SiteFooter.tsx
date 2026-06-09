@@ -8,6 +8,9 @@ export function SiteFooter() {
       <div className="mx-auto max-w-3xl px-4 py-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
         <div>© {new Date().getFullYear()} zaenal mutaqin · NihongoLevel</div>
         <nav className="flex flex-wrap items-center gap-x-4 gap-y-2">
+          <Link to="/panduan-wisata" className="hover:text-foreground transition">
+            {lang === "id" ? "Panduan Wisata" : "Travel Guide"}
+          </Link>
           <Link to="/pricing" className="hover:text-foreground transition">
             {lang === "id" ? "Harga" : "Pricing"}
           </Link>

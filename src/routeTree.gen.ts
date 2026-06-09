@@ -19,6 +19,7 @@ import { Route as RefundRouteImport } from './routes/refund'
 import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as PanduanWisataRouteImport } from './routes/panduan-wisata'
 import { Route as FavoritRouteImport } from './routes/favorit'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
@@ -77,6 +78,11 @@ const PricingRoute = PricingRouteImport.update({
   path: '/pricing',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PanduanWisataRoute = PanduanWisataRouteImport.update({
+  id: '/panduan-wisata',
+  path: '/panduan-wisata',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FavoritRoute = FavoritRouteImport.update({
   id: '/favorit',
   path: '/favorit',
@@ -119,6 +125,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/favorit': typeof FavoritRoute
+  '/panduan-wisata': typeof PanduanWisataRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
@@ -138,6 +145,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/favorit': typeof FavoritRoute
+  '/panduan-wisata': typeof PanduanWisataRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
@@ -158,6 +166,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/favorit': typeof FavoritRoute
+  '/panduan-wisata': typeof PanduanWisataRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
@@ -179,6 +188,7 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/favorit'
+    | '/panduan-wisata'
     | '/pricing'
     | '/privacy'
     | '/privacy-policy'
@@ -198,6 +208,7 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/favorit'
+    | '/panduan-wisata'
     | '/pricing'
     | '/privacy'
     | '/privacy-policy'
@@ -217,6 +228,7 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/favorit'
+    | '/panduan-wisata'
     | '/pricing'
     | '/privacy'
     | '/privacy-policy'
@@ -237,6 +249,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRoute
   FavoritRoute: typeof FavoritRoute
+  PanduanWisataRoute: typeof PanduanWisataRoute
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
   PrivacyPolicyRoute: typeof PrivacyPolicyRoute
@@ -325,6 +338,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PricingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/panduan-wisata': {
+      id: '/panduan-wisata'
+      path: '/panduan-wisata'
+      fullPath: '/panduan-wisata'
+      preLoaderRoute: typeof PanduanWisataRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/favorit': {
       id: '/favorit'
       path: '/favorit'
@@ -381,6 +401,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
   FavoritRoute: FavoritRoute,
+  PanduanWisataRoute: PanduanWisataRoute,
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
   PrivacyPolicyRoute: PrivacyPolicyRoute,
@@ -399,3 +420,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
