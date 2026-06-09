@@ -12,6 +12,7 @@ import {
   type RawStyleBlock,
 } from "@/lib/translate.functions";
 import { useT } from "@/lib/i18n";
+import { gtagEvent } from "@/lib/gtag";
 
 type TranslateErrorCode =
   | "FORBIDDEN_ORIGIN"
