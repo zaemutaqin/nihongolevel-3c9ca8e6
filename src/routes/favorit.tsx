@@ -16,7 +16,21 @@ import { useAuth } from "@/lib/auth";
 import { LockedFeature } from "@/components/LockedFeature";
 
 export const Route = createFileRoute("/favorit")({
-  head: () => ({ meta: [{ title: "Favorit — NihongoLevel" }] }),
+  head: () => ({
+    meta: [
+      { title: "Favorit — NihongoLevel" },
+      {
+        name: "description",
+        content:
+          "Kumpulan ekspresi bahasa Jepang yang kamu tandai favorit — siap diulang kapan saja untuk memperkuat ingatan.",
+      },
+      { property: "og:title", content: "Favorit — NihongoLevel" },
+      { property: "og:description", content: "Ekspresi bahasa Jepang favorit kamu, siap diulang kapan saja." },
+      { property: "og:url", content: "/favorit" },
+    ],
+    links: [{ rel: "canonical", href: "/favorit" }],
+  }),
+
   component: FavoritPage,
 });
 

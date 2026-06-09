@@ -22,9 +22,23 @@ import { useAuth } from "@/lib/auth";
 import { LockedFeature } from "@/components/LockedFeature";
 
 export const Route = createFileRoute("/dashboard")({
-  head: () => ({ meta: [{ title: "Perjalanan Belajarmu — NihongoLevel" }] }),
+  head: () => ({
+    meta: [
+      { title: "Perjalanan Belajarmu — NihongoLevel" },
+      {
+        name: "description",
+        content:
+          "Pantau streak harian, riwayat pencarian mingguan, dan ekspresi favorit yang perlu diulang dalam dashboard belajar bahasa Jepang kamu.",
+      },
+      { property: "og:title", content: "Perjalanan Belajarmu — NihongoLevel" },
+      { property: "og:description", content: "Streak harian, statistik mingguan, dan favorit yang perlu diulang." },
+      { property: "og:url", content: "/dashboard" },
+    ],
+    links: [{ rel: "canonical", href: "/dashboard" }],
+  }),
   component: DashboardPage,
 });
+
 
 function DashboardPage() {
   const { t } = useT();

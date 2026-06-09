@@ -18,8 +18,12 @@ export const Route = createFileRoute("/pricing")({
         content:
           "Free with 3 searches per day. Upgrade to Pro for $5/month or $45/year to unlock unlimited searches and all features.",
       },
+      { property: "og:url", content: "/pricing" },
     ],
+    links: [{ rel: "canonical", href: "/pricing" }],
   }),
+
+
   component: PricingPage,
 });
 
