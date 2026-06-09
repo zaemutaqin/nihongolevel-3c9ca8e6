@@ -76,9 +76,6 @@ export function Landing() {
       </header>
 
       <main className="mx-auto max-w-2xl px-6 pt-8 pb-16 text-center">
-        <div className="mx-auto mb-4 inline-flex items-center justify-center rounded-2xl bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
-          ✿ {t("misc.poweredBy")}
-        </div>
         <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight">
           Nihongo<span className="text-primary">Level</span>
         </h1>
@@ -193,7 +190,7 @@ export function Landing() {
           </div>
         </section>
 
-        <p className="mt-12 text-xs text-muted-foreground">{t("home.footer")}</p>
+        
       </main>
 
       <SiteFooter />
