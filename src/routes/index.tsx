@@ -591,7 +591,7 @@ function Index() {
       <footer className="mt-16 pb-6 text-center text-xs text-muted-foreground">
         {t("home.footer")}
       </footer>
-      {guestBlocked && <GuestPrompt />}
+      
     </div>
   );
 }
