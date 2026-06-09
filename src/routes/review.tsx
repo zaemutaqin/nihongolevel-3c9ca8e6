@@ -13,6 +13,7 @@ import {
 } from "@/lib/storage";
 import { StylePill, JlptRef, cleanJapanese } from "@/components/result-parts";
 import { SpeakerButton } from "@/components/SpeakerButton";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/review")({
@@ -23,29 +24,30 @@ export const Route = createFileRoute("/review")({
 type Tab = "flashcard" | "situasi";
 
 function ReviewPage() {
+  const { t } = useT();
   const [tab, setTab] = useState<Tab>("flashcard");
   return (
     <div className="mx-auto max-w-3xl px-4 py-8">
-      <h1 className="text-2xl font-bold mb-4">Latihan Harian</h1>
+      <h1 className="text-2xl font-bold mb-4">{t("rev.title")}</h1>
 
       <div className="flex gap-1 mb-6 p-1 rounded-xl bg-muted/60 border border-border w-fit">
         {(
           [
-            { id: "flashcard", label: "Review Ekspresi" },
-            { id: "situasi", label: "Latihan Situasi" },
+            { id: "flashcard", label: t("rev.tab.flash") },
+            { id: "situasi", label: t("rev.tab.situ") },
           ] as { id: Tab; label: string }[]
-        ).map((t) => (
+        ).map((tt) => (
           <button
-            key={t.id}
-            onClick={() => setTab(t.id)}
+            key={tt.id}
+            onClick={() => setTab(tt.id)}
             className={cn(
               "px-4 py-1.5 text-sm font-semibold rounded-lg transition",
-              tab === t.id
+              tab === tt.id
                 ? "bg-background text-foreground shadow-sm"
                 : "text-muted-foreground hover:text-foreground",
             )}
           >
-            {t.label}
+            {tt.label}
           </button>
         ))}
       </div>
@@ -55,8 +57,8 @@ function ReviewPage() {
   );
 }
 
-// =============== FLASHCARD MODE (existing) ===============
 function FlashcardMode() {
+  const { t } = useT();
   const [due] = useLocalCollection<FavoriteEntry>(getDueReviewFavorites);
   const [session, setSession] = useState<FavoriteEntry[] | null>(null);
   const [idx, setIdx] = useState(0);
@@ -73,10 +75,8 @@ function FlashcardMode() {
   if (total === 0) {
     return (
       <div className="rounded-2xl border border-dashed border-border bg-card/50 p-10 text-center">
-        <p className="font-semibold">Belum ada yang perlu diulang</p>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Tambahkan ekspresi ke favorit untuk mulai latihan.
-        </p>
+        <p className="font-semibold">{t("rev.empty.title")}</p>
+        <p className="mt-1 text-sm text-muted-foreground">{t("rev.empty.desc")}</p>
       </div>
     );
   }
@@ -85,9 +85,9 @@ function FlashcardMode() {
     return (
       <div className="rounded-2xl border border-border bg-card p-8 text-center">
         <p className="text-3xl mb-2">🎉</p>
-        <p className="font-semibold text-lg">Sesi selesai!</p>
+        <p className="font-semibold text-lg">{t("rev.sessionDone")}</p>
         <p className="mt-1 text-sm text-muted-foreground">
-          Kamu sudah meninjau {total} ekspresi hari ini.
+          {t("rev.reviewed")} {total} {t("rev.expressionsToday")}
         </p>
         <button
           onClick={() => {
@@ -97,7 +97,7 @@ function FlashcardMode() {
           }}
           className="mt-5 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium"
         >
-          <RotateCw className="w-4 h-4" /> Mulai sesi baru
+          <RotateCw className="w-4 h-4" /> {t("rev.newSession")}
         </button>
       </div>
     );
@@ -115,7 +115,7 @@ function FlashcardMode() {
     <div>
       <div className="mb-5">
         <p className="text-sm text-muted-foreground mb-1">
-          {dueCount} ekspresi siap direview hari ini
+          {dueCount} {t("rev.readyToday")}
         </p>
         <div className="h-2 rounded-full bg-muted overflow-hidden">
           <div className="h-full bg-primary transition-all" style={{ width: `${progress}%` }} />
@@ -127,7 +127,7 @@ function FlashcardMode() {
 
       <div className="rounded-2xl border border-border bg-card p-6 sm:p-8 shadow-sm">
         <p className="text-xs uppercase tracking-wide text-muted-foreground font-semibold mb-2">
-          Coba ingat dalam Bahasa Jepang
+          {t("rev.tryRemember")}
         </p>
         <p className="text-xl sm:text-2xl font-semibold text-foreground">{current.input}</p>
 
@@ -136,7 +136,7 @@ function FlashcardMode() {
             onClick={() => setRevealed(true)}
             className="mt-6 w-full rounded-lg bg-primary text-primary-foreground px-5 py-3 text-sm font-medium hover:opacity-90 transition"
           >
-            Lihat jawaban
+            {t("rev.showAnswer")}
           </button>
         ) : (
           <>
@@ -162,13 +162,13 @@ function FlashcardMode() {
                 onClick={() => handleRate(false)}
                 className="inline-flex items-center justify-center gap-2 rounded-lg border border-destructive/40 bg-destructive/10 text-destructive px-5 py-3 text-sm font-semibold hover:bg-destructive/15 transition"
               >
-                <X className="w-4 h-4" /> Lupa
+                <X className="w-4 h-4" /> {t("qrm.forgot")}
               </button>
               <button
                 onClick={() => handleRate(true)}
                 className="inline-flex items-center justify-center gap-2 rounded-lg border border-green-500/40 bg-green-500/10 text-green-700 px-5 py-3 text-sm font-semibold hover:bg-green-500/15 transition"
               >
-                <Check className="w-4 h-4" /> Ingat
+                <Check className="w-4 h-4" /> {t("qrm.remember")}
               </button>
             </div>
           </>
@@ -178,7 +178,6 @@ function FlashcardMode() {
   );
 }
 
-// =============== SITUASI MODE (new) ===============
 interface Challenge {
   historyId: number;
   input: string;
@@ -213,6 +212,7 @@ function shuffle<T>(arr: T[]): T[] {
 }
 
 function SituasiMode() {
+  const { t } = useT();
   const [history] = useLocalCollection<HistoryEntry>(getHistory);
   const allChallenges = useMemo(() => buildChallenges(history), [history]);
   const totalAvailable = allChallenges.length;
@@ -232,11 +232,8 @@ function SituasiMode() {
   if (totalAvailable === 0) {
     return (
       <div className="rounded-2xl border border-dashed border-border bg-card/50 p-10 text-center">
-        <p className="font-semibold">Belum ada tantangan tersedia</p>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Cari beberapa ekspresi dulu di halaman Cari — tantangan akan dibuat otomatis dari
-          riwayatmu.
-        </p>
+        <p className="font-semibold">{t("sit.empty.title")}</p>
+        <p className="mt-1 text-sm text-muted-foreground">{t("sit.empty.desc")}</p>
       </div>
     );
   }
@@ -248,9 +245,9 @@ function SituasiMode() {
     return (
       <div className="rounded-2xl border border-border bg-card p-8 text-center">
         <p className="text-3xl mb-2">🎯</p>
-        <p className="font-semibold text-lg">Sesi tantangan selesai!</p>
+        <p className="font-semibold text-lg">{t("sit.done")}</p>
         <p className="mt-1 text-sm text-muted-foreground">
-          Total tantangan hari ini: {doneToday}
+          {t("sit.totalToday")} {doneToday}
         </p>
         <button
           onClick={() => {
@@ -261,7 +258,7 @@ function SituasiMode() {
           }}
           className="mt-5 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium"
         >
-          <RotateCw className="w-4 h-4" /> Sesi baru
+          <RotateCw className="w-4 h-4" /> {t("sit.newSession")}
         </button>
       </div>
     );
@@ -279,18 +276,18 @@ function SituasiMode() {
     <div>
       <div className="mb-5 flex items-center justify-between flex-wrap gap-2">
         <p className="text-sm text-muted-foreground">
-          {totalAvailable} tantangan tersedia dari riwayat belajarmu
+          {totalAvailable} {t("sit.available")}
         </p>
         <p className="text-xs font-semibold text-foreground">
-          {Math.min(idx, sessionTotal)} / {sessionTotal} selesai sesi ini
+          {Math.min(idx, sessionTotal)} / {sessionTotal} {t("sit.sessionProgress")}
         </p>
       </div>
 
       <div className="rounded-2xl border border-border bg-card p-6 sm:p-8 shadow-sm">
         <p className="text-xs uppercase tracking-wide text-muted-foreground font-semibold mb-2">
-          Tantangan {idx + 1}
+          {t("sit.challenge")} {idx + 1}
         </p>
-        <p className="text-sm text-foreground/80">Kamu sudah tahu cara bilang ini ke teman:</p>
+        <p className="text-sm text-foreground/80">{t("sit.knowHow")}</p>
         <div className="mt-2 flex items-start gap-2">
           <p className="font-jp text-2xl leading-snug flex-1 break-words">{current.casual}</p>
           <SpeakerButton text={current.casual} size="sm" />
@@ -298,7 +295,7 @@ function SituasiMode() {
         <p className="italic text-xs text-muted-foreground">{current.casualRomaji}</p>
 
         <p className="mt-5 text-sm font-semibold text-foreground">
-          Sekarang, bagaimana kamu mengatakannya kepada <span className="text-primary">ATASAN</span>?
+          {t("sit.howToBoss")} <span className="text-primary">{t("sit.boss")}</span>?
         </p>
 
         {step === "attempt" ? (
@@ -306,7 +303,7 @@ function SituasiMode() {
             <textarea
               value={attempt}
               onChange={(e) => setAttempt(e.target.value)}
-              placeholder="Tulis upayamu di sini (Bahasa Jepang atau Indonesia)..."
+              placeholder={t("sit.attemptPlaceholder")}
               rows={3}
               className="mt-3 w-full resize-none rounded-lg border border-input bg-background px-3 py-2.5 text-sm outline-none focus:border-ring focus:ring-2 focus:ring-ring/30"
             />
@@ -314,14 +311,14 @@ function SituasiMode() {
               onClick={() => setStep("reveal")}
               className="mt-3 w-full rounded-lg bg-primary text-primary-foreground py-2.5 text-sm font-semibold hover:opacity-90 transition"
             >
-              Lihat jawaban ideal
+              {t("sit.showIdeal")}
             </button>
           </>
         ) : (
           <>
             <div className="mt-5 pt-5 border-t border-border">
               <p className="text-[11px] uppercase font-semibold text-muted-foreground mb-1">
-                Versi formal / keigo
+                {t("sit.formalVersion")}
               </p>
               <div className="flex items-start gap-2">
                 <p className="font-jp text-2xl sm:text-3xl leading-snug flex-1 break-words">
@@ -334,7 +331,7 @@ function SituasiMode() {
               {attempt.trim() && (
                 <div className="mt-4 rounded-lg bg-muted/60 p-3 text-sm">
                   <p className="text-[11px] uppercase font-semibold text-muted-foreground mb-1">
-                    Jawabanmu
+                    {t("sit.yourAnswer")}
                   </p>
                   <p className="text-foreground/80">{attempt}</p>
                 </div>
@@ -343,7 +340,7 @@ function SituasiMode() {
               {current.formalGrammar.length > 0 && (
                 <div className="mt-4">
                   <p className="text-[11px] uppercase font-semibold text-muted-foreground mb-2">
-                    Perbedaan utama
+                    {t("sit.mainDiff")}
                   </p>
                   <ul className="space-y-2">
                     {current.formalGrammar.slice(0, 2).map((g, i) => (
@@ -357,19 +354,19 @@ function SituasiMode() {
               )}
             </div>
 
-            <p className="mt-5 text-sm font-semibold">Apakah jawabanmu mendekati ini?</p>
+            <p className="mt-5 text-sm font-semibold">{t("sit.closeEnough")}</p>
             <div className="mt-2 grid grid-cols-2 gap-3">
               <button
                 onClick={() => handleRate(false)}
                 className="inline-flex items-center justify-center gap-2 rounded-lg border border-destructive/40 bg-destructive/10 text-destructive px-5 py-3 text-sm font-semibold hover:bg-destructive/15 transition"
               >
-                <X className="w-4 h-4" /> Belum
+                <X className="w-4 h-4" /> {t("sit.no")}
               </button>
               <button
                 onClick={() => handleRate(true)}
                 className="inline-flex items-center justify-center gap-2 rounded-lg border border-green-500/40 bg-green-500/10 text-green-700 px-5 py-3 text-sm font-semibold hover:bg-green-500/15 transition"
               >
-                <Check className="w-4 h-4" /> Iya
+                <Check className="w-4 h-4" /> {t("sit.yes")}
               </button>
             </div>
           </>
