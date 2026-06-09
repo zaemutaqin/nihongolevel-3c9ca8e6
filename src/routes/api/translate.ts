@@ -252,7 +252,7 @@ Rules: ${explLang} = ${explLangFull} (write every "${explLang}" field in ${explL
                 const full = JSON.parse(cleaned);
                 emit({ type: "done", full });
               } catch (e) {
-                console.error("Failed to parse final JSON", e);
+                console.error("Failed to parse final JSON", e, "RAW:", cleaned);
                 emit({ type: "error", code: "INVALID_RESPONSE" });
               }
             } catch (e) {
