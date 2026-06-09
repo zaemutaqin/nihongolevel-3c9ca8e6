@@ -3,15 +3,15 @@ import { getPaddleEnvironment } from "@/lib/paddle";
 export function PaymentTestModeBanner() {
   if (getPaddleEnvironment() !== "sandbox") return null;
   return (
-    <div className="w-full bg-orange-100 border-b border-orange-300 px-4 py-2 text-center text-xs sm:text-sm text-orange-800">
-      All payments made in the preview are in test mode.{" "}
+    <div className="w-full bg-orange-50 dark:bg-orange-950/30 border-b border-orange-200/60 dark:border-orange-900/40 px-4 py-1 text-center text-[11px] text-orange-700 dark:text-orange-300">
+      Test mode — preview payments use sandbox cards.{" "}
       <a
         href="https://docs.lovable.dev/features/payments#test-and-live-environments"
         target="_blank"
         rel="noopener noreferrer"
-        className="underline font-medium"
+        className="underline"
       >
-        Read more
+        Learn more
       </a>
     </div>
   );

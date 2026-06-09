@@ -380,8 +380,8 @@ function Index() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-8 sm:py-12">
       <header className="text-center mb-8">
-        <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full bg-muted text-muted-foreground text-xs font-medium">
-          <Sparkles className="w-3.5 h-3.5" />
+        <div className="inline-flex items-center gap-1.5 mb-3 px-2 py-0.5 rounded-full bg-muted/60 text-muted-foreground text-[10px] font-medium">
+          <Sparkles className="w-3 h-3" />
           {t("misc.poweredBy")}
         </div>
         <h1 className="text-3xl sm:text-4xl font-bold tracking-tight sm:hidden">
@@ -390,7 +390,7 @@ function Index() {
         <p className="mt-2 text-sm text-muted-foreground">{t("home.subtitle")}</p>
       </header>
 
-      <section className="rounded-2xl border border-border bg-card p-5 sm:p-6 shadow-sm">
+      <section className="rounded-2xl border border-border bg-card p-6 shadow-sm">
         <label htmlFor="input" className="block text-sm font-medium mb-2">
           {t("home.inputLabel")}
         </label>
@@ -405,11 +405,14 @@ function Index() {
           className="w-full resize-none rounded-lg border border-input bg-background px-3 py-2.5 text-sm outline-none transition focus:border-ring focus:ring-2 focus:ring-ring/30 disabled:opacity-60 disabled:cursor-not-allowed"
         />
         {!isPro && (
-          <p className="mt-2 text-xs text-muted-foreground">
-            {lang === "id"
-              ? `Sisa pencarian hari ini: ${remaining}/${GUEST_LIMIT}`
-              : `Searches remaining today: ${remaining}/${GUEST_LIMIT}`}
-          </p>
+          <div className="mt-3">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-1 text-[11px] font-medium text-muted-foreground">
+              <span className={cn("w-1.5 h-1.5 rounded-full", remaining > 0 ? "bg-primary" : "bg-destructive")} />
+              {lang === "id"
+                ? `Sisa pencarian hari ini: ${remaining}/${GUEST_LIMIT}`
+                : `Searches remaining today: ${remaining}/${GUEST_LIMIT}`}
+            </span>
+          </div>
         )}
 
         <div className="mt-4 rounded-lg border border-border overflow-hidden">

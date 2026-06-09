@@ -56,13 +56,13 @@ export function UpgradeModal({ open, onClose }: UpgradeModalProps) {
 
   return (
     <div
-      className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 backdrop-blur-md p-4 sm:p-6 overflow-y-auto"
       role="dialog"
       aria-modal="true"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-md rounded-2xl bg-card border border-border shadow-xl relative max-h-[90vh] overflow-y-auto"
+        className="w-full max-w-md my-auto rounded-2xl bg-card border border-border shadow-2xl relative max-h-[calc(100vh-2rem)] overflow-y-auto animate-in fade-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -73,7 +73,7 @@ export function UpgradeModal({ open, onClose }: UpgradeModalProps) {
           <X className="w-4 h-4" />
         </button>
 
-        <div className="p-6">
+        <div className="p-6 sm:p-8 pt-8">
           <div className="inline-flex items-center gap-1.5 rounded-full bg-yellow-400/15 text-yellow-700 dark:text-yellow-300 px-2.5 py-1 text-xs font-semibold mb-3">
             <Crown className="w-3.5 h-3.5" /> Pro
           </div>
@@ -110,7 +110,7 @@ export function UpgradeModal({ open, onClose }: UpgradeModalProps) {
             </table>
           </div>
 
-          <div className="mt-5 grid grid-cols-2 gap-3">
+          <div className="mt-6 grid grid-cols-2 gap-4">
             <PlanCard
               active={plan === "monthly"}
               onClick={() => setPlan("monthly")}
@@ -129,7 +129,7 @@ export function UpgradeModal({ open, onClose }: UpgradeModalProps) {
             />
           </div>
 
-          <div className="mt-5">
+          <div className="mt-8">
             {user ? (
               <button
                 onClick={handleUpgrade}
