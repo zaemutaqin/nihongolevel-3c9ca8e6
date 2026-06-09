@@ -1,10 +1,22 @@
 import { useState, useRef, useEffect } from "react";
-import { LogOut, Crown, KeyRound, Loader2, Check } from "lucide-react";
+import { LogOut, Crown, KeyRound, Loader2, Check, Settings, AlertTriangle } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { useLang } from "@/lib/i18n";
 import { supabase } from "@/integrations/supabase/client";
 import { SignInButton } from "./SignInButton";
 import { UpgradeModal } from "./UpgradeModal";
+import { getPaddleEnvironment } from "@/lib/paddle";
+import { createCustomerPortalSession, getMySubscription } from "@/lib/billing.functions";
+import { useServerFn } from "@tanstack/react-start";
+import { useQuery } from "@tanstack/react-query";
+
+type SubInfo = {
+  status: string;
+  price_id: string;
+  current_period_end: string | null;
+  cancel_at_period_end: boolean | null;
+  environment: string;
+} | null;
 
 export function UserMenu() {
   const { user, profile, signOut, refreshProfile } = useAuth();
@@ -15,7 +27,18 @@ export function UserMenu() {
   const [code, setCode] = useState("");
   const [activating, setActivating] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
+  const [portalLoading, setPortalLoading] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+
+  const env = getPaddleEnvironment();
+  const fetchSub = useServerFn(getMySubscription);
+  const openPortalFn = useServerFn(createCustomerPortalSession);
+  const { data: sub } = useQuery<SubInfo>({
+    queryKey: ["my-subscription", user?.id, env],
+    queryFn: () => fetchSub({ data: { environment: env } }) as Promise<SubInfo>,
+    enabled: !!user,
+    staleTime: 30_000,
+  });
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -32,6 +55,26 @@ export function UserMenu() {
   const avatar = profile?.avatar_url ?? user.user_metadata?.avatar_url ?? null;
   const isPro = profile?.is_pro ?? false;
   const initial = (name || email || "?")[0].toUpperCase();
+  const hasPaidSub = !!sub;
+  const isPastDue = sub?.status === "past_due";
+  const willCancel = !!sub?.cancel_at_period_end && sub?.status !== "canceled";
+  const periodEnd = sub?.current_period_end ? new Date(sub.current_period_end) : null;
+  const periodEndLabel = periodEnd
+    ? periodEnd.toLocaleDateString(lang === "id" ? "id-ID" : "en-US", { year: "numeric", month: "short", day: "numeric" })
+    : null;
+
+  const openPortal = async () => {
+    setPortalLoading(true);
+    try {
+      const res = await openPortalFn({ data: { environment: env } });
+      window.open(res.url, "_blank", "noopener,noreferrer");
+    } catch (e) {
+      console.error(e);
+      setMsg(lang === "id" ? "Gagal membuka portal" : "Could not open portal");
+    } finally {
+      setPortalLoading(false);
+    }
+  };
 
   const activate = async () => {
     setActivating(true);
@@ -96,7 +139,7 @@ export function UserMenu() {
                 <div className="text-xs text-muted-foreground truncate">{email}</div>
               </div>
             </div>
-            <div className="mt-3">
+            <div className="mt-3 flex flex-wrap items-center gap-1.5">
               {isPro ? (
                 <span className="inline-flex items-center gap-1 rounded-full bg-yellow-400/15 text-yellow-700 dark:text-yellow-300 px-2 py-0.5 text-xs font-semibold">
                   <Crown className="w-3 h-3" /> Pro ✓
@@ -106,8 +149,48 @@ export function UserMenu() {
                   {lang === "id" ? "Gratis" : "Free"}
                 </span>
               )}
+              {isPastDue && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-red-500/15 text-red-600 dark:text-red-400 px-2 py-0.5 text-[10px] font-semibold">
+                  <AlertTriangle className="w-3 h-3" />
+                  {lang === "id" ? "Pembayaran gagal" : "Payment failed"}
+                </span>
+              )}
             </div>
+            {hasPaidSub && periodEndLabel && (
+              <p className="mt-2 text-[11px] text-muted-foreground">
+                {willCancel
+                  ? (lang === "id" ? `Berakhir ${periodEndLabel}` : `Ends ${periodEndLabel}`)
+                  : sub?.status === "canceled"
+                  ? (lang === "id" ? `Berakhir ${periodEndLabel}` : `Ended ${periodEndLabel}`)
+                  : (lang === "id" ? `Diperbarui ${periodEndLabel}` : `Renews ${periodEndLabel}`)}
+              </p>
+            )}
+            {isPastDue && (
+              <p className="mt-1 text-[11px] text-red-600 dark:text-red-400">
+                {lang === "id"
+                  ? "Perbarui kartu di portal untuk menjaga akses."
+                  : "Update your card in the portal to keep access."}
+              </p>
+            )}
           </div>
+
+          {hasPaidSub && (
+            <div className="p-3 border-b border-border">
+              <button
+                onClick={openPortal}
+                disabled={portalLoading}
+                className="w-full inline-flex items-center justify-center gap-2 px-3 py-2 rounded-md border border-border text-sm font-semibold hover:bg-muted transition disabled:opacity-60"
+              >
+                {portalLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Settings className="w-4 h-4" />}
+                {lang === "id" ? "Kelola langganan" : "Manage subscription"}
+              </button>
+              <p className="mt-1.5 text-[11px] text-muted-foreground text-center">
+                {lang === "id"
+                  ? "Batalkan, ganti kartu, atau lihat invoice"
+                  : "Cancel, update card, or view invoices"}
+              </p>
+            </div>
+          )}
 
           {!isPro && (
             <div className="p-3 border-b border-border space-y-2">
@@ -148,6 +231,7 @@ export function UserMenu() {
               {msg && <p className="text-xs text-muted-foreground">{msg}</p>}
             </div>
           )}
+
 
           <button
             onClick={() => { setOpen(false); signOut(); }}

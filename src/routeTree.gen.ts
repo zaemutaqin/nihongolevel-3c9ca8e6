@@ -24,6 +24,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiTranslateRouteImport } from './routes/api/translate'
 import { Route as ApiActivateProRouteImport } from './routes/api/activate-pro'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
+import { Route as ApiPublicPaymentsReconcileRouteImport } from './routes/api/public/payments/reconcile'
 
 const TermsOfServiceRoute = TermsOfServiceRouteImport.update({
   id: '/terms-of-service',
@@ -101,6 +102,12 @@ const ApiPublicPaymentsWebhookRoute =
     path: '/api/public/payments/webhook',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicPaymentsReconcileRoute =
+  ApiPublicPaymentsReconcileRouteImport.update({
+    id: '/api/public/payments/reconcile',
+    path: '/api/public/payments/reconcile',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -117,6 +124,7 @@ export interface FileRoutesByFullPath {
   '/terms-of-service': typeof TermsOfServiceRoute
   '/api/activate-pro': typeof ApiActivateProRoute
   '/api/translate': typeof ApiTranslateRoute
+  '/api/public/payments/reconcile': typeof ApiPublicPaymentsReconcileRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesByTo {
@@ -134,6 +142,7 @@ export interface FileRoutesByTo {
   '/terms-of-service': typeof TermsOfServiceRoute
   '/api/activate-pro': typeof ApiActivateProRoute
   '/api/translate': typeof ApiTranslateRoute
+  '/api/public/payments/reconcile': typeof ApiPublicPaymentsReconcileRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesById {
@@ -152,6 +161,7 @@ export interface FileRoutesById {
   '/terms-of-service': typeof TermsOfServiceRoute
   '/api/activate-pro': typeof ApiActivateProRoute
   '/api/translate': typeof ApiTranslateRoute
+  '/api/public/payments/reconcile': typeof ApiPublicPaymentsReconcileRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRouteTypes {
@@ -171,6 +181,7 @@ export interface FileRouteTypes {
     | '/terms-of-service'
     | '/api/activate-pro'
     | '/api/translate'
+    | '/api/public/payments/reconcile'
     | '/api/public/payments/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -188,6 +199,7 @@ export interface FileRouteTypes {
     | '/terms-of-service'
     | '/api/activate-pro'
     | '/api/translate'
+    | '/api/public/payments/reconcile'
     | '/api/public/payments/webhook'
   id:
     | '__root__'
@@ -205,6 +217,7 @@ export interface FileRouteTypes {
     | '/terms-of-service'
     | '/api/activate-pro'
     | '/api/translate'
+    | '/api/public/payments/reconcile'
     | '/api/public/payments/webhook'
   fileRoutesById: FileRoutesById
 }
@@ -223,6 +236,7 @@ export interface RootRouteChildren {
   TermsOfServiceRoute: typeof TermsOfServiceRoute
   ApiActivateProRoute: typeof ApiActivateProRoute
   ApiTranslateRoute: typeof ApiTranslateRoute
+  ApiPublicPaymentsReconcileRoute: typeof ApiPublicPaymentsReconcileRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
 
@@ -333,6 +347,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/payments/reconcile': {
+      id: '/api/public/payments/reconcile'
+      path: '/api/public/payments/reconcile'
+      fullPath: '/api/public/payments/reconcile'
+      preLoaderRoute: typeof ApiPublicPaymentsReconcileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -351,6 +372,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsOfServiceRoute: TermsOfServiceRoute,
   ApiActivateProRoute: ApiActivateProRoute,
   ApiTranslateRoute: ApiTranslateRoute,
+  ApiPublicPaymentsReconcileRoute: ApiPublicPaymentsReconcileRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }
 export const routeTree = rootRouteImport
