@@ -325,10 +325,19 @@ Rules: ${explLang} = ${explLangFull} (write every "${explLang}" field in ${explL
                 .replace(/^```(?:json)?\s*/i, "")
                 .replace(/\s*```$/i, "")
                 .trim();
+
+              const validate = (full: Record<string, unknown> | null): full is Record<string, unknown> => {
+                if (!full || typeof full !== "object") return false;
+                if (!full.intent || !full.social_analysis || !full.most_natural || !full.styles) return false;
+                const mn = full.most_natural as { japanese?: unknown };
+                if (typeof mn.japanese !== "string" || !JAPANESE_RE.test(mn.japanese)) return false;
+                return true;
+              };
+
+              let finalFull: Record<string, unknown> | null = null;
               try {
-                const full = JSON.parse(cleaned);
-                emit({ type: "done", full });
-              } catch (e) {
+                finalFull = JSON.parse(cleaned);
+              } catch {
                 // Fallback: reassemble from extracted pieces (handles truncation).
                 const intent = tryExtract(textBuf, "intent")?.value;
                 const social = tryExtract(textBuf, "social_analysis")?.value;
@@ -344,24 +353,28 @@ Rules: ${explLang} = ${explLangFull} (write every "${explLang}" field in ${explL
                   }
                 }
                 if (intent && social && most && Object.keys(styles).length === 4) {
-                  emit({
-                    type: "done",
-                    full: {
-                      intent,
-                      social_analysis: social,
-                      most_natural: most,
-                      styles,
-                      alternatives: alts ?? [],
-                    },
-                  });
-                } else {
-                  console.error("Failed to parse final JSON", e, "RAW:", cleaned);
-                  emit({ type: "error", code: "INVALID_RESPONSE" });
+                  finalFull = {
+                    intent,
+                    social_analysis: social,
+                    most_natural: most,
+                    styles,
+                    alternatives: alts ?? [],
+                  };
                 }
+              }
+
+              if (validate(finalFull)) {
+                emit({ type: "done", full: finalFull });
+                await audit({ event_type: "translate_success", ip_address: ip, user_id: userId, input_length: inputLength, success: true, metadata: { lang } });
+              } else {
+                console.error("Failed to validate final JSON, RAW:", cleaned);
+                emit({ type: "error", code: "INVALID_RESPONSE" });
+                await audit({ event_type: "translate_fail", ip_address: ip, user_id: userId, input_length: inputLength, success: false, error_code: "invalid_response" });
               }
             } catch (e) {
               console.error("Stream error", e);
               emit({ type: "error", code: "AI_UNAVAILABLE" });
+              await audit({ event_type: "translate_fail", ip_address: ip, user_id: userId, input_length: inputLength, success: false, error_code: "stream_error" });
             } finally {
               controller.close();
             }
@@ -373,8 +386,10 @@ Rules: ${explLang} = ${explLangFull} (write every "${explLang}" field in ${explL
             "Content-Type": "application/x-ndjson; charset=utf-8",
             "Cache-Control": "no-cache, no-transform",
             "X-Accel-Buffering": "no",
+            ...securityHeaders(allowedOrigin),
           },
         });
+
       },
     },
   },
