@@ -56,24 +56,25 @@ export function UpgradeModal({ open, onClose }: UpgradeModalProps) {
 
   return (
     <div
-      className="fixed inset-0 z-[60] flex items-start sm:items-center justify-center bg-black/70 backdrop-blur-md p-4 sm:p-6 overflow-y-auto"
+      className="fixed inset-0 z-[9999] overflow-y-auto bg-black/60 backdrop-blur-md"
       role="dialog"
       aria-modal="true"
       onClick={onClose}
     >
-      <div
-        className="w-full max-w-md rounded-2xl bg-card border border-border shadow-2xl relative animate-in fade-in zoom-in-95 duration-200"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <button
-          onClick={onClose}
-          className="absolute top-3 right-3 p-1.5 rounded-lg hover:bg-muted transition z-10"
-          aria-label="Close"
+      <div className="flex min-h-full items-center justify-center p-4 sm:p-6">
+        <div
+          className="relative w-[95%] sm:w-full max-w-md my-8 rounded-2xl bg-card border border-border shadow-2xl animate-in fade-in zoom-in-95 duration-200"
+          onClick={(e) => e.stopPropagation()}
         >
-          <X className="w-4 h-4" />
-        </button>
+          <button
+            onClick={onClose}
+            className="absolute top-3 right-3 p-2 rounded-lg hover:bg-muted transition z-10"
+            aria-label="Close"
+          >
+            <X className="w-4 h-4" />
+          </button>
 
-        <div className="p-6 sm:p-8 pt-8">
+          <div className="p-8">
           <div className="inline-flex items-center gap-1.5 rounded-full bg-yellow-400/15 text-yellow-700 dark:text-yellow-300 px-2.5 py-1 text-xs font-semibold mb-3">
             <Crown className="w-3.5 h-3.5" /> Pro
           </div>
