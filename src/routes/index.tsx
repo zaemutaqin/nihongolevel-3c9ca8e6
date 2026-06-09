@@ -334,24 +334,24 @@ function Index() {
       <header className="text-center mb-8">
         <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full bg-muted text-muted-foreground text-xs font-medium">
           <Sparkles className="w-3.5 h-3.5" />
-          Powered by Gemini
+          {t("misc.poweredBy")}
         </div>
         <h1 className="text-3xl sm:text-4xl font-bold tracking-tight sm:hidden">
           Nihongo<span className="text-primary">Level</span>
         </h1>
-        <p className="mt-2 text-sm text-muted-foreground">Belajar berbicara seperti orang Jepang</p>
+        <p className="mt-2 text-sm text-muted-foreground">{t("home.subtitle")}</p>
       </header>
 
       <section className="rounded-2xl border border-border bg-card p-5 sm:p-6 shadow-sm">
         <label htmlFor="input" className="block text-sm font-medium mb-2">
-          Kalimat Bahasa Indonesia
+          {t("home.inputLabel")}
         </label>
         <textarea
           id="input"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={onKeyDown}
-          placeholder="Tulis kalimat di sini... (Ctrl+Enter untuk terjemahkan)"
+          placeholder={t("home.placeholder")}
           rows={3}
           className="w-full resize-none rounded-lg border border-input bg-background px-3 py-2.5 text-sm outline-none transition focus:border-ring focus:ring-2 focus:ring-ring/30"
         />
