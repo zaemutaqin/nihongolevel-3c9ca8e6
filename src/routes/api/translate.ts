@@ -6,6 +6,7 @@ const InputSchema = z.object({
   sentence: z.string().trim().min(1).max(500),
   listener: z.string().trim().max(100).optional(),
   mood: z.string().trim().max(100).optional(),
+  lang: z.enum(["id", "en"]).optional().default("id"),
 });
 
 const STYLE_KEYS = ["dasar", "sehari_hari", "ekspresif", "mendekati_native"] as const;
@@ -105,27 +106,35 @@ export const Route = createFileRoute("/api/translate")({
           return errorResponse("SERVER_MISCONFIGURED", 500);
         }
 
-        const { sentence, listener, mood } = parsed.data;
+        const { sentence, listener, mood, lang } = parsed.data;
+        const isEn = lang === "en";
+        const inputLangLabel = isEn ? "English" : "Indonesian";
+        const explLang = isEn ? "en" : "id";
+        const explLangFull = isEn ? "English" : "Indonesian";
+
+        const englishNote = isEn
+          ? `The user is writing in English. Translate and analyze the English input into Japanese expressions. Return all explanation fields in English.\n`
+          : "";
 
         // Compact prompt — schema-only, minimal prose, to reduce both input
         // and output tokens.
         const prompt = `Japanese communication coach. Return ONLY raw JSON, no markdown.
-
-Input: "${sentence}"
+${englishNote}
+Input sentence (${inputLangLabel}): "${sentence}"
 Listener: ${listener || "auto"}
 Mood: ${mood || "auto"}
 
-{"intent":{"type":"monolog|asking_others|casual_conversation|professional_formal|joking_relaxed","explanation":"id"},
-"social_analysis":{"relationship":"id","emotion":"id","communication_goal":"id","wrong_context_risk":"id"},
-"most_natural":{"japanese":"...","romaji":"...","reason":"id","native_note":"id"},
+{"intent":{"type":"monolog|asking_others|casual_conversation|professional_formal|joking_relaxed","explanation":"${explLang}"},
+"social_analysis":{"relationship":"${explLang}","emotion":"${explLang}","communication_goal":"${explLang}","wrong_context_risk":"${explLang}"},
+"most_natural":{"japanese":"...","romaji":"...","reason":"${explLang}","native_note":"${explLang}"},
 "styles":{
-"dasar":{"japanese":"...","romaji":"...","naturalness":"native|stiff|textbook","naturalness_note":"id","when_to_use":"id","suitable_for":"id","impression":"id","why_this_style":"id","grammar":[{"pattern":"...","explanation":"id"}],"kanji":[{"char":"...","reading":"on:.../kun:...","meaning":"id","examples":"...","jlpt":"N4","frequency":"sangat_umum|umum|khusus","example_words":[{"word":"...","reading":"...","meaning":"id"}]}],"jlpt_reference":"N4"},
+"dasar":{"japanese":"...","romaji":"...","naturalness":"native|stiff|textbook","naturalness_note":"${explLang}","when_to_use":"${explLang}","suitable_for":"${explLang}","impression":"${explLang}","why_this_style":"${explLang}","grammar":[{"pattern":"...","explanation":"${explLang}"}],"kanji":[{"char":"...","reading":"on:.../kun:...","meaning":"${explLang}","examples":"...","jlpt":"N4","frequency":"sangat_umum|umum|khusus","example_words":[{"word":"...","reading":"...","meaning":"${explLang}"}]}],"jlpt_reference":"N4"},
 "sehari_hari":{...same,"jlpt_reference":"N3"},
 "ekspresif":{...same,"jlpt_reference":"N2"},
 "mendekati_native":{...same,"jlpt_reference":"N1"}},
-"alternatives":[{"rank":1,"role_label":"Paling Umum Digunakan","context_label":"id","japanese":"...","romaji":"...","style":"sehari_hari","explanation":"id"},{"rank":2,"role_label":"Lebih Sopan","context_label":"id","japanese":"...","romaji":"...","style":"ekspresif","explanation":"id"},{"rank":3,"role_label":"Untuk Situasi Formal","context_label":"id","japanese":"...","romaji":"...","style":"mendekati_native","explanation":"id"}]}
+"alternatives":[{"rank":1,"role_label":"Paling Umum Digunakan","context_label":"${explLang}","japanese":"...","romaji":"...","style":"sehari_hari","explanation":"${explLang}"},{"rank":2,"role_label":"Lebih Sopan","context_label":"${explLang}","japanese":"...","romaji":"...","style":"ekspresif","explanation":"${explLang}"},{"rank":3,"role_label":"Untuk Situasi Formal","context_label":"${explLang}","japanese":"...","romaji":"...","style":"mendekati_native","explanation":"${explLang}"}]}
 
-Rules: id = Indonesian. Exactly ONE expression per japanese field (no "/", no parens). Romaji numbers in full romaji ("san-ji" not "3-ji"). Max 4 kanji, only those appearing in the sentence. role_label ∈ {Paling Umum Digunakan, Lebih Sopan, Untuk Monolog, Untuk Situasi Formal, Pilihan Kasual, Paling Natural}. For monolog use 〜かな, never 〜ですか.`;
+Rules: ${explLang} = ${explLangFull} (write every "${explLang}" field in ${explLangFull}). Exactly ONE expression per japanese field (no "/", no parens). Romaji numbers in full romaji ("san-ji" not "3-ji"). Max 4 kanji, only those appearing in the Japanese output. role_label values stay in Indonesian exactly as listed: ∈ {Paling Umum Digunakan, Lebih Sopan, Untuk Monolog, Untuk Situasi Formal, Pilihan Kasual, Paling Natural}. For monolog use 〜かな, never 〜ですか.`;
 
         const upstream = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
           method: "POST",
