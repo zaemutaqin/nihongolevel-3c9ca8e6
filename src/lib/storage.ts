@@ -101,6 +101,10 @@ function write<T>(key: string, value: T[]) {
   localStorage.setItem(key, JSON.stringify(value));
   // notify listeners in same tab
   window.dispatchEvent(new CustomEvent("nihongo:storage", { detail: { key } }));
+  // best-effort mirror to cloud when signed in (skip cache key)
+  if (key !== RESULT_CACHE_KEY) {
+    import("./cloud-sync").then(({ pushChange }) => pushChange(key, value as unknown[])).catch(() => {});
+  }
 }
 
 // ============== History ==============
