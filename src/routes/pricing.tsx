@@ -35,7 +35,7 @@ function PricingPage() {
         { label: "Pencarian per hari", free: "3", pro: "Unlimited" },
         { label: "Riwayat pencarian", free: "—", pro: "Selamanya" },
         { label: "Favorit", free: "—", pro: "Unlimited" },
-        { label: "My Learning / Dashboard", free: "—", pro: "✓" },
+        { label: "My Level / Dashboard", free: "—", pro: "✓" },
         { label: "Latihan Harian", free: "—", pro: "✓" },
         { label: "Bahasa Indonesia + English", free: "✓", pro: "✓" },
       ]
@@ -43,7 +43,7 @@ function PricingPage() {
         { label: "Searches per day", free: "3", pro: "Unlimited" },
         { label: "Search history", free: "—", pro: "Forever" },
         { label: "Favorites", free: "—", pro: "Unlimited" },
-        { label: "My Learning / Dashboard", free: "—", pro: "✓" },
+        { label: "My Level / Dashboard", free: "—", pro: "✓" },
         { label: "Daily Practice", free: "—", pro: "✓" },
         { label: "Indonesian + English", free: "✓", pro: "✓" },
       ];
@@ -126,7 +126,7 @@ function PricingPage() {
               <Li>{lang === "id" ? "Pencarian tanpa batas" : "Unlimited searches"}</Li>
               <Li>{lang === "id" ? "Riwayat selamanya" : "Full history, kept forever"}</Li>
               <Li>{lang === "id" ? "Favorit tanpa batas" : "Unlimited favorites"}</Li>
-              <Li>{lang === "id" ? "My Learning & Latihan Harian" : "My Learning & Daily Practice"}</Li>
+              <Li>{lang === "id" ? "My Level & Latihan Harian" : "My Level & Daily Practice"}</Li>
               <Li>{lang === "id" ? "Semua fitur baru di masa depan" : "All future features included"}</Li>
             </ul>
             <Link

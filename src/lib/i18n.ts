@@ -38,13 +38,13 @@ const ID: Dict = {
   "nav.home": "Beranda",
   "nav.history": "Riwayat",
   "nav.favorites": "Favorit",
-  "nav.dashboard": "Perjalanan Belajarmu",
+  "nav.dashboard": "Levelku",
   "nav.review": "Latihan Harian",
   "nav.search_short": "Cari",
   "nav.home_short": "Beranda",
   "nav.history_short": "Riwayat",
   "nav.favorites_short": "Favorit",
-  "nav.dashboard_short": "Perjalanan",
+  "nav.dashboard_short": "Levelku",
   "nav.review_short": "Latihan",
 
   // Home
@@ -155,7 +155,7 @@ const ID: Dict = {
   "hist.confirmDelete": "Hapus entri ini?",
 
   // Dashboard
-  "dash.title": "Perjalanan Belajarmu",
+  "dash.title": "Levelku",
   "dash.subtitle": "Pantau kemajuan dan latihan ekspresi favoritmu setiap hari.",
   "dash.today": "Hari ini",
   "dash.needReview": "Perlu diulang hari ini",
@@ -263,13 +263,13 @@ const EN: Dict = {
   "nav.home": "Home",
   "nav.history": "History",
   "nav.favorites": "Favorites",
-  "nav.dashboard": "My Learning",
+  "nav.dashboard": "My Level",
   "nav.review": "Daily Practice",
   "nav.search_short": "Search",
   "nav.home_short": "Home",
   "nav.history_short": "History",
   "nav.favorites_short": "Favorites",
-  "nav.dashboard_short": "My Learning",
+  "nav.dashboard_short": "My Level",
   "nav.review_short": "Practice",
 
   "home.subtitle": "Learn to speak like a native Japanese",
@@ -368,7 +368,7 @@ const EN: Dict = {
   "hist.empty.desc": "Try entering your first situation — e.g. 'I'm so tired today'.",
   "hist.confirmDelete": "Delete this entry?",
 
-  "dash.title": "My Learning",
+  "dash.title": "My Level",
   "dash.subtitle": "Track your progress and practice favorite expressions daily.",
   "dash.today": "Today",
   "dash.needReview": "To review today",

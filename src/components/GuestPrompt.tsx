@@ -39,13 +39,13 @@ export function GuestPrompt() {
                   "Pencarian unlimited",
                   "Riwayat selamanya",
                   "Favorit unlimited",
-                  "My Learning & Latihan Harian",
+                  "My Level & Latihan Harian",
                 ]
               : [
                   "Unlimited searches",
                   "History forever",
                   "Unlimited favorites",
-                  "My Learning & Daily Practice",
+                  "My Level & Daily Practice",
                 ]
             ).map((f) => (
               <li key={f} className="flex items-center gap-2">

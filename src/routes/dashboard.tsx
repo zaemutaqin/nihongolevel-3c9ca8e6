@@ -24,13 +24,13 @@ import { LockedFeature } from "@/components/LockedFeature";
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
     meta: [
-      { title: "Perjalanan Belajarmu — NihongoLevel" },
+      { title: "Levelku — NihongoLevel" },
       {
         name: "description",
         content:
           "Pantau streak harian, riwayat pencarian mingguan, dan ekspresi favorit yang perlu diulang dalam dashboard belajar bahasa Jepang kamu.",
       },
-      { property: "og:title", content: "Perjalanan Belajarmu — NihongoLevel" },
+      { property: "og:title", content: "Levelku — NihongoLevel" },
       { property: "og:description", content: "Streak harian, statistik mingguan, dan favorit yang perlu diulang." },
       { property: "og:url", content: "/dashboard" },
     ],
