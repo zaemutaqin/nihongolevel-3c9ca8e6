@@ -101,22 +101,18 @@ const GUEST_LIMIT = 3;
 
 function Index() {
   const { t, tList, lang } = useT();
-  const { user, profile } = useAuth();
+  const { profile } = useAuth();
   const isPro = !!profile?.is_pro;
-  const [guestCount, setGuestCount] = useState(0);
 
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    if (isPro) {
-      localStorage.setItem("nihongo_guest_count", "0");
-      setGuestCount(0);
-    } else {
-      setGuestCount(Number(localStorage.getItem("nihongo_guest_count") || "0"));
-    }
-  }, [isPro, user]);
-
-  const guestBlocked = !isPro && guestCount >= GUEST_LIMIT;
-  const remaining = Math.max(0, GUEST_LIMIT - guestCount);
+  const friendlyError = (e: unknown): string => {
+    const raw = e instanceof Error ? e.message : String(e);
+    const base =
+      e instanceof Error && (ERR_CODES as string[]).includes(e.message)
+        ? t(`err.${e.message}`)
+        : t("err.generic");
+    if (import.meta.env.DEV) return `${base} [${raw}]`;
+    return base;
+  };
   const friendlyError = (e: unknown): string => {
     const raw = e instanceof Error ? e.message : String(e);
     const base =
