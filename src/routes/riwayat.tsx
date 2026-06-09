@@ -78,9 +78,10 @@ function RiwayatPage() {
 
       {filtered.length === 0 ? (
         <EmptyState
-          title="Belum ada riwayat"
-          desc="Mulai dengan menerjemahkan kalimat pertamamu."
+          title="Belum ada percakapan tersimpan"
+          desc="Coba masukkan situasi pertamamu — misalnya 'Hari ini aku capek banget'."
         />
+
       ) : (
         <div className="space-y-4">
           {filtered.map((h) => (
