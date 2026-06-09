@@ -13,6 +13,8 @@ import {
 } from "@/lib/translate.functions";
 import { useT } from "@/lib/i18n";
 import { gtagEvent } from "@/lib/gtag";
+import { useAuth } from "@/lib/auth";
+import { GuestPrompt } from "@/components/GuestPrompt";
 
 type TranslateErrorCode =
   | "FORBIDDEN_ORIGIN"
@@ -88,6 +90,8 @@ const LEVELS: { key: LevelKey; label: string }[] = [
 
 function Index() {
   const { t, tList, lang } = useT();
+  const { user } = useAuth();
+  const [showGuestPrompt, setShowGuestPrompt] = useState(false);
   const friendlyError = (e: unknown): string => {
     if (e instanceof Error && (ERR_CODES as string[]).includes(e.message)) {
       return t(`err.${e.message}`);
