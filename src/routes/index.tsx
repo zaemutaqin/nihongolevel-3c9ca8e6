@@ -192,18 +192,12 @@ function Index() {
   };
 
   const handleTranslate = async (text?: string) => {
-    if (!isPro && guestCount >= GUEST_LIMIT) return;
     const sentence = (text ?? input).trim();
     if (!sentence) {
       setError(t("home.errEmpty"));
       return;
     }
     gtagEvent("search", { search_term: sentence });
-    if (!isPro) {
-      const n = guestCount + 1;
-      localStorage.setItem("nihongo_guest_count", String(n));
-      setGuestCount(n);
-    }
     setError(null);
     setResult(null);
     setHistoryEntry(null);
