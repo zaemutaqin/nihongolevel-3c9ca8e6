@@ -1,6 +1,30 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 import { cleanJapanese } from "@/lib/translate.functions";
+import {
+  audit,
+  clientIp,
+  countEventsForIp,
+  countEventsForUser,
+  hoursAgoIso,
+  isInappropriate,
+  jsonResponse,
+  pickAllowedOrigin,
+  preflightResponse,
+  redactPersonalData,
+  sanitizeInput,
+  securityHeaders,
+} from "@/lib/security.server";
+
+// Per-tier daily caps. Hourly anomaly cap is a hard block above any tier.
+const GUEST_DAY_MAX = 3;
+const FREE_DAY_MAX = 50;
+const PRO_DAY_MAX = 500;
+const IP_HOUR_BLOCK = 20;        // > this in 1h → 24h block
+const USER_DAY_FLAG = 100;       // > this in 24h → flag (still allow)
+
+const JAPANESE_RE = /[\u3000-\u9fff\u3400-\u4dbf\u30a0-\u30ff\u3040-\u309f]/;
+
 
 const InputSchema = z.object({
   sentence: z.string().trim().min(1).max(500),
