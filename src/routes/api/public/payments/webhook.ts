@@ -51,7 +51,7 @@ async function handleSubscriptionCreated(data: any, env: PaddleEnv) {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function handleSubscriptionUpdated(data: any, env: PaddleEnv) {
   const { id, status, currentBillingPeriod, scheduledChange, customData } = data;
-  await getSupabase()
+  await (await getSupabase())
     .from("subscriptions")
     .update({
       status,
@@ -73,7 +73,7 @@ async function handleSubscriptionUpdated(data: any, env: PaddleEnv) {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function handleSubscriptionCanceled(data: any, env: PaddleEnv) {
   const { id, customData, currentBillingPeriod } = data;
-  await getSupabase()
+  await (await getSupabase())
     .from("subscriptions")
     .update({
       status: "canceled",
