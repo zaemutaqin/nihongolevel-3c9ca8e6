@@ -537,12 +537,12 @@ function naturalnessFromRank(rank: number | undefined): Naturalness {
 }
 
 export function AlternativesSection({ items }: { items: AlternativeExpression[] }) {
-  // Sort by rank so ① always shows first
+  const { t } = useT();
   const sorted = [...items].sort((a, b) => (a.rank ?? 99) - (b.rank ?? 99));
   return (
     <section>
       <h2 className="text-sm font-bold uppercase tracking-wide mb-3 text-foreground/80">
-        Alternatif berdasarkan situasi
+        {t("alt.title")}
       </h2>
       <div className="grid gap-3 sm:grid-cols-3">
         {sorted.map((alt, i) => {
