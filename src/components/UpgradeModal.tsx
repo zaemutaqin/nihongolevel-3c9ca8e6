@@ -4,7 +4,7 @@ import { X, Check, Loader2, Crown, ShieldCheck, Gift } from "lucide-react";
 import { useLang } from "@/lib/i18n";
 import { useAuth } from "@/lib/auth";
 import { usePaddleCheckout } from "@/hooks/usePaddleCheckout";
-import { SignInButton } from "./SignInButton";
+import { lovable } from "@/integrations/lovable";
 import { supabase } from "@/integrations/supabase/client";
 
 interface UpgradeModalProps {
