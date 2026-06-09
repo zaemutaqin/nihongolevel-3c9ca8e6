@@ -362,7 +362,7 @@ function Index() {
             className="w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium hover:bg-muted/40 transition"
             aria-expanded={contextOpen}
           >
-            <span>Tambah konteks (opsional)</span>
+            <span>{t("home.addContext")}</span>
             <ChevronDown
               className={cn(
                 "w-4 h-4 text-muted-foreground transition-transform",
@@ -374,7 +374,7 @@ function Index() {
             <div className="px-3 pb-3 grid sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-medium mb-1 text-muted-foreground">
-                  Kepada siapa kamu berbicara?
+                  {t("home.listenerLabel")}
                 </label>
                 <select
                   value={listener}
@@ -390,7 +390,7 @@ function Index() {
               </div>
               <div>
                 <label className="block text-xs font-medium mb-1 text-muted-foreground">
-                  Bagaimana suasananya?
+                  {t("home.moodLabel")}
                 </label>
                 <select
                   value={mood}
