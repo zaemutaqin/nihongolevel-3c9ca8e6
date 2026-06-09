@@ -128,11 +128,12 @@ export function IntentChip({ intent }: { intent: IntentInfo }) {
 }
 
 export function SocialAnalysisCard({ data }: { data: SocialAnalysis }) {
+  const { t } = useT();
   const rows = [
-    { Icon: Users, label: "Hubungan sosial", value: data.relationship },
-    { Icon: Heart, label: "Emosi / tone", value: data.emotion },
-    { Icon: Target, label: "Tujuan komunikasi", value: data.communication_goal },
-    { Icon: AlertTriangle, label: "Risiko salah konteks", value: data.wrong_context_risk },
+    { Icon: Users, label: t("sa.relationship"), value: data.relationship },
+    { Icon: Heart, label: t("sa.emotion"), value: data.emotion },
+    { Icon: Target, label: t("sa.goal"), value: data.communication_goal },
+    { Icon: AlertTriangle, label: t("sa.risk"), value: data.wrong_context_risk },
   ];
   return (
     <div
@@ -140,7 +141,7 @@ export function SocialAnalysisCard({ data }: { data: SocialAnalysis }) {
       style={{ borderLeft: "4px solid var(--intent-asking_others)" }}
     >
       <h2 className="text-sm font-bold uppercase tracking-wide mb-3 text-foreground/80">
-        Analisis Situasi
+        {t("sa.title")}
       </h2>
       <ul className="space-y-3">
         {rows.map(({ Icon, label, value }) => (
