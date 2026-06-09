@@ -397,9 +397,10 @@ function Index() {
           <Sparkles className="w-3 h-3" />
           {t("misc.poweredBy")}
         </div>
-        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight sm:hidden">
-          Nihongo<span className="text-primary">Level</span>
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+          NihongoLevel — Belajar Bicara Bahasa Jepang Natural
         </h1>
+
         <p className="mt-2 text-sm text-muted-foreground">{t("home.subtitle")}</p>
       </header>
 
