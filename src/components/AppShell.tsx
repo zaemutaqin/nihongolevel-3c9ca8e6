@@ -95,18 +95,6 @@ export function AppShell() {
             ))}
           </div>
           <div className="ml-auto flex items-center gap-3">
-            <Link to="/pricing" className="text-xs font-semibold text-muted-foreground hover:text-foreground transition">
-              Pricing
-            </Link>
-            <Link to="/privacy-policy" className="text-xs font-semibold text-muted-foreground hover:text-foreground transition">
-              Privacy Policy
-            </Link>
-            <Link to="/terms-of-service" className="text-xs font-semibold text-muted-foreground hover:text-foreground transition">
-              Terms of Service
-            </Link>
-            <Link to="/refund-policy" className="text-xs font-semibold text-muted-foreground hover:text-foreground transition">
-              Refund Policy
-            </Link>
             <LangToggle lang={lang} />
             <UserMenu />
           </div>
