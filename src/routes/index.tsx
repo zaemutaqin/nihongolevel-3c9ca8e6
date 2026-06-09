@@ -88,10 +88,25 @@ const LEVELS: { key: LevelKey; label: string }[] = [
   { key: "n1", label: "N1" },
 ];
 
+const GUEST_LIMIT = 3;
+
 function Index() {
   const { t, tList, lang } = useT();
   const { user } = useAuth();
-  const [showGuestPrompt, setShowGuestPrompt] = useState(false);
+  const [guestCount, setGuestCount] = useState(0);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (user) {
+      localStorage.setItem("nihongo_guest_count", "0");
+      setGuestCount(0);
+    } else {
+      setGuestCount(Number(localStorage.getItem("nihongo_guest_count") || "0"));
+    }
+  }, [user]);
+
+  const guestBlocked = !user && guestCount >= GUEST_LIMIT;
+  const remaining = Math.max(0, GUEST_LIMIT - guestCount);
   const friendlyError = (e: unknown): string => {
     if (e instanceof Error && (ERR_CODES as string[]).includes(e.message)) {
       return t(`err.${e.message}`);
