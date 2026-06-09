@@ -11,6 +11,7 @@ import {
   type LevelBlock,
   type RawStyleBlock,
 } from "@/lib/translate.functions";
+import { useT } from "@/lib/i18n";
 
 type TranslateErrorCode =
   | "FORBIDDEN_ORIGIN"
@@ -20,21 +21,15 @@ type TranslateErrorCode =
   | "INVALID_RESPONSE"
   | "SERVER_MISCONFIGURED";
 
-const ERROR_MESSAGES: Record<TranslateErrorCode, string> = {
-  FORBIDDEN_ORIGIN: "Permintaan tidak diizinkan. Buka aplikasi dari situs resmi.",
-  RATE_LIMITED: "Terlalu banyak permintaan. Coba lagi dalam beberapa saat.",
-  CREDITS_EXHAUSTED: "Layanan sedang tidak tersedia. Coba lagi nanti.",
-  AI_UNAVAILABLE: "Layanan AI tidak tersedia. Coba lagi nanti.",
-  INVALID_RESPONSE: "Gagal memproses respons. Coba lagi.",
-  SERVER_MISCONFIGURED: "Layanan belum siap. Coba lagi nanti.",
-};
+const ERR_CODES: TranslateErrorCode[] = [
+  "FORBIDDEN_ORIGIN",
+  "RATE_LIMITED",
+  "CREDITS_EXHAUSTED",
+  "AI_UNAVAILABLE",
+  "INVALID_RESPONSE",
+  "SERVER_MISCONFIGURED",
+];
 
-function friendlyError(e: unknown): string {
-  if (e instanceof Error && e.message in ERROR_MESSAGES) {
-    return ERROR_MESSAGES[e.message as TranslateErrorCode];
-  }
-  return "Gagal menerjemahkan kalimat. Coba lagi.";
-}
 import { cn } from "@/lib/utils";
 import {
   IntentBadge,
