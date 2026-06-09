@@ -7,6 +7,7 @@ import {
   deleteHistory,
   formatIndonesianDate,
   addFavoriteFromMostNatural,
+  addFavoriteFromLevel,
   isFavorited,
   type HistoryEntry,
   type LevelKey,
@@ -22,12 +23,9 @@ import {
   JlptRef,
   cleanJapanese,
 } from "@/components/result-parts";
-
 import { SpeakerButton } from "@/components/SpeakerButton";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
-import {
-  addFavoriteFromLevel,
-} from "@/lib/storage";
 
 export const Route = createFileRoute("/riwayat")({
   head: () => ({ meta: [{ title: "Riwayat — NihongoLevel" }] }),
@@ -42,6 +40,7 @@ const LEVELS: { key: LevelKey; label: string }[] = [
 ];
 
 function RiwayatPage() {
+  const { t } = useT();
   const [history] = useLocalCollection<HistoryEntry>(getHistory);
   const [query, setQuery] = useState("");
 
@@ -65,23 +64,22 @@ function RiwayatPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-8">
-      <h1 className="text-2xl font-bold mb-4">Riwayat</h1>
+      <h1 className="text-2xl font-bold mb-4">{t("hist.title")}</h1>
       <div className="relative mb-5">
         <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Cari kalimat, ekspresi Jepang, atau situasi..."
+          placeholder={t("hist.searchPlaceholder")}
           className="w-full rounded-lg border border-input bg-background pl-9 pr-3 py-2.5 text-sm outline-none focus:border-ring focus:ring-2 focus:ring-ring/30"
         />
       </div>
 
       {filtered.length === 0 ? (
-        <EmptyState
-          title="Belum ada percakapan tersimpan"
-          desc="Coba masukkan situasi pertamamu — misalnya 'Hari ini aku capek banget'."
-        />
-
+        <div className="rounded-2xl border border-dashed border-border bg-card/50 p-10 text-center">
+          <p className="font-semibold text-foreground">{t("hist.empty.title")}</p>
+          <p className="mt-1 text-sm text-muted-foreground">{t("hist.empty.desc")}</p>
+        </div>
       ) : (
         <div className="space-y-4">
           {filtered.map((h) => (
@@ -94,9 +92,10 @@ function RiwayatPage() {
 }
 
 function HistoryCard({ entry }: { entry: HistoryEntry }) {
+  const { t } = useT();
   const [open, setOpen] = useState(false);
   const [tick, setTick] = useState(0);
-  
+
   return (
     <div className="rounded-2xl border border-border bg-card shadow-sm p-5">
       <div className="flex items-start justify-between gap-3">
@@ -109,9 +108,9 @@ function HistoryCard({ entry }: { entry: HistoryEntry }) {
         </div>
         <button
           onClick={() => {
-            if (confirm("Hapus entri ini?")) deleteHistory(entry.id);
+            if (confirm(t("hist.confirmDelete"))) deleteHistory(entry.id);
           }}
-          aria-label="Hapus"
+          aria-label={t("misc.deleteAria")}
           className="p-1.5 rounded text-muted-foreground hover:text-destructive hover:bg-muted transition"
         >
           <Trash2 className="w-4 h-4" />
@@ -139,18 +138,18 @@ function HistoryCard({ entry }: { entry: HistoryEntry }) {
           className="inline-flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-lg border border-border hover:bg-muted transition"
         >
           <ChevronDown className={cn("w-3.5 h-3.5 transition-transform", open && "rotate-180")} />
-          {open ? "Sembunyikan" : "Lihat detail"}
+          {open ? t("rp.hide") : t("rp.viewDetails")}
         </button>
         <button
           onClick={() => {
             addFavoriteFromMostNatural(entry);
-            setTick((t) => t + 1);
+            setTick((c) => c + 1);
           }}
           disabled={isFavorited(entry.id, "most_natural")}
           className="inline-flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-lg border border-border hover:bg-muted transition disabled:opacity-50"
         >
           <Star className="w-3.5 h-3.5" />
-          {isFavorited(entry.id, "most_natural") ? "Tersimpan" : "Simpan favorit"}
+          {isFavorited(entry.id, "most_natural") ? t("rp.saved") : t("rp.saveFav")}
         </button>
       </div>
 
@@ -165,7 +164,7 @@ function HistoryCard({ entry }: { entry: HistoryEntry }) {
                 level={label}
                 entry={entry}
                 levelKey={key}
-                onChange={() => setTick((t) => t + 1)}
+                onChange={() => setTick((c) => c + 1)}
               />
             ))}
           </div>
@@ -174,21 +173,12 @@ function HistoryCard({ entry }: { entry: HistoryEntry }) {
             isFav={isFavorited(entry.id, "most_natural")}
             onFavorite={() => {
               addFavoriteFromMostNatural(entry);
-              setTick((t) => t + 1);
+              setTick((c) => c + 1);
             }}
           />
           {entry.alternatives?.length > 0 && <AlternativesSection items={entry.alternatives} />}
         </div>
       )}
-    </div>
-  );
-}
-
-function EmptyState({ title, desc }: { title: string; desc: string }) {
-  return (
-    <div className="rounded-2xl border border-dashed border-border bg-card/50 p-10 text-center">
-      <p className="font-semibold text-foreground">{title}</p>
-      <p className="mt-1 text-sm text-muted-foreground">{desc}</p>
     </div>
   );
 }

@@ -14,16 +14,35 @@ import { useState } from "react";
 import { ChevronDown, Users, Heart, Target, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SpeakerButton } from "@/components/SpeakerButton";
+import { useT } from "@/lib/i18n";
 
 export { cleanJapanese };
 
+// Backwards-compat (Indonesian fallback). Prefer useIntentLabel inside components.
 export const INTENT_LABELS: Record<IntentType, { emoji: string; label: string; short: string }> = {
-  monolog: { emoji: "🧠", label: "Monolog / berpikir sendiri", short: "Monolog" },
-  asking_others: { emoji: "💬", label: "Tanya ke orang lain", short: "Tanya ke orang" },
-  casual_conversation: { emoji: "🤝", label: "Percakapan kasual / akrab", short: "Kasual" },
-  professional_formal: { emoji: "💼", label: "Konteks profesional / formal", short: "Profesional" },
-  joking_relaxed: { emoji: "😄", label: "Bercanda / santai", short: "Bercanda" },
+  monolog: { emoji: "🧠", label: "Monolog", short: "Monolog" },
+  asking_others: { emoji: "💬", label: "Asking", short: "Asking" },
+  casual_conversation: { emoji: "🤝", label: "Casual", short: "Casual" },
+  professional_formal: { emoji: "💼", label: "Professional", short: "Professional" },
+  joking_relaxed: { emoji: "😄", label: "Joking", short: "Joking" },
 };
+
+const INTENT_EMOJI: Record<IntentType, string> = {
+  monolog: "🧠",
+  asking_others: "💬",
+  casual_conversation: "🤝",
+  professional_formal: "💼",
+  joking_relaxed: "😄",
+};
+
+export function useIntentLabel(type: IntentType) {
+  const { t } = useT();
+  return {
+    emoji: INTENT_EMOJI[type] ?? "✨",
+    label: t(`intent.${type}`),
+    short: t(`intent.${type}_short`),
+  };
+}
 
 export const NATURALNESS_LABELS: Record<
   Naturalness,
@@ -34,19 +53,22 @@ export const NATURALNESS_LABELS: Record<
   textbook: { emoji: "❌", label: "Textbook only", tone: "nat-textbook" },
 };
 
-export const STYLE_BY_LEVEL: Record<string, { name: string; tone: string }> = {
-  N4: { name: "Dasar", tone: "level-n4" },
-  N3: { name: "Sehari-hari", tone: "level-n3" },
-  N2: { name: "Ekspresif", tone: "level-n2" },
-  N1: { name: "Mendekati Native", tone: "level-n1" },
+export const STYLE_BY_LEVEL: Record<string, { tone: string }> = {
+  N4: { tone: "level-n4" },
+  N3: { tone: "level-n3" },
+  N2: { tone: "level-n2" },
+  N1: { tone: "level-n1" },
 };
 
 export function styleMeta(level: string) {
-  return STYLE_BY_LEVEL[level?.toUpperCase()] ?? { name: level, tone: "level-n3" };
+  return STYLE_BY_LEVEL[level?.toUpperCase()] ?? { tone: "level-n3" };
 }
 
 export function StylePill({ level, size = "md" }: { level: string; size?: "sm" | "md" }) {
   const meta = styleMeta(level);
+  const { t } = useT();
+  const key = (level || "").toUpperCase();
+  const name = t(`style.${key}`) || key;
   const sizeCls = size === "sm" ? "text-[11px] px-2 py-0.5" : "text-xs px-3 py-1";
   return (
     <span
@@ -57,21 +79,22 @@ export function StylePill({ level, size = "md" }: { level: string; size?: "sm" |
         border: `1px solid color-mix(in oklab, var(--${meta.tone}) 35%, transparent)`,
       }}
     >
-      {meta.name}
+      {name}
     </span>
   );
 }
 
 export function JlptRef({ level, className }: { level: string; className?: string }) {
+  const { t } = useT();
   return (
     <span className={cn("text-[11px] text-muted-foreground", className)}>
-      setara {level?.toUpperCase()}
+      {t("style.equiv")} {level?.toUpperCase()}
     </span>
   );
 }
 
 export function IntentBadge({ intent }: { intent: IntentInfo }) {
-  const meta = INTENT_LABELS[intent.type] ?? { emoji: "✨", label: intent.type, short: intent.type };
+  const meta = useIntentLabel(intent.type);
   const color = `var(--intent-${intent.type})`;
   return (
     <div
@@ -91,7 +114,7 @@ export function IntentBadge({ intent }: { intent: IntentInfo }) {
 }
 
 export function IntentChip({ intent }: { intent: IntentInfo }) {
-  const meta = INTENT_LABELS[intent.type] ?? { emoji: "✨", label: intent.type, short: intent.type };
+  const meta = useIntentLabel(intent.type);
   const color = `var(--intent-${intent.type})`;
   return (
     <span
@@ -105,11 +128,12 @@ export function IntentChip({ intent }: { intent: IntentInfo }) {
 }
 
 export function SocialAnalysisCard({ data }: { data: SocialAnalysis }) {
+  const { t } = useT();
   const rows = [
-    { Icon: Users, label: "Hubungan sosial", value: data.relationship },
-    { Icon: Heart, label: "Emosi / tone", value: data.emotion },
-    { Icon: Target, label: "Tujuan komunikasi", value: data.communication_goal },
-    { Icon: AlertTriangle, label: "Risiko salah konteks", value: data.wrong_context_risk },
+    { Icon: Users, label: t("sa.relationship"), value: data.relationship },
+    { Icon: Heart, label: t("sa.emotion"), value: data.emotion },
+    { Icon: Target, label: t("sa.goal"), value: data.communication_goal },
+    { Icon: AlertTriangle, label: t("sa.risk"), value: data.wrong_context_risk },
   ];
   return (
     <div
@@ -117,7 +141,7 @@ export function SocialAnalysisCard({ data }: { data: SocialAnalysis }) {
       style={{ borderLeft: "4px solid var(--intent-asking_others)" }}
     >
       <h2 className="text-sm font-bold uppercase tracking-wide mb-3 text-foreground/80">
-        Analisis Situasi
+        {t("sa.title")}
       </h2>
       <ul className="space-y-3">
         {rows.map(({ Icon, label, value }) => (
@@ -137,26 +161,11 @@ export function SocialAnalysisCard({ data }: { data: SocialAnalysis }) {
 // ============= Naturalness =============
 const NATURALNESS_BAR: Record<
   Naturalness,
-  { filled: 1 | 2 | 3; label: string; color: string; track: string }
+  { filled: 1 | 2 | 3; key: string; color: string; track: string }
 > = {
-  native: {
-    filled: 3,
-    label: "Sangat Umum",
-    color: "bg-green-500",
-    track: "bg-green-500/15",
-  },
-  stiff: {
-    filled: 2,
-    label: "Cukup Umum",
-    color: "bg-amber-500",
-    track: "bg-amber-500/15",
-  },
-  textbook: {
-    filled: 1,
-    label: "Jarang Digunakan",
-    color: "bg-red-400",
-    track: "bg-red-400/15",
-  },
+  native: { filled: 3, key: "nat.native", color: "bg-green-500", track: "bg-green-500/15" },
+  stiff: { filled: 2, key: "nat.stiff", color: "bg-amber-500", track: "bg-amber-500/15" },
+  textbook: { filled: 1, key: "nat.textbook", color: "bg-red-400", track: "bg-red-400/15" },
 };
 
 export function NaturalnessBar({
@@ -166,12 +175,13 @@ export function NaturalnessBar({
   value: Naturalness;
   compact?: boolean;
 }) {
+  const { t } = useT();
   const meta = NATURALNESS_BAR[value] ?? NATURALNESS_BAR.stiff;
   return (
     <div className="w-full">
       {!compact && (
         <p className="text-[11px] font-medium text-muted-foreground mb-1">
-          Seberapa sering diucapkan:
+          {t("nat.label")}
         </p>
       )}
       <div className={cn("flex gap-1 w-full rounded-full overflow-hidden", "h-1.5")}>
@@ -185,32 +195,28 @@ export function NaturalnessBar({
           />
         ))}
       </div>
-      <p className="mt-1 text-[11px] font-semibold text-foreground/80">{meta.label}</p>
+      <p className="mt-1 text-[11px] font-semibold text-foreground/80">{t(meta.key)}</p>
     </div>
   );
 }
 
-// Deprecated text chip — kept exported for backward-compat (favorit page uses it)
+// Deprecated text chip — kept exported for backward-compat
 export function NaturalnessChip({ value }: { value: Naturalness }) {
+  const { t } = useT();
   const meta = NATURALNESS_LABELS[value] ?? NATURALNESS_LABELS.stiff;
+  const labelKey = value === "native" ? "nat.native" : value === "stiff" ? "nat.stiff" : "nat.textbook";
   return (
     <span
       className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold text-white"
       style={{ backgroundColor: `var(--${meta.tone})` }}
     >
       <span>{meta.emoji}</span>
-      <span>{meta.label}</span>
+      <span>{t(labelKey)}</span>
     </span>
   );
 }
 
 // ============= Kanji =============
-const FREQ_LABEL: Record<string, string> = {
-  sangat_umum: "Sangat Umum",
-  umum: "Umum",
-  khusus: "Khusus",
-};
-
 function kanjiFrequency(k: KanjiInfo): "sangat_umum" | "umum" | "khusus" {
   if (k.frequency) return k.frequency;
   const j = (k.jlpt || "").toUpperCase();
@@ -220,6 +226,7 @@ function kanjiFrequency(k: KanjiInfo): "sangat_umum" | "umum" | "khusus" {
 }
 
 export function KanjiCard({ k }: { k: KanjiInfo }) {
+  const { t } = useT();
   const freq = kanjiFrequency(k);
   const jlpt = (k.jlpt || "N4").toUpperCase();
   return (
@@ -238,7 +245,7 @@ export function KanjiCard({ k }: { k: KanjiInfo }) {
           >
             {jlpt}
           </span>
-          <span className="text-[10px] text-muted-foreground">{FREQ_LABEL[freq]}</span>
+          <span className="text-[10px] text-muted-foreground">{t(`rp.kanjiFreq.${freq}`)}</span>
         </div>
       </div>
       <p className="mt-3 text-[11px] text-muted-foreground font-jp leading-snug">{k.reading}</p>
@@ -247,7 +254,7 @@ export function KanjiCard({ k }: { k: KanjiInfo }) {
       {k.example_words && k.example_words.length > 0 && (
         <div className="mt-3 pt-3 border-t border-border">
           <p className="text-[10px] uppercase font-semibold text-muted-foreground mb-1.5">
-            Kanji ini juga muncul dalam:
+            {t("rp.alsoIn")}
           </p>
           <ul className="space-y-1.5">
             {k.example_words.slice(0, 2).map((w, i) => (
@@ -286,6 +293,7 @@ export function LevelCard({
 }) {
   const meta = styleMeta(level);
   const tone = meta.tone;
+  const { t } = useT();
   const [grammarOpen, setGrammarOpen] = useState(false);
   const japanese = cleanJapanese(data.japanese);
 
@@ -294,7 +302,6 @@ export function LevelCard({
       className="rounded-2xl border bg-card shadow-sm overflow-hidden"
       style={{ borderColor: `var(--${tone})` + "40" }}
     >
-      {/* DEFAULT (always visible) */}
       <div className="px-5 pt-5 pb-4">
         <div className="flex items-center gap-2 mb-3 flex-wrap">
           <StylePill level={level} />
@@ -314,7 +321,7 @@ export function LevelCard({
 
         {data.when_to_use && (
           <p className="mt-3 text-sm text-foreground/80 line-clamp-1">
-            <span className="text-xs font-semibold text-foreground/60">Kapan dipakai: </span>
+            <span className="text-xs font-semibold text-foreground/60">{t("rp.whenUsed")}</span>
             {data.when_to_use}
           </p>
         )}
@@ -328,7 +335,7 @@ export function LevelCard({
             <ChevronDown
               className={cn("w-3.5 h-3.5 transition-transform", open && "rotate-180")}
             />
-            {open ? "Sembunyikan" : "Lihat detail"}
+            {open ? t("rp.hide") : t("rp.viewDetails")}
           </button>
           {onFavorite && (
             <button
@@ -341,13 +348,12 @@ export function LevelCard({
               )}
             >
               <Star className="w-3 h-3" fill={isFav ? "currentColor" : "none"} />
-              {isFav ? "Tersimpan" : "Simpan favorit"}
+              {isFav ? t("rp.saved") : t("rp.saveFav")}
             </button>
           )}
         </div>
       </div>
 
-      {/* EXPANDED */}
       {open && (
         <div className="px-5 pb-5 pt-1 space-y-4 border-t border-border/60">
           <p className="mt-4 italic text-sm text-muted-foreground">{data.romaji}</p>
@@ -357,13 +363,13 @@ export function LevelCard({
           )}
 
           {data.suitable_for && (
-            <InfoRow label="Cocok diucapkan kepada" value={data.suitable_for} />
+            <InfoRow label={t("rp.suitableFor")} value={data.suitable_for} />
           )}
           {data.impression && (
-            <InfoRow label="Kesan yang diterima lawan bicara" value={data.impression} />
+            <InfoRow label={t("rp.impression")} value={data.impression} />
           )}
           {data.why_this_level && (
-            <InfoRow label="Kenapa level ini?" value={data.why_this_level} />
+            <InfoRow label={t("rp.whyLevel")} value={data.why_this_level} />
           )}
 
           {data.grammar?.length > 0 && (
@@ -373,7 +379,7 @@ export function LevelCard({
                 className="w-full flex items-center justify-between px-3 py-2.5 text-sm font-semibold hover:bg-muted/40 transition"
                 aria-expanded={grammarOpen}
               >
-                <span>Tata Bahasa</span>
+                <span>{t("rp.grammar")}</span>
                 <ChevronDown
                   className={cn(
                     "w-4 h-4 text-muted-foreground transition-transform",
@@ -396,7 +402,7 @@ export function LevelCard({
 
           {data.kanji?.length > 0 && (
             <div>
-              <h3 className="text-sm font-semibold mb-2">Kanji</h3>
+              <h3 className="text-sm font-semibold mb-2">{t("rp.kanji")}</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {data.kanji.map((k, i) => (
                   <KanjiCard key={i} k={k} />
@@ -409,7 +415,7 @@ export function LevelCard({
             onClick={onToggle}
             className="w-full text-xs font-medium text-muted-foreground hover:text-foreground py-2 transition"
           >
-            ▴ Sembunyikan
+            ▴ {t("rp.hide")}
           </button>
         </div>
       )}
@@ -436,6 +442,7 @@ export function MostNaturalCard({
   isFav?: boolean;
 }) {
   const tone = "level-n3";
+  const { t } = useT();
   const japanese = cleanJapanese(data.japanese);
   const [whyOpen, setWhyOpen] = useState(false);
   return (
@@ -452,7 +459,7 @@ export function MostNaturalCard({
           className="text-sm font-bold uppercase tracking-wide"
           style={{ color: `var(--${tone})` }}
         >
-          Yang paling natural
+          {t("mn.label")}
         </h2>
       </div>
       <div className="flex items-start gap-3">
@@ -470,7 +477,7 @@ export function MostNaturalCard({
           color: `var(--${tone})`,
         }}
       >
-        ✓ Inilah yang akan terdengar alami bagi penutur asli
+        {t("mn.badge")}
       </p>
 
       <div className="mt-4">
@@ -485,7 +492,7 @@ export function MostNaturalCard({
             aria-expanded={whyOpen}
             className="w-full flex items-center justify-between px-3 py-2.5 text-sm font-semibold hover:bg-muted/40 transition"
           >
-            <span>Mengapa ini yang paling natural?</span>
+            <span>{t("mn.why")}</span>
             <ChevronDown
               className={cn(
                 "w-4 h-4 text-muted-foreground transition-transform",
@@ -511,7 +518,7 @@ export function MostNaturalCard({
             )}
           >
             <Star className="w-4 h-4" fill={isFav ? "currentColor" : "none"} />
-            {isFav ? "Tersimpan di Favorit" : "⭐ Simpan ke Favorit"}
+            {isFav ? t("mn.savedFav") : t("mn.saveFav")}
           </button>
         </div>
       )}
@@ -530,12 +537,12 @@ function naturalnessFromRank(rank: number | undefined): Naturalness {
 }
 
 export function AlternativesSection({ items }: { items: AlternativeExpression[] }) {
-  // Sort by rank so ① always shows first
+  const { t } = useT();
   const sorted = [...items].sort((a, b) => (a.rank ?? 99) - (b.rank ?? 99));
   return (
     <section>
       <h2 className="text-sm font-bold uppercase tracking-wide mb-3 text-foreground/80">
-        Alternatif berdasarkan situasi
+        {t("alt.title")}
       </h2>
       <div className="grid gap-3 sm:grid-cols-3">
         {sorted.map((alt, i) => {
@@ -558,7 +565,7 @@ export function AlternativesSection({ items }: { items: AlternativeExpression[] 
                 </span>
                 <div className="min-w-0 flex-1">
                   <p className="text-xs font-bold text-foreground leading-tight">
-                    {alt.role_label ?? "Pilihan"}
+                    {alt.role_label ?? t("alt.fallback")}
                   </p>
                   {alt.context_label && (
                     <p className="text-[11px] text-muted-foreground mt-0.5">

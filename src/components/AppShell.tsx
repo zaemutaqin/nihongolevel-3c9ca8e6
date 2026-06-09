@@ -1,17 +1,46 @@
 import { Link, Outlet } from "@tanstack/react-router";
 import { Search, History, Star, BarChart3, RotateCw } from "lucide-react";
+import { useT, setLang, type Lang } from "@/lib/i18n";
+import { cn } from "@/lib/utils";
 
-type NavItem = { to: string; label: string; Icon: typeof Search; exact?: boolean };
+type NavItem = { to: string; key: string; Icon: typeof Search; exact?: boolean };
 const NAV: NavItem[] = [
-  { to: "/", label: "Cari", Icon: Search, exact: true },
-  { to: "/riwayat", label: "Riwayat", Icon: History },
-  { to: "/favorit", label: "Favorit", Icon: Star },
-  { to: "/dashboard", label: "Perjalanan", Icon: BarChart3 },
-  { to: "/review", label: "Latihan", Icon: RotateCw },
+  { to: "/", key: "search", Icon: Search, exact: true },
+  { to: "/riwayat", key: "history", Icon: History },
+  { to: "/favorit", key: "favorites", Icon: Star },
+  { to: "/dashboard", key: "dashboard", Icon: BarChart3 },
+  { to: "/review", key: "review", Icon: RotateCw },
 ];
 
+function LangToggle({ lang }: { lang: Lang }) {
+  return (
+    <div className="inline-flex items-center gap-0.5 rounded-full border border-border bg-background p-0.5 text-xs font-semibold">
+      <button
+        onClick={() => setLang("id")}
+        className={cn(
+          "px-2 py-0.5 rounded-full transition",
+          lang === "id" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground",
+        )}
+        aria-pressed={lang === "id"}
+      >
+        🇮🇩 ID
+      </button>
+      <button
+        onClick={() => setLang("en")}
+        className={cn(
+          "px-2 py-0.5 rounded-full transition",
+          lang === "en" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground",
+        )}
+        aria-pressed={lang === "en"}
+      >
+        🇬🇧 EN
+      </button>
+    </div>
+  );
+}
 
 export function AppShell() {
+  const { t, lang } = useT();
   return (
     <div className="min-h-screen bg-background text-foreground font-sans">
       {/* Desktop top nav */}
@@ -21,7 +50,7 @@ export function AppShell() {
             Nihongo<span className="text-primary">Level</span>
           </Link>
           <div className="flex gap-1">
-            {NAV.map(({ to, label, Icon, exact }) => (
+            {NAV.map(({ to, key, Icon, exact }) => (
               <Link
                 key={to}
                 to={to}
@@ -31,12 +60,23 @@ export function AppShell() {
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition"
               >
                 <Icon className="w-4 h-4" />
-                {label}
+                {t(`nav.${key}_short`)}
               </Link>
             ))}
           </div>
+          <div className="ml-auto">
+            <LangToggle lang={lang} />
+          </div>
         </div>
       </nav>
+
+      {/* Mobile top bar */}
+      <div className="sm:hidden sticky top-0 z-30 flex items-center justify-between px-4 py-2.5 border-b border-border bg-background/90 backdrop-blur">
+        <Link to="/" className="font-bold">
+          Nihongo<span className="text-primary">Level</span>
+        </Link>
+        <LangToggle lang={lang} />
+      </div>
 
       <main className="pb-24 sm:pb-10">
         <Outlet />
@@ -45,7 +85,7 @@ export function AppShell() {
       {/* Mobile bottom nav */}
       <nav className="sm:hidden fixed bottom-0 inset-x-0 z-30 border-t border-border bg-background/95 backdrop-blur">
         <div className="grid grid-cols-5">
-          {NAV.map(({ to, label, Icon, exact }) => (
+          {NAV.map(({ to, key, Icon, exact }) => (
             <Link
               key={to}
               to={to}
@@ -55,7 +95,7 @@ export function AppShell() {
               className="flex flex-col items-center justify-center gap-0.5 py-2.5 text-[10px] font-medium"
             >
               <Icon className="w-5 h-5" />
-              {label}
+              {t(`nav.${key}_short`)}
             </Link>
           ))}
         </div>
