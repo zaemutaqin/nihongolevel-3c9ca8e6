@@ -55,16 +55,18 @@ export function GuestPrompt() {
             ))}
           </ul>
           <div className="mt-5">
-            {user ? (
-              <button
-                onClick={() => setShowUpgrade(true)}
-                className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-primary text-primary-foreground py-2.5 text-sm font-semibold hover:opacity-90 transition"
-              >
-                <Crown className="w-4 h-4" />
-                {lang === "id" ? "Mulai Pro Sekarang" : "Start Pro Now"}
-              </button>
-            ) : (
-              <SignInButton />
+            <button
+              onClick={() => setShowUpgrade(true)}
+              className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-primary text-primary-foreground py-2.5 text-sm font-semibold hover:opacity-90 transition"
+            >
+              <Crown className="w-4 h-4" />
+              {lang === "id" ? "Mulai Pro Sekarang — $19" : "Start Pro Now — $19"}
+            </button>
+            {!user && (
+              <div className="mt-4 pt-4 border-t border-border flex items-center justify-center gap-2 text-xs text-muted-foreground">
+                <span>{lang === "id" ? "Sudah Pro?" : "Already Pro?"}</span>
+                <SignInButton size="sm" />
+              </div>
             )}
           </div>
         </div>
