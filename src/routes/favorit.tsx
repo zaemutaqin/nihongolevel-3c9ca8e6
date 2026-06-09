@@ -7,8 +7,9 @@ import {
   useLocalCollection,
   type FavoriteEntry,
 } from "@/lib/storage";
-import { INTENT_LABELS, NaturalnessBar, StylePill, JlptRef, KanjiCard, cleanJapanese } from "@/components/result-parts";
+import { NaturalnessBar, StylePill, JlptRef, KanjiCard, cleanJapanese, useIntentLabel } from "@/components/result-parts";
 import { SpeakerButton } from "@/components/SpeakerButton";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import type { IntentType } from "@/lib/translate.functions";
 
@@ -17,18 +18,19 @@ export const Route = createFileRoute("/favorit")({
   component: FavoritPage,
 });
 
-const FILTERS: { value: IntentType | "all"; label: string }[] = [
-  { value: "all", label: "Semua" },
-  { value: "monolog", label: "Monolog" },
-  { value: "asking_others", label: "Tanya ke orang" },
-  { value: "casual_conversation", label: "Kasual" },
-  { value: "professional_formal", label: "Profesional" },
-  { value: "joking_relaxed", label: "Bercanda" },
-];
-
 function FavoritPage() {
+  const { t } = useT();
   const [favs] = useLocalCollection<FavoriteEntry>(getFavorites);
   const [filter, setFilter] = useState<IntentType | "all">("all");
+
+  const FILTERS: { value: IntentType | "all"; label: string }[] = [
+    { value: "all", label: t("fav.filter.all") },
+    { value: "monolog", label: t("intent.monolog_short") },
+    { value: "asking_others", label: t("intent.asking_others_short") },
+    { value: "casual_conversation", label: t("intent.casual_conversation_short") },
+    { value: "professional_formal", label: t("intent.professional_formal_short") },
+    { value: "joking_relaxed", label: t("intent.joking_relaxed_short") },
+  ];
 
   const filtered = useMemo(
     () => (filter === "all" ? favs : favs.filter((f) => f.intent.type === filter)),
@@ -37,7 +39,7 @@ function FavoritPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-8">
-      <h1 className="text-2xl font-bold mb-4">Favorit</h1>
+      <h1 className="text-2xl font-bold mb-4">{t("fav.title")}</h1>
 
       <div className="flex flex-wrap gap-2 mb-5">
         {FILTERS.map((f) => (
@@ -58,12 +60,9 @@ function FavoritPage() {
 
       {filtered.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-border bg-card/50 p-10 text-center">
-          <p className="font-semibold">Belum ada ekspresi favorit</p>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Tandai ekspresi yang ingin kamu gunakan dalam kehidupan nyata.
-          </p>
+          <p className="font-semibold">{t("fav.empty.title")}</p>
+          <p className="mt-1 text-sm text-muted-foreground">{t("fav.empty.desc")}</p>
         </div>
-
       ) : (
         <div className="space-y-4">
           {filtered.map((f) => (
@@ -76,9 +75,10 @@ function FavoritPage() {
 }
 
 function FavoriteCard({ fav }: { fav: FavoriteEntry }) {
+  const { t } = useT();
   const [open, setOpen] = useState(false);
   const tone = `level-${(fav.level || "N3").toLowerCase()}`;
-  const intentMeta = INTENT_LABELS[fav.intent.type];
+  const intentMeta = useIntentLabel(fav.intent.type);
   return (
     <div
       className="rounded-2xl border bg-card shadow-sm p-5"
@@ -97,9 +97,9 @@ function FavoriteCard({ fav }: { fav: FavoriteEntry }) {
         </div>
         <button
           onClick={() => {
-            if (confirm("Hapus favorit ini?")) removeFavorite(fav.id);
+            if (confirm(t("fav.confirmDelete"))) removeFavorite(fav.id);
           }}
-          aria-label="Hapus"
+          aria-label={t("misc.deleteAria")}
           className="p-1.5 rounded text-muted-foreground hover:text-destructive hover:bg-muted transition"
         >
           <Trash2 className="w-4 h-4" />
@@ -110,7 +110,7 @@ function FavoriteCard({ fav }: { fav: FavoriteEntry }) {
         <StylePill level={fav.level} size="sm" />
         <JlptRef level={fav.level} />
         <span className="text-[11px] text-muted-foreground">
-          {intentMeta?.emoji} {intentMeta?.short ?? fav.intent.type}
+          {intentMeta.emoji} {intentMeta.short}
         </span>
       </div>
 
@@ -120,9 +120,8 @@ function FavoriteCard({ fav }: { fav: FavoriteEntry }) {
         </div>
       )}
 
-
       <p className="mt-3 text-xs text-muted-foreground">
-        Dari: <span className="text-foreground/80">"{fav.input}"</span>
+        {t("fav.from")} <span className="text-foreground/80">"{fav.input}"</span>
       </p>
 
       {(fav.grammar?.length || fav.kanji?.length || fav.why_this_level) && (
@@ -134,25 +133,25 @@ function FavoriteCard({ fav }: { fav: FavoriteEntry }) {
             <ChevronDown
               className={cn("w-3.5 h-3.5 transition-transform", open && "rotate-180")}
             />
-            {open ? "Sembunyikan" : "Lihat detail"}
+            {open ? t("rp.hide") : t("rp.viewDetails")}
           </button>
           {open && (
             <div className="mt-4 space-y-4">
               {fav.nuance && (
                 <div className="rounded-lg bg-muted/60 p-3 text-sm text-foreground/80">
-                  <span className="font-medium text-foreground">Nuansa: </span>
+                  <span className="font-medium text-foreground">{t("fav.nuance")}</span>
                   {fav.nuance}
                 </div>
               )}
               {fav.why_this_level && (
                 <div className="rounded-lg border border-border p-3 text-sm">
-                  <p className="font-semibold mb-1">Kenapa level ini?</p>
+                  <p className="font-semibold mb-1">{t("rp.whyLevel")}</p>
                   <p className="text-muted-foreground">{fav.why_this_level}</p>
                 </div>
               )}
               {fav.grammar && fav.grammar.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-semibold mb-2">Tata Bahasa</h3>
+                  <h3 className="text-sm font-semibold mb-2">{t("rp.grammar")}</h3>
                   <ul className="space-y-2">
                     {fav.grammar.map((g, i) => (
                       <li key={i} className="rounded-lg border border-border p-3 text-sm">
@@ -165,7 +164,7 @@ function FavoriteCard({ fav }: { fav: FavoriteEntry }) {
               )}
               {fav.kanji && fav.kanji.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-semibold mb-2">Kanji</h3>
+                  <h3 className="text-sm font-semibold mb-2">{t("rp.kanji")}</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {fav.kanji.map((k, i) => (
                       <KanjiCard key={i} k={k} />
@@ -173,7 +172,6 @@ function FavoriteCard({ fav }: { fav: FavoriteEntry }) {
                   </div>
                 </div>
               )}
-
             </div>
           )}
         </>
