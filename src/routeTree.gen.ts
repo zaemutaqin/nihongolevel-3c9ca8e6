@@ -9,8 +9,12 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as RiwayatRouteImport } from './routes/riwayat'
 import { Route as ReviewRouteImport } from './routes/review'
+import { Route as RefundRouteImport } from './routes/refund'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as FavoritRouteImport } from './routes/favorit'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
@@ -18,6 +22,11 @@ import { Route as ApiTranslateRouteImport } from './routes/api/translate'
 import { Route as ApiActivateProRouteImport } from './routes/api/activate-pro'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RiwayatRoute = RiwayatRouteImport.update({
   id: '/riwayat',
   path: '/riwayat',
@@ -26,6 +35,21 @@ const RiwayatRoute = RiwayatRouteImport.update({
 const ReviewRoute = ReviewRouteImport.update({
   id: '/review',
   path: '/review',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RefundRoute = RefundRouteImport.update({
+  id: '/refund',
+  path: '/refund',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FavoritRoute = FavoritRouteImport.update({
@@ -64,8 +88,12 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/favorit': typeof FavoritRoute
+  '/pricing': typeof PricingRoute
+  '/privacy': typeof PrivacyRoute
+  '/refund': typeof RefundRoute
   '/review': typeof ReviewRoute
   '/riwayat': typeof RiwayatRoute
+  '/terms': typeof TermsRoute
   '/api/activate-pro': typeof ApiActivateProRoute
   '/api/translate': typeof ApiTranslateRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -74,8 +102,12 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/favorit': typeof FavoritRoute
+  '/pricing': typeof PricingRoute
+  '/privacy': typeof PrivacyRoute
+  '/refund': typeof RefundRoute
   '/review': typeof ReviewRoute
   '/riwayat': typeof RiwayatRoute
+  '/terms': typeof TermsRoute
   '/api/activate-pro': typeof ApiActivateProRoute
   '/api/translate': typeof ApiTranslateRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -85,8 +117,12 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/favorit': typeof FavoritRoute
+  '/pricing': typeof PricingRoute
+  '/privacy': typeof PrivacyRoute
+  '/refund': typeof RefundRoute
   '/review': typeof ReviewRoute
   '/riwayat': typeof RiwayatRoute
+  '/terms': typeof TermsRoute
   '/api/activate-pro': typeof ApiActivateProRoute
   '/api/translate': typeof ApiTranslateRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -97,8 +133,12 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/favorit'
+    | '/pricing'
+    | '/privacy'
+    | '/refund'
     | '/review'
     | '/riwayat'
+    | '/terms'
     | '/api/activate-pro'
     | '/api/translate'
     | '/api/public/payments/webhook'
@@ -107,8 +147,12 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/favorit'
+    | '/pricing'
+    | '/privacy'
+    | '/refund'
     | '/review'
     | '/riwayat'
+    | '/terms'
     | '/api/activate-pro'
     | '/api/translate'
     | '/api/public/payments/webhook'
@@ -117,8 +161,12 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/favorit'
+    | '/pricing'
+    | '/privacy'
+    | '/refund'
     | '/review'
     | '/riwayat'
+    | '/terms'
     | '/api/activate-pro'
     | '/api/translate'
     | '/api/public/payments/webhook'
@@ -128,8 +176,12 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRoute
   FavoritRoute: typeof FavoritRoute
+  PricingRoute: typeof PricingRoute
+  PrivacyRoute: typeof PrivacyRoute
+  RefundRoute: typeof RefundRoute
   ReviewRoute: typeof ReviewRoute
   RiwayatRoute: typeof RiwayatRoute
+  TermsRoute: typeof TermsRoute
   ApiActivateProRoute: typeof ApiActivateProRoute
   ApiTranslateRoute: typeof ApiTranslateRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
@@ -137,6 +189,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/riwayat': {
       id: '/riwayat'
       path: '/riwayat'
@@ -149,6 +208,27 @@ declare module '@tanstack/react-router' {
       path: '/review'
       fullPath: '/review'
       preLoaderRoute: typeof ReviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/refund': {
+      id: '/refund'
+      path: '/refund'
+      fullPath: '/refund'
+      preLoaderRoute: typeof RefundRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/favorit': {
@@ -200,8 +280,12 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
   FavoritRoute: FavoritRoute,
+  PricingRoute: PricingRoute,
+  PrivacyRoute: PrivacyRoute,
+  RefundRoute: RefundRoute,
   ReviewRoute: ReviewRoute,
   RiwayatRoute: RiwayatRoute,
+  TermsRoute: TermsRoute,
   ApiActivateProRoute: ApiActivateProRoute,
   ApiTranslateRoute: ApiTranslateRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,

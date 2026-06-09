@@ -7,6 +7,7 @@ import { useAuth } from "@/lib/auth";
 import { gtagEvent } from "@/lib/gtag";
 import { PaymentTestModeBanner } from "./PaymentTestModeBanner";
 import { UpgradeSuccessListener } from "./UpgradeSuccessListener";
+import { SiteFooter } from "./SiteFooter";
 
 import { UserMenu } from "./UserMenu";
 
@@ -115,6 +116,10 @@ export function AppShell() {
       <main className="pb-24 sm:pb-10">
         <Outlet />
       </main>
+
+      <div className="hidden sm:block">
+        <SiteFooter />
+      </div>
 
       {/* Mobile bottom nav */}
       <nav className="sm:hidden fixed bottom-0 inset-x-0 z-30 border-t border-border bg-background/95 backdrop-blur">
