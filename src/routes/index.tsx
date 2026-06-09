@@ -547,7 +547,7 @@ function Index() {
       )}
 
       <footer className="mt-16 pb-6 text-center text-xs text-muted-foreground">
-        Dibuat untuk belajar bahasa Jepang ✿
+        {t("home.footer")}
       </footer>
     </div>
   );
