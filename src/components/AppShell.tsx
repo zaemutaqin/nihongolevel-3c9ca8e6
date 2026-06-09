@@ -1,5 +1,5 @@
 import { Link, Outlet } from "@tanstack/react-router";
-import { Search, History, Star, BarChart3, RotateCw, Lock } from "lucide-react";
+import { Home, Search, History, Star, BarChart3, RotateCw, Lock } from "lucide-react";
 import { Toaster } from "@/components/ui/sonner";
 import { useT, setLang, type Lang } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
