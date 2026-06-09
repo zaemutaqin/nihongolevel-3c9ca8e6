@@ -176,7 +176,7 @@ function Index() {
   const handleTranslate = async (text?: string) => {
     const sentence = (text ?? input).trim();
     if (!sentence) {
-      setError("Silakan masukkan kalimat terlebih dahulu.");
+      setError(t("home.errEmpty"));
       return;
     }
     gtagEvent("search", { search_term: sentence });
