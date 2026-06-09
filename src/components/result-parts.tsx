@@ -217,12 +217,6 @@ export function NaturalnessChip({ value }: { value: Naturalness }) {
 }
 
 // ============= Kanji =============
-const FREQ_LABEL: Record<string, string> = {
-  sangat_umum: "Sangat Umum",
-  umum: "Umum",
-  khusus: "Khusus",
-};
-
 function kanjiFrequency(k: KanjiInfo): "sangat_umum" | "umum" | "khusus" {
   if (k.frequency) return k.frequency;
   const j = (k.jlpt || "").toUpperCase();
@@ -232,6 +226,7 @@ function kanjiFrequency(k: KanjiInfo): "sangat_umum" | "umum" | "khusus" {
 }
 
 export function KanjiCard({ k }: { k: KanjiInfo }) {
+  const { t } = useT();
   const freq = kanjiFrequency(k);
   const jlpt = (k.jlpt || "N4").toUpperCase();
   return (
@@ -250,7 +245,7 @@ export function KanjiCard({ k }: { k: KanjiInfo }) {
           >
             {jlpt}
           </span>
-          <span className="text-[10px] text-muted-foreground">{FREQ_LABEL[freq]}</span>
+          <span className="text-[10px] text-muted-foreground">{t(`rp.kanjiFreq.${freq}`)}</span>
         </div>
       </div>
       <p className="mt-3 text-[11px] text-muted-foreground font-jp leading-snug">{k.reading}</p>
@@ -259,7 +254,7 @@ export function KanjiCard({ k }: { k: KanjiInfo }) {
       {k.example_words && k.example_words.length > 0 && (
         <div className="mt-3 pt-3 border-t border-border">
           <p className="text-[10px] uppercase font-semibold text-muted-foreground mb-1.5">
-            Kanji ini juga muncul dalam:
+            {t("rp.alsoIn")}
           </p>
           <ul className="space-y-1.5">
             {k.example_words.slice(0, 2).map((w, i) => (
