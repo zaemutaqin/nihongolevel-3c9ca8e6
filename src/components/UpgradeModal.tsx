@@ -1,10 +1,11 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { X, Check, Loader2, Crown, ShieldCheck } from "lucide-react";
+import { X, Check, Loader2, Crown, ShieldCheck, Gift } from "lucide-react";
 import { useLang } from "@/lib/i18n";
 import { useAuth } from "@/lib/auth";
 import { usePaddleCheckout } from "@/hooks/usePaddleCheckout";
 import { SignInButton } from "./SignInButton";
+import { supabase } from "@/integrations/supabase/client";
 
 interface UpgradeModalProps {
   open: boolean;
