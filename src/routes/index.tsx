@@ -206,12 +206,20 @@ function Index() {
     setFromCache(false);
     setLoading(true);
 
-    // 2) Stream from the server route
+    // 2) Stream from the server route — with one automatic retry on failure
     abortRef.current?.abort();
     const ctrl = new AbortController();
     abortRef.current = ctrl;
 
-    try {
+    const NON_RETRYABLE = new Set([
+      "FORBIDDEN_ORIGIN",
+      "RATE_LIMITED",
+      "CREDITS_EXHAUSTED",
+      "SERVER_MISCONFIGURED",
+    ]);
+
+    const attempt = async (): Promise<TranslationResult> => {
+      resetPartial();
       const res = await fetch("/api/translate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -219,6 +227,7 @@ function Index() {
           sentence,
           listener: listener || undefined,
           mood: mood || undefined,
+          lang,
         }),
         signal: ctrl.signal,
       });
@@ -268,7 +277,6 @@ function Index() {
               setPartialLevels((prev) => ({ ...prev, [lk]: block }));
             }
           } else if (ev.type === "done") {
-            // Build the full TranslationResult via the server-side mapper.
             const raw = ev.full as {
               intent: IntentInfo;
               social_analysis: SocialAnalysis;
@@ -312,6 +320,20 @@ function Index() {
       }
 
       if (!finalFull) throw new Error("INVALID_RESPONSE");
+      return finalFull;
+    };
+
+    try {
+      let finalFull: TranslationResult;
+      try {
+        finalFull = await attempt();
+      } catch (e) {
+        if ((e as Error)?.name === "AbortError") throw e;
+        const code = (e as Error)?.message;
+        if (NON_RETRYABLE.has(code)) throw e;
+        console.warn("[translate] first attempt failed, retrying once:", code);
+        finalFull = await attempt();
+      }
       finalize(sentence, finalFull, false);
     } catch (e) {
       if ((e as Error)?.name === "AbortError") return;
