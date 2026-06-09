@@ -234,7 +234,7 @@ const ID: Dict = {
   "err.AI_UNAVAILABLE": "Layanan AI tidak tersedia. Coba lagi nanti.",
   "err.INVALID_RESPONSE": "Gagal memproses respons. Coba lagi.",
   "err.SERVER_MISCONFIGURED": "Layanan belum siap. Coba lagi nanti.",
-  "err.generic": "Gagal menerjemahkan kalimat. Coba lagi.",
+  "err.generic": "Gagal memproses. Coba lagi.",
 
   // Examples
   "examples": [
@@ -441,7 +441,7 @@ const EN: Dict = {
   "err.AI_UNAVAILABLE": "AI service unavailable. Please try again later.",
   "err.INVALID_RESPONSE": "Failed to process the response. Please try again.",
   "err.SERVER_MISCONFIGURED": "Service not ready. Please try again later.",
-  "err.generic": "Failed to translate the sentence. Please try again.",
+  "err.generic": "Failed to process. Please try again.",
 
   "examples": [
     "What should I eat today?",
