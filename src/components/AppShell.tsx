@@ -1,9 +1,12 @@
 import { Link, Outlet } from "@tanstack/react-router";
 import { Search, History, Star, BarChart3, RotateCw } from "lucide-react";
+import { Toaster } from "@/components/ui/sonner";
 import { useT, setLang, type Lang } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth";
 import { gtagEvent } from "@/lib/gtag";
+import { PaymentTestModeBanner } from "./PaymentTestModeBanner";
+import { UpgradeSuccessListener } from "./UpgradeSuccessListener";
 
 import { UserMenu } from "./UserMenu";
 
