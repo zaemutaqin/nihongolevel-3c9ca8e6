@@ -21,10 +21,10 @@ const NAV: NavItem[] = [
   { to: "/review", key: "review", Icon: RotateCw, proOnly: true },
 ];
 
-function LangToggle({ lang, size = "md" }: { lang: Lang; size?: "sm" | "md" }) {
-  const dim = size === "sm" ? "w-7 h-7" : "w-9 h-9";
+function LangToggle({ lang, size = "md" }: { lang: Lang; size?: "sm" | "md" | "xs" }) {
+  const dim = size === "xs" ? "w-5 h-5" : size === "sm" ? "w-6 h-6" : "w-8 h-8";
   return (
-    <div className="inline-flex items-center gap-2">
+    <div className="inline-flex items-center gap-1.5">
       <button
         onClick={() => {
           setLang("id");
@@ -33,7 +33,7 @@ function LangToggle({ lang, size = "md" }: { lang: Lang; size?: "sm" | "md" }) {
         className={cn(
           "rounded-full transition shadow-sm hover:scale-105",
           dim,
-          lang === "id" ? "ring-2 ring-primary ring-offset-2 ring-offset-background" : "opacity-70 hover:opacity-100",
+          lang === "id" ? "ring-2 ring-primary ring-offset-1 ring-offset-background" : "opacity-70 hover:opacity-100",
         )}
         aria-label="Bahasa Indonesia"
         title="Bahasa Indonesia"
@@ -48,7 +48,7 @@ function LangToggle({ lang, size = "md" }: { lang: Lang; size?: "sm" | "md" }) {
         className={cn(
           "rounded-full transition shadow-sm hover:scale-105",
           dim,
-          lang === "en" ? "ring-2 ring-primary ring-offset-2 ring-offset-background" : "opacity-70 hover:opacity-100",
+          lang === "en" ? "ring-2 ring-primary ring-offset-1 ring-offset-background" : "opacity-70 hover:opacity-100",
         )}
         aria-label="English"
         title="English"
