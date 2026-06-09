@@ -1,13 +1,24 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
-import { useState, useEffect, type KeyboardEvent } from "react";
-import { Loader2, ChevronDown, AlertCircle, Sparkles } from "lucide-react";
+import { useState, useEffect, useRef, type KeyboardEvent } from "react";
+import { Loader2, ChevronDown, AlertCircle, Sparkles, Zap } from "lucide-react";
 import {
-  translateSentence,
-  TRANSLATE_ERROR_CODES,
-  type TranslateErrorCode,
+  styleBlockToLevelBlock,
   type TranslationResult,
+  type IntentInfo,
+  type SocialAnalysis,
+  type MostNatural,
+  type AlternativeExpression,
+  type LevelBlock,
+  type RawStyleBlock,
 } from "@/lib/translate.functions";
+
+type TranslateErrorCode =
+  | "FORBIDDEN_ORIGIN"
+  | "RATE_LIMITED"
+  | "CREDITS_EXHAUSTED"
+  | "AI_UNAVAILABLE"
+  | "INVALID_RESPONSE"
+  | "SERVER_MISCONFIGURED";
 
 const ERROR_MESSAGES: Record<TranslateErrorCode, string> = {
   FORBIDDEN_ORIGIN: "Permintaan tidak diizinkan. Buka aplikasi dari situs resmi.",
@@ -33,10 +44,18 @@ import {
   AlternativesSection,
 } from "@/components/result-parts";
 import {
+  IntentBadgeSkeleton,
+  MostNaturalSkeleton,
+  StyleCardSkeleton,
+} from "@/components/result-skeletons";
+import {
   addHistory,
   addFavoriteFromLevel,
   addFavoriteFromMostNatural,
   isFavorited,
+  buildCacheKey,
+  getCachedResult,
+  setCachedResult,
   type HistoryEntry,
   type LevelKey,
 } from "@/lib/storage";
@@ -98,12 +117,12 @@ const MOOD_OPTIONS = [
 ];
 
 function Index() {
-  const translate = useServerFn(translateSentence);
   const [input, setInput] = useState("");
   const [listener, setListener] = useState("");
   const [mood, setMood] = useState("");
   const [contextOpen, setContextOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [fromCache, setFromCache] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<TranslationResult | null>(null);
   const [historyEntry, setHistoryEntry] = useState<HistoryEntry | null>(null);
@@ -115,6 +134,21 @@ function Index() {
     n1: false,
   });
 
+  // Progressive (partial) result fields populated while the AI is streaming.
+  const [partialIntent, setPartialIntent] = useState<IntentInfo | null>(null);
+  const [partialSocial, setPartialSocial] = useState<SocialAnalysis | null>(null);
+  const [partialMostNatural, setPartialMostNatural] = useState<MostNatural | null>(null);
+  const [partialAlts, setPartialAlts] = useState<AlternativeExpression[]>([]);
+  const [partialLevels, setPartialLevels] = useState<Partial<Record<LevelKey, LevelBlock>>>({});
+  const abortRef = useRef<AbortController | null>(null);
+
+  const STYLE_TO_LEVEL_KEY: Record<string, LevelKey> = {
+    dasar: "n4",
+    sehari_hari: "n3",
+    ekspresif: "n2",
+    mendekati_native: "n1",
+  };
+
   // Pick up prefill written by Dashboard suggestion chips
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -125,8 +159,23 @@ function Index() {
     }
   }, []);
 
+  const resetPartial = () => {
+    setPartialIntent(null);
+    setPartialSocial(null);
+    setPartialMostNatural(null);
+    setPartialAlts([]);
+    setPartialLevels({});
+  };
 
-
+  const finalize = (sentence: string, full: TranslationResult, cached: boolean) => {
+    setResult(full);
+    const entry = addHistory(sentence, full);
+    setHistoryEntry(entry);
+    setOpen({ n4: false, n3: false, n2: false, n1: false });
+    if (!cached) {
+      setCachedResult(buildCacheKey(sentence, listener, mood), full);
+    }
+  };
 
   const handleTranslate = async (text?: string) => {
     const sentence = (text ?? input).trim();
@@ -135,18 +184,131 @@ function Index() {
       return;
     }
     setError(null);
-    setLoading(true);
     setResult(null);
     setHistoryEntry(null);
+    resetPartial();
+
+    // 1) Cache hit → instant render
+    const ckey = buildCacheKey(sentence, listener, mood);
+    const cached = getCachedResult(ckey);
+    if (cached) {
+      setFromCache(true);
+      setLoading(false);
+      finalize(sentence, cached, true);
+      return;
+    }
+    setFromCache(false);
+    setLoading(true);
+
+    // 2) Stream from the server route
+    abortRef.current?.abort();
+    const ctrl = new AbortController();
+    abortRef.current = ctrl;
+
     try {
-      const data = await translate({
-        data: { sentence, listener: listener || undefined, mood: mood || undefined },
+      const res = await fetch("/api/translate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sentence,
+          listener: listener || undefined,
+          mood: mood || undefined,
+        }),
+        signal: ctrl.signal,
       });
-      setResult(data);
-      const entry = addHistory(sentence, data);
-      setHistoryEntry(entry);
-      setOpen({ n4: false, n3: false, n2: false, n1: false });
+      if (!res.ok || !res.body) {
+        let code = "AI_UNAVAILABLE";
+        try {
+          const j = await res.json();
+          if (j?.error) code = j.error;
+        } catch {
+          /* noop */
+        }
+        throw new Error(code);
+      }
+
+      const reader = res.body.getReader();
+      const dec = new TextDecoder();
+      let buf = "";
+      let finalFull: TranslationResult | null = null;
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buf += dec.decode(value, { stream: true });
+        let nl: number;
+        while ((nl = buf.indexOf("\n")) !== -1) {
+          const line = buf.slice(0, nl).trim();
+          buf = buf.slice(nl + 1);
+          if (!line) continue;
+          let ev: { type: string; [k: string]: unknown };
+          try {
+            ev = JSON.parse(line);
+          } catch {
+            continue;
+          }
+          if (ev.type === "section") {
+            const k = ev.key as string;
+            if (k === "intent") setPartialIntent(ev.value as IntentInfo);
+            else if (k === "social_analysis") setPartialSocial(ev.value as SocialAnalysis);
+            else if (k === "most_natural") setPartialMostNatural(ev.value as MostNatural);
+            else if (k === "alternatives")
+              setPartialAlts((ev.value as AlternativeExpression[]) ?? []);
+          } else if (ev.type === "style") {
+            const sk = ev.styleKey as string;
+            const lk = STYLE_TO_LEVEL_KEY[sk];
+            if (lk) {
+              const block = styleBlockToLevelBlock(ev.value as RawStyleBlock);
+              setPartialLevels((prev) => ({ ...prev, [lk]: block }));
+            }
+          } else if (ev.type === "done") {
+            // Build the full TranslationResult via the server-side mapper.
+            const raw = ev.full as {
+              intent: IntentInfo;
+              social_analysis: SocialAnalysis;
+              most_natural: MostNatural;
+              alternatives?: (AlternativeExpression & { style?: string })[];
+              styles?: Record<string, RawStyleBlock>;
+            };
+            const styles = raw.styles ?? {};
+            const styleToLvl: Record<string, "N4" | "N3" | "N2" | "N1"> = {
+              dasar: "N4",
+              sehari_hari: "N3",
+              ekspresif: "N2",
+              mendekati_native: "N1",
+            };
+            const alts: AlternativeExpression[] = (raw.alternatives ?? []).map((a, i) => ({
+              rank: a.rank ?? i + 1,
+              role_label: a.role_label,
+              context_label: a.context_label,
+              japanese: a.japanese,
+              romaji: a.romaji,
+              explanation: a.explanation,
+              level: a.style ? styleToLvl[a.style] ?? "N3" : a.level ?? "N3",
+            }));
+            finalFull = {
+              intent: raw.intent,
+              social_analysis: raw.social_analysis,
+              most_natural: {
+                ...raw.most_natural,
+                level: raw.most_natural?.level ?? "N3",
+              },
+              alternatives: alts,
+              n4: styleBlockToLevelBlock(styles.dasar),
+              n3: styleBlockToLevelBlock(styles.sehari_hari),
+              n2: styleBlockToLevelBlock(styles.ekspresif),
+              n1: styleBlockToLevelBlock(styles.mendekati_native),
+            };
+          } else if (ev.type === "error") {
+            throw new Error((ev.code as string) || "AI_UNAVAILABLE");
+          }
+        }
+      }
+
+      if (!finalFull) throw new Error("INVALID_RESPONSE");
+      finalize(sentence, finalFull, false);
     } catch (e) {
+      if ((e as Error)?.name === "AbortError") return;
       console.error(e);
       setError(friendlyError(e));
     } finally {
@@ -295,17 +457,59 @@ function Index() {
       )}
 
       {loading && !result && (
-        <div className="mt-10 flex flex-col items-center justify-center gap-3 text-muted-foreground">
-          <Loader2 className="w-8 h-8 animate-spin" />
-          <p className="text-sm">Sedang mencari ekspresi yang tepat...</p>
+        <div className="mt-8 space-y-6">
+          <h2 className="text-base font-bold text-foreground">
+            Bagaimana orang Jepang mengatakannya
+          </h2>
+          {partialIntent ? <IntentBadge intent={partialIntent} /> : <IntentBadgeSkeleton />}
+          {partialSocial && <SocialAnalysisCard data={partialSocial} />}
+          {partialMostNatural ? (
+            <MostNaturalCard
+              data={{ ...partialMostNatural, level: partialMostNatural.level ?? "N3" }}
+              isFav={false}
+              onFavorite={() => {}}
+            />
+          ) : (
+            <MostNaturalSkeleton />
+          )}
+          <section>
+            <h3 className="text-sm font-bold uppercase tracking-wide mb-3 text-foreground/80">
+              Pilihan ekspresi berdasarkan gaya komunikasi
+            </h3>
+            <div className="space-y-4">
+              {LEVELS.map(({ key, label }) =>
+                partialLevels[key] ? (
+                  <LevelCard
+                    key={key}
+                    level={label}
+                    data={partialLevels[key]!}
+                    open={false}
+                    onToggle={() => {}}
+                    isFav={false}
+                    onFavorite={() => {}}
+                  />
+                ) : (
+                  <StyleCardSkeleton key={key} label={label} />
+                ),
+              )}
+            </div>
+          </section>
         </div>
       )}
 
       {result && historyEntry && (
         <div className="mt-8 space-y-6" key={favTick}>
-          <h2 className="text-base font-bold text-foreground">
-            Bagaimana orang Jepang mengatakannya
-          </h2>
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="text-base font-bold text-foreground">
+              Bagaimana orang Jepang mengatakannya
+            </h2>
+            {fromCache && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-[11px] font-medium text-muted-foreground">
+                <Zap className="w-3 h-3" />
+                Dari cache
+              </span>
+            )}
+          </div>
           <IntentBadge intent={result.intent} />
           {result.social_analysis && <SocialAnalysisCard data={result.social_analysis} />}
           <MostNaturalCard

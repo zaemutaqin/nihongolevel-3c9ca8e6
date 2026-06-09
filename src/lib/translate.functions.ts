@@ -174,18 +174,40 @@ export function cleanJapanese(text: string | undefined | null): string {
     .trim();
 }
 
-function jlptToFrequency(jlpt: string | undefined): KanjiFrequency {
+export function jlptToFrequency(jlpt: string | undefined): KanjiFrequency {
   const j = (jlpt || "").toUpperCase();
   if (j === "N5" || j === "N4") return "sangat_umum";
   if (j === "N3") return "umum";
   return "khusus";
 }
 
-function normalizeKanji(k: KanjiInfo): KanjiInfo {
+export function normalizeKanji(k: KanjiInfo): KanjiInfo {
   return {
     ...k,
     frequency: k.frequency ?? jlptToFrequency(k.jlpt),
     example_words: k.example_words ?? [],
+  };
+}
+
+export const STYLE_KEY_TO_LEVEL = STYLE_TO_LEVEL;
+export type { RawStyleBlock };
+
+// Convert a raw style block (as emitted by the AI) into the legacy LevelBlock
+// shape used by UI components and storage.
+export function styleBlockToLevelBlock(s: RawStyleBlock | undefined | null): LevelBlock {
+  const src = s ?? ({} as RawStyleBlock);
+  return {
+    japanese: cleanJapanese(src.japanese),
+    romaji: src.romaji ?? "",
+    naturalness: src.naturalness ?? "stiff",
+    naturalness_note: src.naturalness_note ?? "",
+    nuance: src.impression ?? "",
+    why_this_level: src.why_this_style ?? "",
+    grammar: src.grammar ?? [],
+    kanji: (src.kanji ?? []).map(normalizeKanji),
+    when_to_use: src.when_to_use,
+    suitable_for: src.suitable_for,
+    impression: src.impression,
   };
 }
 
