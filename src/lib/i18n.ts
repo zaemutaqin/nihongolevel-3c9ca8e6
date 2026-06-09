@@ -260,11 +260,13 @@ const ID: Dict = {
 
 const EN: Dict = {
   "nav.search": "Search",
+  "nav.home": "Home",
   "nav.history": "History",
   "nav.favorites": "Favorites",
   "nav.dashboard": "My Learning",
   "nav.review": "Daily Practice",
   "nav.search_short": "Search",
+  "nav.home_short": "Home",
   "nav.history_short": "History",
   "nav.favorites_short": "Favorites",
   "nav.dashboard_short": "My Learning",
