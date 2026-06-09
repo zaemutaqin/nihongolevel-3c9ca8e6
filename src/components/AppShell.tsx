@@ -2,6 +2,9 @@ import { Link, Outlet } from "@tanstack/react-router";
 import { Search, History, Star, BarChart3, RotateCw } from "lucide-react";
 import { useT, setLang, type Lang } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/lib/auth";
+import { Landing } from "./Landing";
+import { UserMenu } from "./UserMenu";
 
 type NavItem = { to: string; key: string; Icon: typeof Search; exact?: boolean };
 const NAV: NavItem[] = [
@@ -41,6 +44,18 @@ function LangToggle({ lang }: { lang: Lang }) {
 
 export function AppShell() {
   const { t, lang } = useT();
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="w-6 h-6 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+      </div>
+    );
+  }
+
+  if (!user) return <Landing />;
+
   return (
     <div className="min-h-screen bg-background text-foreground font-sans">
       {/* Desktop top nav */}
@@ -64,8 +79,9 @@ export function AppShell() {
               </Link>
             ))}
           </div>
-          <div className="ml-auto">
+          <div className="ml-auto flex items-center gap-3">
             <LangToggle lang={lang} />
+            <UserMenu />
           </div>
         </div>
       </nav>
@@ -75,7 +91,10 @@ export function AppShell() {
         <Link to="/" className="font-bold">
           Nihongo<span className="text-primary">Level</span>
         </Link>
-        <LangToggle lang={lang} />
+        <div className="flex items-center gap-2">
+          <LangToggle lang={lang} />
+          <UserMenu />
+        </div>
       </div>
 
       <main className="pb-24 sm:pb-10">
