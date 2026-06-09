@@ -147,7 +147,7 @@ Rules: ${explLang} = ${explLangFull} (write every "${explLang}" field in ${explL
             messages: [{ role: "user", content: prompt }],
             temperature: 0.3,
             stream: true,
-            max_tokens: 1800,
+            max_tokens: 3200,
           }),
         });
 
