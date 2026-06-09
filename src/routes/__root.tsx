@@ -77,18 +77,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Bicara seperti Native" },
+      { title: "NihongoLevel" },
+      { name: "description", content: "Belajar berbicara seperti orang Jepang — bukan sekadar lulus JLPT" },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Bicara seperti Native" },
+      { property: "og:title", content: "NihongoLevel" },
+      { property: "og:description", content: "Belajar berbicara seperti orang Jepang — bukan sekadar lulus JLPT" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
-      { name: "twitter:title", content: "Lovable App" },
-      { name: "twitter:description", content: "Bicara seperti Native" },
+      { name: "twitter:title", content: "NihongoLevel" },
+      { name: "twitter:description", content: "Belajar berbicara seperti orang Jepang — bukan sekadar lulus JLPT" },
       { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/832700fb-d35d-41bb-90f1-59e25a3a3749/id-preview-cfbe2ff6--4d22f449-03a6-44f6-8f4d-20ce6466fc54.lovable.app-1780792152611.png" },
       { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/832700fb-d35d-41bb-90f1-59e25a3a3749/id-preview-cfbe2ff6--4d22f449-03a6-44f6-8f4d-20ce6466fc54.lovable.app-1780792152611.png" },
+
     ],
     links: [
       {
