@@ -178,7 +178,18 @@ export const Route = createFileRoute("/api/translate")({
           return jsonResponse({ error: "server_misconfigured" }, 500, allowedOrigin);
         }
 
-        const { listener, mood, lang } = parsed.data;
+        const { lang } = parsed.data;
+        // Sanitize listener/mood the same way as `sentence` to prevent prompt injection.
+        const sanitizeOptional = (raw: string | undefined): string | undefined => {
+          if (!raw) return undefined;
+          const s = sanitizeInput(raw);
+          if (!s.ok) return undefined;
+          if (isInappropriate(s.value)) return undefined;
+          // Strip characters commonly used in prompt-injection attempts.
+          return s.value.replace(/[\r\n`{}<>]/g, " ").slice(0, 100).trim() || undefined;
+        };
+        const listener = sanitizeOptional(parsed.data.listener);
+        const mood = sanitizeOptional(parsed.data.mood);
         const sentence = cleanedInput;
         const inputLength = sane.value.length;
         const isEn = lang === "en";
