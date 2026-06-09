@@ -30,7 +30,21 @@ import { useAuth } from "@/lib/auth";
 import { LockedFeature } from "@/components/LockedFeature";
 
 export const Route = createFileRoute("/riwayat")({
-  head: () => ({ meta: [{ title: "Riwayat — NihongoLevel" }] }),
+  head: () => ({
+    meta: [
+      { title: "Riwayat — NihongoLevel" },
+      {
+        name: "description",
+        content:
+          "Semua pencarian ekspresi bahasa Jepang kamu tersimpan di sini — tinjau ulang, tandai favorit, dan lanjutkan belajar dari mana pun kamu berhenti.",
+      },
+      { property: "og:title", content: "Riwayat Pencarian — NihongoLevel" },
+      { property: "og:description", content: "Riwayat lengkap pencarian ekspresi bahasa Jepang kamu." },
+      { property: "og:url", content: "/riwayat" },
+    ],
+    links: [{ rel: "canonical", href: "/riwayat" }],
+  }),
+
   component: RiwayatPage,
 });
 
