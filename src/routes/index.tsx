@@ -179,6 +179,7 @@ function Index() {
       setError("Silakan masukkan kalimat terlebih dahulu.");
       return;
     }
+    gtagEvent("search", { search_term: sentence });
     setError(null);
     setResult(null);
     setHistoryEntry(null);
@@ -514,6 +515,7 @@ function Index() {
             onFavorite={() => {
               addFavoriteFromMostNatural(historyEntry);
               setFavTick((t) => t + 1);
+              gtagEvent("save_favorite");
             }}
           />
           <section>
@@ -532,6 +534,7 @@ function Index() {
                   onFavorite={() => {
                     addFavoriteFromLevel(historyEntry, key);
                     setFavTick((t) => t + 1);
+                    gtagEvent("save_favorite");
                   }}
                 />
               ))}

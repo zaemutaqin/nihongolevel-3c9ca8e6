@@ -20,7 +20,10 @@ function LangToggle({ lang }: { lang: Lang }) {
   return (
     <div className="inline-flex items-center gap-0.5 rounded-full border border-border bg-background p-0.5 text-xs font-semibold">
       <button
-        onClick={() => setLang("id")}
+        onClick={() => {
+          setLang("id");
+          gtagEvent("language_switch", { language: "id" });
+        }}
         className={cn(
           "px-2 py-0.5 rounded-full transition",
           lang === "id" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground",
@@ -30,7 +33,10 @@ function LangToggle({ lang }: { lang: Lang }) {
         🇮🇩 ID
       </button>
       <button
-        onClick={() => setLang("en")}
+        onClick={() => {
+          setLang("en");
+          gtagEvent("language_switch", { language: "en" });
+        }}
         className={cn(
           "px-2 py-0.5 rounded-full transition",
           lang === "en" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground",
