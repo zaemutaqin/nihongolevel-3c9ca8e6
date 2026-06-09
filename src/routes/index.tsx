@@ -97,6 +97,18 @@ function Index() {
     n1: false,
   });
 
+  // Pick up prefill written by Dashboard suggestion chips
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const pre = sessionStorage.getItem("nihongo_prefill");
+    if (pre) {
+      sessionStorage.removeItem("nihongo_prefill");
+      setInput(pre);
+    }
+  }, []);
+
+
+
 
   const handleTranslate = async (text?: string) => {
     const sentence = (text ?? input).trim();
