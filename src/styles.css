@@ -175,3 +175,7 @@
   animation: natural-pulse 2.8s ease-in-out infinite;
 }
 
+
+/* Hide Lovable badge */
+#lovable-badge { display: none !important; }
+[data-lovable-badge] { display: none !important; }
