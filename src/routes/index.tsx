@@ -383,6 +383,14 @@ function Index() {
         </h1>
 
         <p className="mt-2 text-sm text-muted-foreground">{t("home.subtitle")}</p>
+        {!profile && (
+          <div className="mt-4 flex flex-col items-center gap-2">
+            <p className="text-xs text-muted-foreground">
+              {lang === "id" ? "Sudah punya akun Pro?" : "Already a Pro user?"}
+            </p>
+            <SignInButton size="sm" />
+          </div>
+        )}
       </header>
 
       <section className="rounded-2xl border border-border bg-card p-6 shadow-sm">
