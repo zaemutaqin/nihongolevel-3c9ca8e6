@@ -84,7 +84,7 @@ export function TermsPage() {
 
         <h2>8. Refunds</h2>
         <p>
-          See our <Link to="/refund">Refund Policy</Link>. Refunds are processed by Paddle.
+          See our <Link to="/refund-policy">Refund Policy</Link>. Refunds are processed by Paddle.
         </p>
 
         <h2>9. Service availability and content accuracy</h2>
@@ -99,7 +99,7 @@ export function TermsPage() {
 
         <h2>11. Suspension and termination</h2>
         <p>
-          We may suspend or terminate your access if you materially breach these Terms, fail to pay, pose a security or fraud risk, or seriously or repeatedly violate our policies. You may stop using the Service at any time. When access ends, your locally-stored data on your device remains yours; cloud-stored data will be deleted in accordance with our <Link to="/privacy">Privacy Notice</Link>.
+          We may suspend or terminate your access if you materially breach these Terms, fail to pay, pose a security or fraud risk, or seriously or repeatedly violate our policies. You may stop using the Service at any time. When access ends, your locally-stored data on your device remains yours; cloud-stored data will be deleted in accordance with our <Link to="/privacy-policy">Privacy Policy</Link>.
         </p>
 
         <h2>12. Limitation of liability</h2>

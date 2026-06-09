@@ -68,7 +68,7 @@ export function RefundPage() {
         <h2>What is not refundable</h2>
         <p>
           Refund requests made <strong>more than 30 days</strong> after the order date are reviewed on a case-by-case basis by Paddle and may be declined. Refunds may also be declined where there is evidence of fraud or serious breach of our{" "}
-          <Link to="/terms">Terms of Service</Link>.
+          <Link to="/terms-of-service">Terms of Service</Link>.
         </p>
 
         <h2>Your statutory rights</h2>

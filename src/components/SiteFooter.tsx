@@ -11,14 +11,14 @@ export function SiteFooter() {
           <Link to="/pricing" className="hover:text-foreground transition">
             {lang === "id" ? "Harga" : "Pricing"}
           </Link>
-          <Link to="/terms" className="hover:text-foreground transition">
-            {lang === "id" ? "Syarat & Ketentuan" : "Terms"}
+          <Link to="/terms-of-service" className="hover:text-foreground transition">
+            {lang === "id" ? "Syarat & Ketentuan" : "Terms of Service"}
           </Link>
-          <Link to="/privacy" className="hover:text-foreground transition">
-            {lang === "id" ? "Privasi" : "Privacy"}
+          <Link to="/privacy-policy" className="hover:text-foreground transition">
+            {lang === "id" ? "Kebijakan Privasi" : "Privacy Policy"}
           </Link>
-          <Link to="/refund" className="hover:text-foreground transition">
-            {lang === "id" ? "Pengembalian Dana" : "Refunds"}
+          <Link to="/refund-policy" className="hover:text-foreground transition">
+            {lang === "id" ? "Kebijakan Refund" : "Refund Policy"}
           </Link>
         </nav>
       </div>
