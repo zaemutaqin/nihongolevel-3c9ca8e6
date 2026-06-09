@@ -55,7 +55,7 @@ function LangToggle({ lang }: { lang: Lang }) {
 
 export function AppShell() {
   const { t, lang } = useT();
-  const { loading, profile } = useAuth();
+  const { loading, profile, user } = useAuth();
   const isPro = !!profile?.is_pro;
 
   if (loading) {
