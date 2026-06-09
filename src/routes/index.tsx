@@ -176,7 +176,7 @@ function Index() {
   const handleTranslate = async (text?: string) => {
     const sentence = (text ?? input).trim();
     if (!sentence) {
-      setError("Silakan masukkan kalimat terlebih dahulu.");
+      setError(t("home.errEmpty"));
       return;
     }
     gtagEvent("search", { search_term: sentence });
@@ -334,24 +334,24 @@ function Index() {
       <header className="text-center mb-8">
         <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full bg-muted text-muted-foreground text-xs font-medium">
           <Sparkles className="w-3.5 h-3.5" />
-          Powered by Gemini
+          {t("misc.poweredBy")}
         </div>
         <h1 className="text-3xl sm:text-4xl font-bold tracking-tight sm:hidden">
           Nihongo<span className="text-primary">Level</span>
         </h1>
-        <p className="mt-2 text-sm text-muted-foreground">Belajar berbicara seperti orang Jepang</p>
+        <p className="mt-2 text-sm text-muted-foreground">{t("home.subtitle")}</p>
       </header>
 
       <section className="rounded-2xl border border-border bg-card p-5 sm:p-6 shadow-sm">
         <label htmlFor="input" className="block text-sm font-medium mb-2">
-          Kalimat Bahasa Indonesia
+          {t("home.inputLabel")}
         </label>
         <textarea
           id="input"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={onKeyDown}
-          placeholder="Tulis kalimat di sini... (Ctrl+Enter untuk terjemahkan)"
+          placeholder={t("home.placeholder")}
           rows={3}
           className="w-full resize-none rounded-lg border border-input bg-background px-3 py-2.5 text-sm outline-none transition focus:border-ring focus:ring-2 focus:ring-ring/30"
         />
@@ -362,7 +362,7 @@ function Index() {
             className="w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium hover:bg-muted/40 transition"
             aria-expanded={contextOpen}
           >
-            <span>Tambah konteks (opsional)</span>
+            <span>{t("home.addContext")}</span>
             <ChevronDown
               className={cn(
                 "w-4 h-4 text-muted-foreground transition-transform",
@@ -374,7 +374,7 @@ function Index() {
             <div className="px-3 pb-3 grid sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-medium mb-1 text-muted-foreground">
-                  Kepada siapa kamu berbicara?
+                  {t("home.listenerLabel")}
                 </label>
                 <select
                   value={listener}
@@ -390,7 +390,7 @@ function Index() {
               </div>
               <div>
                 <label className="block text-xs font-medium mb-1 text-muted-foreground">
-                  Bagaimana suasananya?
+                  {t("home.moodLabel")}
                 </label>
                 <select
                   value={mood}
@@ -410,7 +410,7 @@ function Index() {
 
         <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <p className="text-xs text-muted-foreground">
-            Tekan <kbd className="px-1.5 py-0.5 rounded bg-muted text-foreground/80">Ctrl</kbd> +{" "}
+            {t("home.shortcut")} <kbd className="px-1.5 py-0.5 rounded bg-muted text-foreground/80">Ctrl</kbd> +{" "}
             <kbd className="px-1.5 py-0.5 rounded bg-muted text-foreground/80">Enter</kbd>
           </p>
           <button
@@ -421,16 +421,16 @@ function Index() {
             {loading ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                Mencari...
+                {t("home.searching")}
               </>
             ) : (
-              "Cari ekspresi"
+              t("home.searchBtn")
             )}
           </button>
         </div>
 
         <div className="mt-5">
-          <p className="text-xs text-muted-foreground mb-2">Contoh cepat:</p>
+          <p className="text-xs text-muted-foreground mb-2">{t("home.examplesLabel")}</p>
           <div className="flex flex-wrap gap-2">
             {EXAMPLES.map((ex) => (
               <button
@@ -456,7 +456,7 @@ function Index() {
       {loading && !result && (
         <div className="mt-8 space-y-6">
           <h2 className="text-base font-bold text-foreground">
-            Bagaimana orang Jepang mengatakannya
+            {t("home.resultHeader")}
           </h2>
           {partialIntent ? <IntentBadge intent={partialIntent} /> : <IntentBadgeSkeleton />}
           {partialSocial && <SocialAnalysisCard data={partialSocial} />}
@@ -471,7 +471,7 @@ function Index() {
           )}
           <section>
             <h3 className="text-sm font-bold uppercase tracking-wide mb-3 text-foreground/80">
-              Pilihan ekspresi berdasarkan gaya komunikasi
+              {t("home.styleSubheader")}
             </h3>
             <div className="space-y-4">
               {LEVELS.map(({ key, label }) =>
@@ -498,12 +498,12 @@ function Index() {
         <div className="mt-8 space-y-6" key={favTick}>
           <div className="flex items-center justify-between gap-3">
             <h2 className="text-base font-bold text-foreground">
-              Bagaimana orang Jepang mengatakannya
+              {t("home.resultHeader")}
             </h2>
             {fromCache && (
               <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-[11px] font-medium text-muted-foreground">
                 <Zap className="w-3 h-3" />
-                Dari cache
+                {t("home.fromCache")}
               </span>
             )}
           </div>
@@ -520,7 +520,7 @@ function Index() {
           />
           <section>
             <h3 className="text-sm font-bold uppercase tracking-wide mb-3 text-foreground/80">
-              Pilihan ekspresi berdasarkan gaya komunikasi
+              {t("home.styleSubheader")}
             </h3>
             <div className="space-y-4">
               {LEVELS.map(({ key, label }) => (
@@ -547,7 +547,7 @@ function Index() {
       )}
 
       <footer className="mt-16 pb-6 text-center text-xs text-muted-foreground">
-        Dibuat untuk belajar bahasa Jepang ✿
+        {t("home.footer")}
       </footer>
     </div>
   );
