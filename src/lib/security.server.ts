@@ -2,7 +2,11 @@
 // rate-limit lookups. Never import from client code (file is *.server.ts).
 import { timingSafeEqual } from "crypto";
 
-const ALLOWED_ORIGIN_SUFFIX = ".lovable.app";
+const ALLOWED_ORIGIN_SUFFIXES = [
+  ".lovable.app",
+  ".lovableproject.com",
+  ".lovable.dev",
+];
 const ALLOWED_EXACT = new Set<string>([
   "https://nihongolevel.lovable.app",
 ]);
@@ -25,7 +29,10 @@ export function pickAllowedOrigin(request: Request): string | null {
   if (ALLOWED_EXACT.has(origin)) return origin;
   try {
     const u = new URL(origin);
-    if (u.protocol === "https:" && u.hostname.endsWith(ALLOWED_ORIGIN_SUFFIX)) {
+    if (
+      u.protocol === "https:" &&
+      ALLOWED_ORIGIN_SUFFIXES.some((s) => u.hostname.endsWith(s))
+    ) {
       return origin;
     }
   } catch { /* ignore */ }
