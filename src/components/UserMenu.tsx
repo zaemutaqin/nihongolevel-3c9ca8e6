@@ -1,10 +1,22 @@
 import { useState, useRef, useEffect } from "react";
-import { LogOut, Crown, KeyRound, Loader2, Check } from "lucide-react";
+import { LogOut, Crown, KeyRound, Loader2, Check, Settings, AlertTriangle } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { useLang } from "@/lib/i18n";
 import { supabase } from "@/integrations/supabase/client";
 import { SignInButton } from "./SignInButton";
 import { UpgradeModal } from "./UpgradeModal";
+import { getPaddleEnvironment } from "@/lib/paddle";
+import { createCustomerPortalSession, getMySubscription } from "@/lib/billing.functions";
+import { useServerFn } from "@tanstack/react-start";
+import { useQuery } from "@tanstack/react-query";
+
+type SubInfo = {
+  status: string;
+  price_id: string;
+  current_period_end: string | null;
+  cancel_at_period_end: boolean | null;
+  environment: string;
+} | null;
 
 export function UserMenu() {
   const { user, profile, signOut, refreshProfile } = useAuth();
