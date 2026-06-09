@@ -102,6 +102,15 @@ export function AppShell() {
             })}
           </div>
           <div className="ml-auto flex items-center gap-3">
+            {!user && (
+              <Link
+                to="/auth"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-primary hover:bg-primary/10 transition"
+              >
+                <LogIn className="w-4 h-4" />
+                {lang === "id" ? "Masuk" : "Log in"}
+              </Link>
+            )}
             <LangToggle lang={lang} />
             <UserMenu />
           </div>
