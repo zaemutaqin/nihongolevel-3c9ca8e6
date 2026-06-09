@@ -209,9 +209,40 @@ function styleToLevelBlock(s: RawStyleBlock): LevelBlock {
 export const translateSentence = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => InputSchema.parse(data))
   .handler(async ({ data }): Promise<TranslationResult> => {
+    // Same-origin guard: reject calls that don't originate from our own
+    // front-end. Prevents trivial scripted abuse of the paid AI gateway.
+    try {
+      const req = getRequest();
+      const origin = req.headers.get("origin");
+      const referer = req.headers.get("referer");
+      const host = req.headers.get("host");
+      const source = origin ?? referer ?? "";
+      if (source && host) {
+        let sourceHost = "";
+        try {
+          sourceHost = new URL(source).host;
+        } catch {
+          sourceHost = "";
+        }
+        if (sourceHost && sourceHost !== host) {
+          throw safeError(TRANSLATE_ERROR_CODES.FORBIDDEN_ORIGIN);
+        }
+      } else if (!source) {
+        // No Origin/Referer at all — likely a non-browser caller.
+        throw safeError(TRANSLATE_ERROR_CODES.FORBIDDEN_ORIGIN);
+      }
+    } catch (e) {
+      if (e instanceof Error && e.message === TRANSLATE_ERROR_CODES.FORBIDDEN_ORIGIN) {
+        throw e;
+      }
+      // If request context is unavailable for any reason, fail closed.
+      throw safeError(TRANSLATE_ERROR_CODES.FORBIDDEN_ORIGIN);
+    }
+
     const apiKey = process.env.LOVABLE_API_KEY;
     if (!apiKey) {
-      throw new Error("LOVABLE_API_KEY is not configured");
+      console.error("LOVABLE_API_KEY is not configured");
+      throw safeError(TRANSLATE_ERROR_CODES.SERVER_MISCONFIGURED);
     }
 
     const listener = data.listener && data.listener.length > 0 ? data.listener : "auto-detect";
