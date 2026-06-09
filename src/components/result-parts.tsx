@@ -161,26 +161,11 @@ export function SocialAnalysisCard({ data }: { data: SocialAnalysis }) {
 // ============= Naturalness =============
 const NATURALNESS_BAR: Record<
   Naturalness,
-  { filled: 1 | 2 | 3; label: string; color: string; track: string }
+  { filled: 1 | 2 | 3; key: string; color: string; track: string }
 > = {
-  native: {
-    filled: 3,
-    label: "Sangat Umum",
-    color: "bg-green-500",
-    track: "bg-green-500/15",
-  },
-  stiff: {
-    filled: 2,
-    label: "Cukup Umum",
-    color: "bg-amber-500",
-    track: "bg-amber-500/15",
-  },
-  textbook: {
-    filled: 1,
-    label: "Jarang Digunakan",
-    color: "bg-red-400",
-    track: "bg-red-400/15",
-  },
+  native: { filled: 3, key: "nat.native", color: "bg-green-500", track: "bg-green-500/15" },
+  stiff: { filled: 2, key: "nat.stiff", color: "bg-amber-500", track: "bg-amber-500/15" },
+  textbook: { filled: 1, key: "nat.textbook", color: "bg-red-400", track: "bg-red-400/15" },
 };
 
 export function NaturalnessBar({
@@ -190,12 +175,13 @@ export function NaturalnessBar({
   value: Naturalness;
   compact?: boolean;
 }) {
+  const { t } = useT();
   const meta = NATURALNESS_BAR[value] ?? NATURALNESS_BAR.stiff;
   return (
     <div className="w-full">
       {!compact && (
         <p className="text-[11px] font-medium text-muted-foreground mb-1">
-          Seberapa sering diucapkan:
+          {t("nat.label")}
         </p>
       )}
       <div className={cn("flex gap-1 w-full rounded-full overflow-hidden", "h-1.5")}>
@@ -209,21 +195,23 @@ export function NaturalnessBar({
           />
         ))}
       </div>
-      <p className="mt-1 text-[11px] font-semibold text-foreground/80">{meta.label}</p>
+      <p className="mt-1 text-[11px] font-semibold text-foreground/80">{t(meta.key)}</p>
     </div>
   );
 }
 
-// Deprecated text chip — kept exported for backward-compat (favorit page uses it)
+// Deprecated text chip — kept exported for backward-compat
 export function NaturalnessChip({ value }: { value: Naturalness }) {
+  const { t } = useT();
   const meta = NATURALNESS_LABELS[value] ?? NATURALNESS_LABELS.stiff;
+  const labelKey = value === "native" ? "nat.native" : value === "stiff" ? "nat.stiff" : "nat.textbook";
   return (
     <span
       className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold text-white"
       style={{ backgroundColor: `var(--${meta.tone})` }}
     >
       <span>{meta.emoji}</span>
-      <span>{meta.label}</span>
+      <span>{t(labelKey)}</span>
     </span>
   );
 }
