@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsOfServiceRouteImport } from './routes/terms-of-service'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as RiwayatRouteImport } from './routes/riwayat'
 import { Route as ReviewRouteImport } from './routes/review'
 import { Route as RefundPolicyRouteImport } from './routes/refund-policy'
@@ -34,6 +35,11 @@ const TermsOfServiceRoute = TermsOfServiceRouteImport.update({
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RiwayatRoute = RiwayatRouteImport.update({
@@ -120,6 +126,7 @@ export interface FileRoutesByFullPath {
   '/refund-policy': typeof RefundPolicyRoute
   '/review': typeof ReviewRoute
   '/riwayat': typeof RiwayatRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/terms-of-service': typeof TermsOfServiceRoute
   '/api/activate-pro': typeof ApiActivateProRoute
@@ -138,6 +145,7 @@ export interface FileRoutesByTo {
   '/refund-policy': typeof RefundPolicyRoute
   '/review': typeof ReviewRoute
   '/riwayat': typeof RiwayatRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/terms-of-service': typeof TermsOfServiceRoute
   '/api/activate-pro': typeof ApiActivateProRoute
@@ -157,6 +165,7 @@ export interface FileRoutesById {
   '/refund-policy': typeof RefundPolicyRoute
   '/review': typeof ReviewRoute
   '/riwayat': typeof RiwayatRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/terms-of-service': typeof TermsOfServiceRoute
   '/api/activate-pro': typeof ApiActivateProRoute
@@ -177,6 +186,7 @@ export interface FileRouteTypes {
     | '/refund-policy'
     | '/review'
     | '/riwayat'
+    | '/sitemap.xml'
     | '/terms'
     | '/terms-of-service'
     | '/api/activate-pro'
@@ -195,6 +205,7 @@ export interface FileRouteTypes {
     | '/refund-policy'
     | '/review'
     | '/riwayat'
+    | '/sitemap.xml'
     | '/terms'
     | '/terms-of-service'
     | '/api/activate-pro'
@@ -213,6 +224,7 @@ export interface FileRouteTypes {
     | '/refund-policy'
     | '/review'
     | '/riwayat'
+    | '/sitemap.xml'
     | '/terms'
     | '/terms-of-service'
     | '/api/activate-pro'
@@ -232,6 +244,7 @@ export interface RootRouteChildren {
   RefundPolicyRoute: typeof RefundPolicyRoute
   ReviewRoute: typeof ReviewRoute
   RiwayatRoute: typeof RiwayatRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
   TermsOfServiceRoute: typeof TermsOfServiceRoute
   ApiActivateProRoute: typeof ApiActivateProRoute
@@ -254,6 +267,13 @@ declare module '@tanstack/react-router' {
       path: '/terms'
       fullPath: '/terms'
       preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/riwayat': {
@@ -368,6 +388,7 @@ const rootRouteChildren: RootRouteChildren = {
   RefundPolicyRoute: RefundPolicyRoute,
   ReviewRoute: ReviewRoute,
   RiwayatRoute: RiwayatRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
   TermsOfServiceRoute: TermsOfServiceRoute,
   ApiActivateProRoute: ApiActivateProRoute,
