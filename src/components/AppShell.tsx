@@ -4,7 +4,7 @@ import { useT, setLang, type Lang } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth";
 import { gtagEvent } from "@/lib/gtag";
-import { Landing } from "./Landing";
+
 import { UserMenu } from "./UserMenu";
 
 type NavItem = { to: string; key: string; Icon: typeof Search; exact?: boolean };
@@ -51,7 +51,7 @@ function LangToggle({ lang }: { lang: Lang }) {
 
 export function AppShell() {
   const { t, lang } = useT();
-  const { user, loading } = useAuth();
+  const { loading } = useAuth();
 
   if (loading) {
     return (
@@ -61,7 +61,7 @@ export function AppShell() {
     );
   }
 
-  if (!user) return <Landing />;
+
 
   return (
     <div className="min-h-screen bg-background text-foreground font-sans">

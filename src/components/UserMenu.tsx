@@ -3,6 +3,7 @@ import { LogOut, Crown, KeyRound, Loader2, Check } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { useLang } from "@/lib/i18n";
 import { supabase } from "@/integrations/supabase/client";
+import { SignInButton } from "./SignInButton";
 
 export function UserMenu() {
   const { user, profile, signOut, refreshProfile } = useAuth();
@@ -22,7 +23,7 @@ export function UserMenu() {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  if (!user) return null;
+  if (!user) return <SignInButton size="sm" />;
 
   const name = profile?.full_name ?? user.user_metadata?.full_name ?? user.email ?? "User";
   const email = profile?.email ?? user.email ?? "";

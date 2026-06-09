@@ -26,6 +26,8 @@ import {
 import { SpeakerButton } from "@/components/SpeakerButton";
 import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/lib/auth";
+import { LockedFeature } from "@/components/LockedFeature";
 
 export const Route = createFileRoute("/riwayat")({
   head: () => ({ meta: [{ title: "Riwayat — NihongoLevel" }] }),
@@ -41,8 +43,11 @@ const LEVELS: { key: LevelKey; label: string }[] = [
 
 function RiwayatPage() {
   const { t } = useT();
+  const { user } = useAuth();
   const [history] = useLocalCollection<HistoryEntry>(getHistory);
   const [query, setQuery] = useState("");
+
+  if (!user) return <LockedFeature />;
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();

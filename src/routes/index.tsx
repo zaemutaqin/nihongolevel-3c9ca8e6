@@ -13,6 +13,8 @@ import {
 } from "@/lib/translate.functions";
 import { useT } from "@/lib/i18n";
 import { gtagEvent } from "@/lib/gtag";
+import { useAuth } from "@/lib/auth";
+import { GuestPrompt } from "@/components/GuestPrompt";
 
 type TranslateErrorCode =
   | "FORBIDDEN_ORIGIN"
@@ -88,6 +90,8 @@ const LEVELS: { key: LevelKey; label: string }[] = [
 
 function Index() {
   const { t, tList, lang } = useT();
+  const { user } = useAuth();
+  const [showGuestPrompt, setShowGuestPrompt] = useState(false);
   const friendlyError = (e: unknown): string => {
     if (e instanceof Error && (ERR_CODES as string[]).includes(e.message)) {
       return t(`err.${e.message}`);
@@ -180,6 +184,11 @@ function Index() {
       return;
     }
     gtagEvent("search", { search_term: sentence });
+    if (!user) {
+      const n = Number(localStorage.getItem("nihongo_guest_count") || "0") + 1;
+      localStorage.setItem("nihongo_guest_count", String(n));
+      if (n >= 3) setShowGuestPrompt(true);
+    }
     setError(null);
     setResult(null);
     setHistoryEntry(null);
@@ -549,6 +558,14 @@ function Index() {
       <footer className="mt-16 pb-6 text-center text-xs text-muted-foreground">
         {t("home.footer")}
       </footer>
+      {showGuestPrompt && (
+        <GuestPrompt
+          onDismiss={() => {
+            localStorage.setItem("nihongo_guest_count", "0");
+            setShowGuestPrompt(false);
+          }}
+        />
+      )}
     </div>
   );
 }
