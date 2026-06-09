@@ -89,90 +89,102 @@ function tryExtract(
   }
 }
 
-function errorResponse(code: string, status: number) {
-  return new Response(JSON.stringify({ error: code }), {
-    status,
-    headers: { "Content-Type": "application/json" },
-  });
-}
-
 export const Route = createFileRoute("/api/translate")({
   server: {
     handlers: {
-      POST: async ({ request }) => {
-        // Same-origin guard
-        const origin = request.headers.get("origin");
-        const referer = request.headers.get("referer");
-        const host = request.headers.get("host");
-        const source = origin ?? referer ?? "";
-        let okOrigin = false;
-        if (source && host) {
-          try {
-            okOrigin = new URL(source).host === host;
-          } catch {
-            okOrigin = false;
-          }
-        }
-        if (!okOrigin) return errorResponse("FORBIDDEN_ORIGIN", 403);
+      OPTIONS: async ({ request }) => preflightResponse(pickAllowedOrigin(request)),
 
+      POST: async ({ request }) => {
+        const allowedOrigin = pickAllowedOrigin(request);
+        if (!allowedOrigin) {
+          return jsonResponse({ error: "forbidden_origin" }, 403, null);
+        }
+        const ip = clientIp(request);
+
+        // ---- Body + input sanitization ----
         let body: unknown;
-        try {
-          body = await request.json();
-        } catch {
-          return errorResponse("INVALID_RESPONSE", 400);
+        try { body = await request.json(); } catch {
+          await audit({ event_type: "translate_invalid_input", ip_address: ip, success: false, error_code: "bad_json" });
+          return jsonResponse({ error: "invalid_input" }, 400, allowedOrigin);
         }
         const parsed = InputSchema.safeParse(body);
-        if (!parsed.success) return errorResponse("INVALID_RESPONSE", 400);
+        if (!parsed.success) {
+          await audit({ event_type: "translate_invalid_input", ip_address: ip, success: false, error_code: "schema" });
+          return jsonResponse({ error: "invalid_input" }, 400, allowedOrigin);
+        }
+        const sane = sanitizeInput(parsed.data.sentence);
+        if (!sane.ok) {
+          await audit({ event_type: "translate_invalid_input", ip_address: ip, success: false, error_code: "sanitize" });
+          return jsonResponse({ error: "invalid_input" }, 400, allowedOrigin);
+        }
 
-        // Auth + IP rate limit (guests: 3 / IP / 24h; logged in: unlimited)
+        // ---- Auth resolution ----
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const authHeader = request.headers.get("authorization") ?? "";
         const token = authHeader.toLowerCase().startsWith("bearer ")
-          ? authHeader.slice(7).trim()
-          : "";
-        let isAuthed = false;
+          ? authHeader.slice(7).trim() : "";
+        let userId: string | null = null;
+        let isPro = false;
         if (token) {
-          const { data } = await supabaseAdmin.auth.getUser(token);
-          isAuthed = !!data.user;
-        }
-        if (!isAuthed) {
-          const fwd = request.headers.get("cf-connecting-ip")
-            ?? request.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
-            ?? request.headers.get("x-real-ip")
-            ?? "unknown";
-          const today = new Date().toISOString().slice(0, 10);
-          const { data: row } = await supabaseAdmin
-            .from("guest_rate_limits")
-            .select("count")
-            .eq("ip", fwd)
-            .eq("day", today)
-            .maybeSingle();
-          const current = row?.count ?? 0;
-          if (current >= 3) {
-            return new Response(JSON.stringify({ error: "limit_reached" }), {
-              status: 429,
-              headers: { "Content-Type": "application/json" },
-            });
+          const { data: udata, error: uerr } = await supabaseAdmin.auth.getUser(token);
+          if (uerr || !udata.user) {
+            await audit({ event_type: "auth_failure", ip_address: ip, success: false, error_code: "invalid_token", metadata: { route: "translate" } });
+            return jsonResponse({ error: "unauthorized" }, 401, allowedOrigin);
           }
-          await supabaseAdmin
-            .from("guest_rate_limits")
-            .upsert(
-              { ip: fwd, day: today, count: current + 1, updated_at: new Date().toISOString() },
-              { onConflict: "ip,day" },
-            );
+          userId = udata.user.id;
+          const { data: prof } = await supabaseAdmin.from("profiles").select("is_pro").eq("id", userId).maybeSingle();
+          isPro = !!prof?.is_pro;
+        }
+
+        // ---- Hourly IP anomaly block (applies to everyone, even logged-in) ----
+        const ipHour = await countEventsForIp(ip, ["translate_success", "translate_fail"], hoursAgoIso(1));
+        if (ipHour > IP_HOUR_BLOCK) {
+          await audit({ event_type: "translate_anomaly", ip_address: ip, user_id: userId, success: false, error_code: "ip_hourly", metadata: { count: ipHour } });
+          return jsonResponse({ error: "rate_limit_exceeded", retry_after: 86400 }, 429, allowedOrigin, { "Retry-After": "86400" });
+        }
+
+        // ---- Per-tier daily caps ----
+        const dayAgo = hoursAgoIso(24);
+        let dayCount = 0;
+        let cap = GUEST_DAY_MAX;
+        if (userId) {
+          dayCount = await countEventsForUser(userId, ["translate_success", "translate_fail"], dayAgo);
+          cap = isPro ? PRO_DAY_MAX : FREE_DAY_MAX;
+        } else {
+          dayCount = await countEventsForIp(ip, ["translate_success", "translate_fail"], dayAgo);
+        }
+        if (dayCount >= cap) {
+          await audit({ event_type: "translate_rate_limited", ip_address: ip, user_id: userId, success: false, error_code: userId ? "user_daily" : "guest_daily", metadata: { count: dayCount, cap } });
+          return jsonResponse({ error: userId ? "rate_limit_exceeded" : "limit_reached", retry_after: 86400 }, 429, allowedOrigin, { "Retry-After": "86400" });
+        }
+        if (userId && dayCount > USER_DAY_FLAG) {
+          // Flag (log) but continue.
+          await audit({ event_type: "translate_anomaly", ip_address: ip, user_id: userId, success: true, error_code: "user_high_volume", metadata: { count: dayCount } });
+        }
+
+        // ---- Content moderation: redact PII, block obvious abuse ----
+        if (isInappropriate(sane.value)) {
+          await audit({ event_type: "translate_inappropriate", ip_address: ip, user_id: userId, input_length: sane.value.length, success: false });
+          return jsonResponse({ error: "inappropriate_content" }, 400, allowedOrigin);
+        }
+        const { value: cleanedInput, redacted } = redactPersonalData(sane.value);
+        if (redacted) {
+          await audit({ event_type: "translate_personal_data_redacted", ip_address: ip, user_id: userId, input_length: sane.value.length, success: true });
         }
 
         const apiKey = process.env.LOVABLE_API_KEY;
         if (!apiKey) {
           console.error("LOVABLE_API_KEY missing");
-          return errorResponse("SERVER_MISCONFIGURED", 500);
+          return jsonResponse({ error: "server_misconfigured" }, 500, allowedOrigin);
         }
 
-
-        const { sentence, listener, mood, lang } = parsed.data;
+        const { listener, mood, lang } = parsed.data;
+        const sentence = cleanedInput;
+        const inputLength = sane.value.length;
         const isEn = lang === "en";
         const inputLangLabel = isEn ? "English" : "Indonesian";
         const explLang = isEn ? "en" : "id";
+
         const explLangFull = isEn ? "English" : "Indonesian";
 
         const englishNote = isEn
