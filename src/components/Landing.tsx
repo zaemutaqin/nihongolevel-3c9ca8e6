@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { Sparkles, History, MessageCircle, Loader2 } from "lucide-react";
+import { Sparkles, History, MessageCircle, Loader2, Check } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import { lovable } from "@/integrations/lovable";
 import { useT, setLang, useLang, type Lang } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+import { SiteFooter } from "./SiteFooter";
 
 function LangToggle() {
   const lang = useLang();
@@ -115,8 +117,81 @@ export function Landing() {
           ))}
         </div>
 
+        <section className="mt-16 text-left">
+          <h2 className="text-2xl font-bold text-center">
+            {lang === "id" ? "Harga sederhana" : "Simple pricing"}
+          </h2>
+          <p className="mt-2 text-center text-sm text-muted-foreground">
+            {lang === "id"
+              ? "Mulai gratis. Upgrade kapan saja, batalkan kapan saja."
+              : "Start free. Upgrade anytime, cancel anytime."}
+          </p>
+          <div className="mt-6 grid sm:grid-cols-2 gap-4">
+            <div className="rounded-2xl border border-border bg-card p-5">
+              <div className="text-xs font-semibold uppercase text-muted-foreground">
+                {lang === "id" ? "Gratis" : "Free"}
+              </div>
+              <div className="mt-2 flex items-baseline gap-1">
+                <span className="text-3xl font-bold">$0</span>
+                <span className="text-sm text-muted-foreground">
+                  {lang === "id" ? "selamanya" : "forever"}
+                </span>
+              </div>
+              <ul className="mt-3 space-y-1.5 text-sm">
+                <li className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                  {lang === "id" ? "3 pencarian per hari" : "3 searches per day"}
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                  {lang === "id" ? "Bahasa ID & EN" : "Indonesian & English"}
+                </li>
+              </ul>
+            </div>
+            <div className="rounded-2xl border-2 border-primary bg-card p-5 relative">
+              <span className="absolute -top-2 right-3 inline-flex items-center rounded-full bg-primary text-primary-foreground px-2 py-0.5 text-[10px] font-bold uppercase">
+                {lang === "id" ? "Terpopuler" : "Most popular"}
+              </span>
+              <div className="text-xs font-semibold uppercase text-primary">Pro</div>
+              <div className="mt-2 flex items-baseline gap-1">
+                <span className="text-3xl font-bold">$5</span>
+                <span className="text-sm text-muted-foreground">
+                  {lang === "id" ? "/bulan" : "/month"}
+                </span>
+              </div>
+              <p className="text-xs font-semibold text-primary mt-0.5">
+                {lang === "id" ? "atau $45/tahun — hemat 25%" : "or $45/year — save 25%"}
+              </p>
+              <ul className="mt-3 space-y-1.5 text-sm">
+                <li className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                  {lang === "id" ? "Pencarian tanpa batas" : "Unlimited searches"}
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                  {lang === "id" ? "Riwayat & favorit selamanya" : "History & favorites forever"}
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                  {lang === "id" ? "My Learning & Latihan Harian" : "My Learning & Daily Practice"}
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div className="mt-5 text-center">
+            <Link
+              to="/pricing"
+              className="inline-flex items-center justify-center rounded-lg border border-border px-4 py-2 text-sm font-semibold hover:bg-muted transition"
+            >
+              {lang === "id" ? "Lihat detail harga" : "See full pricing"}
+            </Link>
+          </div>
+        </section>
+
         <p className="mt-12 text-xs text-muted-foreground">{t("home.footer")}</p>
       </main>
+
+      <SiteFooter />
     </div>
   );
 }
