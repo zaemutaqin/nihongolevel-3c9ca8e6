@@ -293,6 +293,7 @@ export function LevelCard({
 }) {
   const meta = styleMeta(level);
   const tone = meta.tone;
+  const { t } = useT();
   const [grammarOpen, setGrammarOpen] = useState(false);
   const japanese = cleanJapanese(data.japanese);
 
@@ -301,7 +302,6 @@ export function LevelCard({
       className="rounded-2xl border bg-card shadow-sm overflow-hidden"
       style={{ borderColor: `var(--${tone})` + "40" }}
     >
-      {/* DEFAULT (always visible) */}
       <div className="px-5 pt-5 pb-4">
         <div className="flex items-center gap-2 mb-3 flex-wrap">
           <StylePill level={level} />
@@ -321,7 +321,7 @@ export function LevelCard({
 
         {data.when_to_use && (
           <p className="mt-3 text-sm text-foreground/80 line-clamp-1">
-            <span className="text-xs font-semibold text-foreground/60">Kapan dipakai: </span>
+            <span className="text-xs font-semibold text-foreground/60">{t("rp.whenUsed")}</span>
             {data.when_to_use}
           </p>
         )}
@@ -335,7 +335,7 @@ export function LevelCard({
             <ChevronDown
               className={cn("w-3.5 h-3.5 transition-transform", open && "rotate-180")}
             />
-            {open ? "Sembunyikan" : "Lihat detail"}
+            {open ? t("rp.hide") : t("rp.viewDetails")}
           </button>
           {onFavorite && (
             <button
@@ -348,13 +348,12 @@ export function LevelCard({
               )}
             >
               <Star className="w-3 h-3" fill={isFav ? "currentColor" : "none"} />
-              {isFav ? "Tersimpan" : "Simpan favorit"}
+              {isFav ? t("rp.saved") : t("rp.saveFav")}
             </button>
           )}
         </div>
       </div>
 
-      {/* EXPANDED */}
       {open && (
         <div className="px-5 pb-5 pt-1 space-y-4 border-t border-border/60">
           <p className="mt-4 italic text-sm text-muted-foreground">{data.romaji}</p>
@@ -364,13 +363,13 @@ export function LevelCard({
           )}
 
           {data.suitable_for && (
-            <InfoRow label="Cocok diucapkan kepada" value={data.suitable_for} />
+            <InfoRow label={t("rp.suitableFor")} value={data.suitable_for} />
           )}
           {data.impression && (
-            <InfoRow label="Kesan yang diterima lawan bicara" value={data.impression} />
+            <InfoRow label={t("rp.impression")} value={data.impression} />
           )}
           {data.why_this_level && (
-            <InfoRow label="Kenapa level ini?" value={data.why_this_level} />
+            <InfoRow label={t("rp.whyLevel")} value={data.why_this_level} />
           )}
 
           {data.grammar?.length > 0 && (
@@ -380,7 +379,7 @@ export function LevelCard({
                 className="w-full flex items-center justify-between px-3 py-2.5 text-sm font-semibold hover:bg-muted/40 transition"
                 aria-expanded={grammarOpen}
               >
-                <span>Tata Bahasa</span>
+                <span>{t("rp.grammar")}</span>
                 <ChevronDown
                   className={cn(
                     "w-4 h-4 text-muted-foreground transition-transform",
@@ -403,7 +402,7 @@ export function LevelCard({
 
           {data.kanji?.length > 0 && (
             <div>
-              <h3 className="text-sm font-semibold mb-2">Kanji</h3>
+              <h3 className="text-sm font-semibold mb-2">{t("rp.kanji")}</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {data.kanji.map((k, i) => (
                   <KanjiCard key={i} k={k} />
@@ -416,7 +415,7 @@ export function LevelCard({
             onClick={onToggle}
             className="w-full text-xs font-medium text-muted-foreground hover:text-foreground py-2 transition"
           >
-            ▴ Sembunyikan
+            ▴ {t("rp.hide")}
           </button>
         </div>
       )}
