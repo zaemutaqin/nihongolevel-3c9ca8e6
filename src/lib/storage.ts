@@ -214,6 +214,57 @@ export function getDueReviewFavorites(): FavoriteEntry[] {
   return favs.filter((f) => dueIds.has(f.id));
 }
 
+// Favorites whose last_reviewed is null or 7+ days ago
+export function getFavoritesNeedsReview7d(): FavoriteEntry[] {
+  const queue = getReviewQueue();
+  const favs = getFavorites();
+  const cutoff = Date.now() - 7 * 24 * 60 * 60 * 1000;
+  const map = new Map(queue.map((r) => [r.favorite_id, r]));
+  return favs.filter((f) => {
+    const r = map.get(f.id);
+    if (!r || !r.last_reviewed) return true;
+    return new Date(r.last_reviewed).getTime() <= cutoff;
+  });
+}
+
+// Oldest reviewed favorites (null last_reviewed counts as oldest)
+export function getOldestReviewedFavorites(limit = 3): { fav: FavoriteEntry; lastReviewed: string | null }[] {
+  const queue = getReviewQueue();
+  const favs = getFavorites();
+  const map = new Map(queue.map((r) => [r.favorite_id, r]));
+  return favs
+    .map((f) => {
+      const r = map.get(f.id);
+      const last = r?.last_reviewed ?? null;
+      const ts = last ? new Date(last).getTime() : 0;
+      return { fav: f, lastReviewed: last, ts };
+    })
+    .sort((a, b) => a.ts - b.ts)
+    .slice(0, limit)
+    .map(({ fav, lastReviewed }) => ({ fav, lastReviewed }));
+}
+
+// ============== Situation challenges ==============
+const CHALLENGE_KEY = "nihongo_challenge_results";
+export interface ChallengeResult {
+  history_id: number;
+  date: string;
+  success: boolean;
+}
+export function getChallengeResults(): ChallengeResult[] {
+  return read<ChallengeResult>(CHALLENGE_KEY);
+}
+export function addChallengeResult(historyId: number, success: boolean) {
+  const all = read<ChallengeResult>(CHALLENGE_KEY);
+  all.push({ history_id: historyId, date: new Date().toISOString(), success });
+  write(CHALLENGE_KEY, all);
+}
+export function getChallengeResultsToday(): ChallengeResult[] {
+  const today = new Date().toDateString();
+  return getChallengeResults().filter((r) => new Date(r.date).toDateString() === today);
+}
+
+
 // ============== React hook ==============
 import { useEffect, useState, useCallback } from "react";
 
