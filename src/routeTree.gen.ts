@@ -9,10 +9,13 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TermsOfServiceRouteImport } from './routes/terms-of-service'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as RiwayatRouteImport } from './routes/riwayat'
 import { Route as ReviewRouteImport } from './routes/review'
+import { Route as RefundPolicyRouteImport } from './routes/refund-policy'
 import { Route as RefundRouteImport } from './routes/refund'
+import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as FavoritRouteImport } from './routes/favorit'
@@ -22,6 +25,11 @@ import { Route as ApiTranslateRouteImport } from './routes/api/translate'
 import { Route as ApiActivateProRouteImport } from './routes/api/activate-pro'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 
+const TermsOfServiceRoute = TermsOfServiceRouteImport.update({
+  id: '/terms-of-service',
+  path: '/terms-of-service',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
@@ -37,9 +45,19 @@ const ReviewRoute = ReviewRouteImport.update({
   path: '/review',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RefundPolicyRoute = RefundPolicyRouteImport.update({
+  id: '/refund-policy',
+  path: '/refund-policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RefundRoute = RefundRouteImport.update({
   id: '/refund',
   path: '/refund',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
+  id: '/privacy-policy',
+  path: '/privacy-policy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -90,10 +108,13 @@ export interface FileRoutesByFullPath {
   '/favorit': typeof FavoritRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
   '/refund': typeof RefundRoute
+  '/refund-policy': typeof RefundPolicyRoute
   '/review': typeof ReviewRoute
   '/riwayat': typeof RiwayatRoute
   '/terms': typeof TermsRoute
+  '/terms-of-service': typeof TermsOfServiceRoute
   '/api/activate-pro': typeof ApiActivateProRoute
   '/api/translate': typeof ApiTranslateRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -104,10 +125,13 @@ export interface FileRoutesByTo {
   '/favorit': typeof FavoritRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
   '/refund': typeof RefundRoute
+  '/refund-policy': typeof RefundPolicyRoute
   '/review': typeof ReviewRoute
   '/riwayat': typeof RiwayatRoute
   '/terms': typeof TermsRoute
+  '/terms-of-service': typeof TermsOfServiceRoute
   '/api/activate-pro': typeof ApiActivateProRoute
   '/api/translate': typeof ApiTranslateRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -119,10 +143,13 @@ export interface FileRoutesById {
   '/favorit': typeof FavoritRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
   '/refund': typeof RefundRoute
+  '/refund-policy': typeof RefundPolicyRoute
   '/review': typeof ReviewRoute
   '/riwayat': typeof RiwayatRoute
   '/terms': typeof TermsRoute
+  '/terms-of-service': typeof TermsOfServiceRoute
   '/api/activate-pro': typeof ApiActivateProRoute
   '/api/translate': typeof ApiTranslateRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -135,10 +162,13 @@ export interface FileRouteTypes {
     | '/favorit'
     | '/pricing'
     | '/privacy'
+    | '/privacy-policy'
     | '/refund'
+    | '/refund-policy'
     | '/review'
     | '/riwayat'
     | '/terms'
+    | '/terms-of-service'
     | '/api/activate-pro'
     | '/api/translate'
     | '/api/public/payments/webhook'
@@ -149,10 +179,13 @@ export interface FileRouteTypes {
     | '/favorit'
     | '/pricing'
     | '/privacy'
+    | '/privacy-policy'
     | '/refund'
+    | '/refund-policy'
     | '/review'
     | '/riwayat'
     | '/terms'
+    | '/terms-of-service'
     | '/api/activate-pro'
     | '/api/translate'
     | '/api/public/payments/webhook'
@@ -163,10 +196,13 @@ export interface FileRouteTypes {
     | '/favorit'
     | '/pricing'
     | '/privacy'
+    | '/privacy-policy'
     | '/refund'
+    | '/refund-policy'
     | '/review'
     | '/riwayat'
     | '/terms'
+    | '/terms-of-service'
     | '/api/activate-pro'
     | '/api/translate'
     | '/api/public/payments/webhook'
@@ -178,10 +214,13 @@ export interface RootRouteChildren {
   FavoritRoute: typeof FavoritRoute
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
+  PrivacyPolicyRoute: typeof PrivacyPolicyRoute
   RefundRoute: typeof RefundRoute
+  RefundPolicyRoute: typeof RefundPolicyRoute
   ReviewRoute: typeof ReviewRoute
   RiwayatRoute: typeof RiwayatRoute
   TermsRoute: typeof TermsRoute
+  TermsOfServiceRoute: typeof TermsOfServiceRoute
   ApiActivateProRoute: typeof ApiActivateProRoute
   ApiTranslateRoute: typeof ApiTranslateRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
@@ -189,6 +228,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/terms-of-service': {
+      id: '/terms-of-service'
+      path: '/terms-of-service'
+      fullPath: '/terms-of-service'
+      preLoaderRoute: typeof TermsOfServiceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/terms': {
       id: '/terms'
       path: '/terms'
@@ -210,11 +256,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ReviewRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/refund-policy': {
+      id: '/refund-policy'
+      path: '/refund-policy'
+      fullPath: '/refund-policy'
+      preLoaderRoute: typeof RefundPolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/refund': {
       id: '/refund'
       path: '/refund'
       fullPath: '/refund'
       preLoaderRoute: typeof RefundRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy-policy': {
+      id: '/privacy-policy'
+      path: '/privacy-policy'
+      fullPath: '/privacy-policy'
+      preLoaderRoute: typeof PrivacyPolicyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -282,10 +342,13 @@ const rootRouteChildren: RootRouteChildren = {
   FavoritRoute: FavoritRoute,
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
+  PrivacyPolicyRoute: PrivacyPolicyRoute,
   RefundRoute: RefundRoute,
+  RefundPolicyRoute: RefundPolicyRoute,
   ReviewRoute: ReviewRoute,
   RiwayatRoute: RiwayatRoute,
   TermsRoute: TermsRoute,
+  TermsOfServiceRoute: TermsOfServiceRoute,
   ApiActivateProRoute: ApiActivateProRoute,
   ApiTranslateRoute: ApiTranslateRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
@@ -293,3 +356,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
