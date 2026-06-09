@@ -55,8 +55,25 @@ export function UpgradeModal({ open, onClose }: UpgradeModalProps) {
           "All future features included",
         ];
 
+  const [signingIn, setSigningIn] = useState(false);
+
+  const triggerSignIn = async () => {
+    setSigningIn(true);
+    try {
+      const r = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: window.location.origin,
+      });
+      if (r.error) setSigningIn(false);
+    } catch {
+      setSigningIn(false);
+    }
+  };
+
   const handleUpgrade = async () => {
-    if (!user) return;
+    if (!user) {
+      await triggerSignIn();
+      return;
+    }
     await openCheckout({
       priceId: "pro_lifetime",
       customerEmail: user.email ?? undefined,
@@ -111,29 +128,18 @@ export function UpgradeModal({ open, onClose }: UpgradeModalProps) {
             </ul>
 
             <div className="mt-6">
-              {user ? (
-                <button
-                  onClick={handleUpgrade}
-                  disabled={loading}
-                  className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-primary text-primary-foreground py-3 text-sm font-semibold hover:opacity-90 transition disabled:opacity-60"
-                >
-                  {loading ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <Crown className="w-4 h-4" />
-                  )}
-                  {lang === "id" ? "Beli Sekarang — $19" : "Buy Now — $19"}
-                </button>
-              ) : (
-                <div className="space-y-2">
-                  <p className="text-xs text-center text-muted-foreground">
-                    {lang === "id"
-                      ? "Login dulu untuk membeli Pro"
-                      : "Sign in first to purchase Pro"}
-                  </p>
-                  <SignInButton />
-                </div>
-              )}
+              <button
+                onClick={handleUpgrade}
+                disabled={loading || signingIn}
+                className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-primary text-primary-foreground py-3 text-sm font-semibold hover:opacity-90 transition disabled:opacity-60"
+              >
+                {loading || signingIn ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Crown className="w-4 h-4" />
+                )}
+                {lang === "id" ? "Beli Sekarang — $19" : "Buy Now — $19"}
+              </button>
 
               <p className="mt-3 text-[11px] text-muted-foreground flex items-center justify-center gap-1.5">
                 <ShieldCheck className="w-3.5 h-3.5" />
@@ -150,7 +156,20 @@ export function UpgradeModal({ open, onClose }: UpgradeModalProps) {
               </div>
             </div>
 
-            {user && <GiftCodeCard />}
+            <GiftCodeCard onNeedSignIn={triggerSignIn} hasUser={!!user} />
+
+            {!user && (
+              <div className="mt-6 pt-4 border-t border-border text-xs text-muted-foreground">
+                {lang === "id" ? "Sudah Pro? " : "Already Pro? "}
+                <button
+                  type="button"
+                  onClick={triggerSignIn}
+                  className="font-semibold text-primary hover:underline"
+                >
+                  {lang === "id" ? "Masuk sekarang" : "Sign in now"}
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
