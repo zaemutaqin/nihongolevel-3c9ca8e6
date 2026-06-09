@@ -60,9 +60,9 @@ export function RefundPage() {
           Approved refunds are returned to the original payment method. Processing time depends on your bank or card issuer (typically 3–10 business days).
         </p>
 
-        <h2>Subscription renewals</h2>
+        <h2>One-time purchase, no renewals</h2>
         <p>
-          NihongoLevel Pro renews automatically each billing period until canceled. You can cancel a subscription at any time; your Pro access continues until the end of the current paid period and is not renewed afterwards. Cancelling stops future charges but does not by itself trigger a refund of the current period — see the 30-day window above for that.
+          NihongoLevel Pro is sold as a one-time purchase that grants lifetime access. There are no recurring charges, no automatic renewals, and nothing to cancel. If you want a refund within the 30-day window above, just contact us and we'll forward the request to Paddle.
         </p>
 
         <h2>What is not refundable</h2>

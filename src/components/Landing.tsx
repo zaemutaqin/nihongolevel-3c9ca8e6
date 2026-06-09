@@ -159,13 +159,13 @@ export function Landing() {
               </span>
               <div className="text-xs font-semibold uppercase text-primary">Pro</div>
               <div className="mt-2 flex items-baseline gap-1">
-                <span className="text-3xl font-bold">$5</span>
+                <span className="text-3xl font-bold">$19</span>
                 <span className="text-sm text-muted-foreground">
-                  {lang === "id" ? "/bulan" : "/month"}
+                  {lang === "id" ? "sekali bayar" : "one-time"}
                 </span>
               </div>
               <p className="text-xs font-semibold text-primary mt-0.5">
-                {lang === "id" ? "atau $45/tahun — hemat 25%" : "or $45/year — save 25%"}
+                {lang === "id" ? "Akses seumur hidup" : "Lifetime access"}
               </p>
               <ul className="mt-3 space-y-1.5 text-sm">
                 <li className="flex items-start gap-2">

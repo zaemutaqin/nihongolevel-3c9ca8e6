@@ -6,134 +6,74 @@ async function getSupabase() {
   return supabaseAdmin;
 }
 
-// Only live subscriptions grant Pro on the published app.
-// Sandbox subscriptions are still recorded for testing but don't flip is_pro.
-async function setProStatus(userId: string, isPro: boolean, env: PaddleEnv) {
+// Lifetime: once granted, always Pro. Only live transactions flip is_pro.
+async function grantLifetimePro(userId: string, env: PaddleEnv) {
   if (env !== "live") return;
-  const update: { is_pro: boolean; pro_activated_at?: string } = { is_pro: isPro };
-  if (isPro) update.pro_activated_at = new Date().toISOString();
-  await (await getSupabase()).from("profiles").update(update).eq("id", userId);
-}
-
-// Active = paid and in good standing OR in dunning (don't revoke during retries).
-function statusGrantsAccess(status: string): boolean {
-  return status === "active" || status === "trialing" || status === "past_due";
+  await (await getSupabase())
+    .from("profiles")
+    .update({ is_pro: true, pro_activated_at: new Date().toISOString() })
+    .eq("id", userId);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function handleSubscriptionCreated(data: any, env: PaddleEnv) {
-  const { id, customerId, items, status, currentBillingPeriod, customData, scheduledChange } = data;
+async function handleTransactionCompleted(data: any, env: PaddleEnv) {
+  const { id, customerId, items, status, customData } = data;
   const userId = customData?.userId;
   if (!userId) {
-    console.error("No userId in customData");
+    console.error("transaction.completed: missing customData.userId", { id });
     return;
   }
-  const item = items[0];
-  const priceId = item.price.importMeta?.externalId;
-  const productId = item.product.importMeta?.externalId;
-  if (!priceId || !productId) {
-    console.warn("Skipping subscription: missing importMeta.externalId");
+  if (status && status !== "completed" && status !== "paid") {
+    console.log("transaction.completed: ignoring non-paid status", status);
     return;
   }
-  await (await getSupabase()).from("subscriptions").upsert(
-    {
-      user_id: userId,
-      paddle_subscription_id: id,
-      paddle_customer_id: customerId,
-      product_id: productId,
-      price_id: priceId,
-      status,
-      current_period_start: currentBillingPeriod?.startsAt,
-      current_period_end: currentBillingPeriod?.endsAt,
-      cancel_at_period_end: scheduledChange?.action === "cancel",
-      environment: env,
-      updated_at: new Date().toISOString(),
-    },
-    { onConflict: "paddle_subscription_id" },
-  );
-  if (statusGrantsAccess(status)) {
-    await setProStatus(userId, true, env);
+  const item = items?.[0];
+  const priceId = item?.price?.importMeta?.externalId;
+  if (!priceId) {
+    console.warn("transaction.completed: missing price externalId — skipping", {
+      id,
+      rawPriceId: item?.price?.id,
+    });
+    return;
   }
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function handleSubscriptionUpdated(data: any, env: PaddleEnv) {
-  const { id, status, currentBillingPeriod, scheduledChange, customData } = data;
-  await (await getSupabase())
-    .from("subscriptions")
-    .update({
-      status,
-      current_period_start: currentBillingPeriod?.startsAt,
-      current_period_end: currentBillingPeriod?.endsAt,
-      cancel_at_period_end: scheduledChange?.action === "cancel",
-      updated_at: new Date().toISOString(),
-    })
-    .eq("paddle_subscription_id", id)
-    .eq("environment", env);
-
-  const userId = customData?.userId;
-  if (!userId) return;
-
-  if (statusGrantsAccess(status)) {
-    // active / trialing / past_due — keep Pro on. Dunning preserves access.
-    await setProStatus(userId, true, env);
-  } else if (status === "canceled") {
-    // Honor grace period: keep Pro until current_period_end (reconciliation job revokes later).
-    const endsAt = currentBillingPeriod?.endsAt
-      ? new Date(currentBillingPeriod.endsAt).getTime()
-      : Date.now() - 1;
-    if (endsAt <= Date.now()) {
-      await setProStatus(userId, false, env);
-    }
-  } else {
-    // paused or other non-access-granting states
-    await setProStatus(userId, false, env);
+  // Record the purchase for audit (re-use subscriptions table, status=lifetime).
+  try {
+    await (await getSupabase()).from("subscriptions").upsert(
+      {
+        user_id: userId,
+        paddle_subscription_id: id, // transaction id used as unique key
+        paddle_customer_id: customerId ?? "",
+        product_id: item?.price?.productId ?? "nihongolevel_pro",
+        price_id: priceId,
+        status: "lifetime",
+        current_period_start: null,
+        current_period_end: null,
+        cancel_at_period_end: false,
+        environment: env,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "paddle_subscription_id" },
+    );
+  } catch (e) {
+    console.error("Failed to record lifetime purchase", e);
   }
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function handleSubscriptionCanceled(data: any, env: PaddleEnv) {
-  const { id, customData, currentBillingPeriod } = data;
-  await (await getSupabase())
-    .from("subscriptions")
-    .update({
-      status: "canceled",
-      current_period_end: currentBillingPeriod?.endsAt,
-      cancel_at_period_end: true,
-      updated_at: new Date().toISOString(),
-    })
-    .eq("paddle_subscription_id", id)
-    .eq("environment", env);
-
-  const userId = customData?.userId;
-  if (!userId) return;
-
-  // Only revoke immediately if the paid period has already ended.
-  // Otherwise the reconciliation cron handles revocation at period_end.
-  const endsAt = currentBillingPeriod?.endsAt
-    ? new Date(currentBillingPeriod.endsAt).getTime()
-    : 0;
-  if (endsAt > 0 && endsAt <= Date.now()) {
-    await setProStatus(userId, false, env);
-  }
+  await grantLifetimePro(userId, env);
 }
 
 async function handleWebhook(req: Request, env: PaddleEnv) {
   const event = await verifyWebhook(req, env);
   switch (event.eventType) {
-    case EventName.SubscriptionCreated:
+    case EventName.TransactionCompleted:
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await handleSubscriptionCreated(event.data as any, env);
+      await handleTransactionCompleted(event.data as any, env);
       break;
-    case EventName.SubscriptionUpdated:
+    case EventName.TransactionPaid:
+      // Some accounts emit TransactionPaid before TransactionCompleted.
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await handleSubscriptionUpdated(event.data as any, env);
-      break;
-    case EventName.SubscriptionCanceled:
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await handleSubscriptionCanceled(event.data as any, env);
+      await handleTransactionCompleted(event.data as any, env);
       break;
     default:
+      // Legacy subscription events (no longer used for lifetime model) — ignore.
       console.log("Unhandled event:", event.eventType);
   }
 }

@@ -10,13 +10,13 @@ export const Route = createFileRoute("/pricing")({
       {
         name: "description",
         content:
-          "Simple pricing for NihongoLevel. Free plan with 3 searches per day, or Pro for unlimited searches, full history, favorites, and daily practice. $5/month or $45/year.",
+          "Simple pricing for NihongoLevel. Free plan with 3 searches per day, or Pro lifetime access for $19 one-time — unlimited searches, full history, favorites, and daily practice.",
       },
       { property: "og:title", content: "Pricing — NihongoLevel Pro" },
       {
         property: "og:description",
         content:
-          "Free with 3 searches per day. Upgrade to Pro for $5/month or $45/year to unlock unlimited searches and all features.",
+          "Free with 3 searches per day. Upgrade to Pro for $19 one-time — lifetime access to every feature, no subscription.",
       },
       { property: "og:url", content: "/pricing" },
     ],
@@ -74,8 +74,8 @@ function PricingPage() {
           </h1>
           <p className="mt-3 text-muted-foreground">
             {lang === "id"
-              ? "Mulai gratis. Upgrade kapan saja, batalkan kapan saja."
-              : "Start free. Upgrade anytime, cancel anytime."}
+              ? "Mulai gratis. Upgrade sekali, akses seumur hidup."
+              : "Start free. Pay once, lifetime access."}
           </p>
         </div>
 
@@ -103,19 +103,19 @@ function PricingPage() {
 
           <div className="rounded-2xl border-2 border-primary bg-card p-6 relative">
             <span className="absolute -top-2 right-4 inline-flex items-center gap-1 rounded-full bg-primary text-primary-foreground px-2 py-0.5 text-[10px] font-bold uppercase">
-              {lang === "id" ? "Terpopuler" : "Most popular"}
+              {lang === "id" ? "Akses Seumur Hidup" : "Lifetime Access"}
             </span>
             <div className="text-xs font-semibold uppercase text-primary">Pro</div>
             <div className="mt-2 flex items-baseline gap-1">
-              <span className="text-4xl font-bold">$5</span>
+              <span className="text-4xl font-bold">$19</span>
               <span className="text-sm text-muted-foreground">
-                {lang === "id" ? "/bulan" : "/month"}
+                {lang === "id" ? "sekali bayar" : "one-time"}
               </span>
             </div>
             <p className="mt-1 text-sm font-semibold text-primary">
               {lang === "id"
-                ? "atau $45/tahun — hemat 25%"
-                : "or $45/year — save 25%"}
+                ? "Bayar sekali, akses selamanya"
+                : "Pay once, access forever"}
             </p>
             <p className="mt-2 text-sm text-muted-foreground">
               {lang === "id"
@@ -127,13 +127,14 @@ function PricingPage() {
               <Li>{lang === "id" ? "Riwayat selamanya" : "Full history, kept forever"}</Li>
               <Li>{lang === "id" ? "Favorit tanpa batas" : "Unlimited favorites"}</Li>
               <Li>{lang === "id" ? "My Learning & Latihan Harian" : "My Learning & Daily Practice"}</Li>
+              <Li>{lang === "id" ? "Semua fitur baru di masa depan" : "All future features included"}</Li>
             </ul>
             <Link
               to="/"
               className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary text-primary-foreground py-3 text-sm font-semibold hover:opacity-90 transition"
             >
               <Crown className="w-4 h-4" />
-              {lang === "id" ? "Mulai Pro Sekarang" : "Start Pro Now"}
+              {lang === "id" ? "Beli Sekarang — $19" : "Buy Now — $19"}
             </Link>
           </div>
         </div>
@@ -165,8 +166,8 @@ function PricingPage() {
 
         <p className="mt-8 text-center text-xs text-muted-foreground">
           {lang === "id"
-            ? "Pembayaran diproses oleh Paddle.com sebagai Merchant of Record kami. Termasuk pajak yang berlaku. Batalkan kapan saja — lihat "
-            : "Payments are processed by Paddle.com as our Merchant of Record. Applicable taxes included. Cancel anytime — see our "}
+            ? "Pembayaran diproses oleh Paddle.com sebagai Merchant of Record kami. Termasuk pajak yang berlaku. Jaminan uang kembali 30 hari — lihat "
+            : "Payments are processed by Paddle.com as our Merchant of Record. Applicable taxes included. 30-day money back guarantee — see our "}
           <Link to="/refund" className="underline hover:text-foreground">
             {lang === "id" ? "kebijakan pengembalian dana" : "refund policy"}
           </Link>
