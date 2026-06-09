@@ -182,7 +182,7 @@ export async function audit(entry: AuditEntry): Promise<void> {
       input_length: entry.input_length ?? null,
       success: entry.success,
       error_code: entry.error_code ?? null,
-      metadata: entry.metadata ?? {},
+      metadata: (entry.metadata ?? {}) as never,
     });
   } catch (e) {
     // Never let audit failure break the request path.
