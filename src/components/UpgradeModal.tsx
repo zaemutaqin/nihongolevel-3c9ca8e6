@@ -175,7 +175,8 @@ export function UpgradeModal({ open, onClose }: UpgradeModalProps) {
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 
