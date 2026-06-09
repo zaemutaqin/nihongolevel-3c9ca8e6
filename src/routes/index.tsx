@@ -88,10 +88,25 @@ const LEVELS: { key: LevelKey; label: string }[] = [
   { key: "n1", label: "N1" },
 ];
 
+const GUEST_LIMIT = 3;
+
 function Index() {
   const { t, tList, lang } = useT();
   const { user } = useAuth();
-  const [showGuestPrompt, setShowGuestPrompt] = useState(false);
+  const [guestCount, setGuestCount] = useState(0);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (user) {
+      localStorage.setItem("nihongo_guest_count", "0");
+      setGuestCount(0);
+    } else {
+      setGuestCount(Number(localStorage.getItem("nihongo_guest_count") || "0"));
+    }
+  }, [user]);
+
+  const guestBlocked = !user && guestCount >= GUEST_LIMIT;
+  const remaining = Math.max(0, GUEST_LIMIT - guestCount);
   const friendlyError = (e: unknown): string => {
     if (e instanceof Error && (ERR_CODES as string[]).includes(e.message)) {
       return t(`err.${e.message}`);
@@ -178,6 +193,7 @@ function Index() {
   };
 
   const handleTranslate = async (text?: string) => {
+    if (!user && guestCount >= GUEST_LIMIT) return;
     const sentence = (text ?? input).trim();
     if (!sentence) {
       setError(t("home.errEmpty"));
@@ -185,9 +201,9 @@ function Index() {
     }
     gtagEvent("search", { search_term: sentence });
     if (!user) {
-      const n = Number(localStorage.getItem("nihongo_guest_count") || "0") + 1;
+      const n = guestCount + 1;
       localStorage.setItem("nihongo_guest_count", String(n));
-      if (n >= 3) setShowGuestPrompt(true);
+      setGuestCount(n);
     }
     setError(null);
     setResult(null);
@@ -384,8 +400,16 @@ function Index() {
           onKeyDown={onKeyDown}
           placeholder={t("home.placeholder")}
           rows={3}
-          className="w-full resize-none rounded-lg border border-input bg-background px-3 py-2.5 text-sm outline-none transition focus:border-ring focus:ring-2 focus:ring-ring/30"
+          disabled={guestBlocked}
+          className="w-full resize-none rounded-lg border border-input bg-background px-3 py-2.5 text-sm outline-none transition focus:border-ring focus:ring-2 focus:ring-ring/30 disabled:opacity-60 disabled:cursor-not-allowed"
         />
+        {!user && (
+          <p className="mt-2 text-xs text-muted-foreground">
+            {lang === "id"
+              ? `Sisa pencarian gratis: ${remaining}/${GUEST_LIMIT}`
+              : `Free searches remaining: ${remaining}/${GUEST_LIMIT}`}
+          </p>
+        )}
 
         <div className="mt-4 rounded-lg border border-border overflow-hidden">
           <button
@@ -446,7 +470,7 @@ function Index() {
           </p>
           <button
             onClick={() => handleTranslate()}
-            disabled={loading}
+            disabled={loading || guestBlocked}
             className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {loading ? (
@@ -580,14 +604,7 @@ function Index() {
       <footer className="mt-16 pb-6 text-center text-xs text-muted-foreground">
         {t("home.footer")}
       </footer>
-      {showGuestPrompt && (
-        <GuestPrompt
-          onDismiss={() => {
-            localStorage.setItem("nihongo_guest_count", "0");
-            setShowGuestPrompt(false);
-          }}
-        />
-      )}
+      {guestBlocked && <GuestPrompt />}
     </div>
   );
 }
