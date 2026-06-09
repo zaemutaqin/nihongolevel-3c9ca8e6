@@ -68,11 +68,15 @@ export function AppShell() {
 
   return (
     <div className="min-h-screen bg-background text-foreground font-sans">
+      <PaymentTestModeBanner />
+      <UpgradeSuccessListener />
+      <Toaster />
       {/* Desktop top nav */}
       <nav className="hidden sm:flex sticky top-0 z-30 border-b border-border bg-background/80 backdrop-blur">
         <div className="mx-auto max-w-3xl w-full px-4 py-3 flex items-center gap-1">
-          <Link to="/" className="font-bold text-lg mr-4">
-            Nihongo<span className="text-primary">Level</span>
+          <Link to="/" className="font-bold text-lg mr-4 inline-flex items-center gap-2">
+            <span>Nihongo<span className="text-primary">Level</span></span>
+            <ProBadgeInline />
           </Link>
           <div className="flex gap-1">
             {NAV.map(({ to, key, Icon, exact }) => (
