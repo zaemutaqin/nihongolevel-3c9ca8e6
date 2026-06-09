@@ -34,21 +34,35 @@ export function UserMenu() {
   const activate = async () => {
     setActivating(true);
     setMsg(null);
-    const { data, error } = await supabase.rpc("activate_pro", { _code: code.trim() });
-    setActivating(false);
-    if (error) {
-      setMsg(error.message);
-      return;
-    }
-    if (data === true) {
-      setMsg(lang === "id" ? "Pro aktif! 🎉" : "Pro activated! 🎉");
-      setCode("");
-      setShowProInput(false);
-      await refreshProfile();
-    } else {
-      setMsg(lang === "id" ? "Kode tidak valid" : "Invalid code");
+    try {
+      const { data: sess } = await supabase.auth.getSession();
+      const token = sess.session?.access_token;
+      const res = await fetch("/api/activate-pro", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({ code: code.trim() }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data?.ok === true) {
+        setMsg(lang === "id" ? "Pro aktif! 🎉" : "Pro activated! 🎉");
+        setCode("");
+        setShowProInput(false);
+        await refreshProfile();
+      } else if (res.status === 401) {
+        setMsg(lang === "id" ? "Harus login dulu" : "Please sign in first");
+      } else {
+        setMsg(lang === "id" ? "Kode tidak valid" : "Invalid code");
+      }
+    } catch {
+      setMsg(lang === "id" ? "Gagal terhubung" : "Connection failed");
+    } finally {
+      setActivating(false);
     }
   };
+
 
   return (
     <div className="relative" ref={ref}>
