@@ -100,7 +100,30 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: appCss,
       },
     ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "NihongoLevel",
+          url: "https://nihongolevel.lovable.app",
+          description: "Belajar berbicara seperti orang Jepang — bukan sekadar lulus JLPT",
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: "NihongoLevel",
+          url: "https://nihongolevel.lovable.app",
+          description: "Alat belajar ekspresi bahasa Jepang natural dengan level kesopanan.",
+        }),
+      },
+    ],
   }),
+
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
