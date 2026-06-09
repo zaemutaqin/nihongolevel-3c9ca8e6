@@ -78,13 +78,6 @@ export const Route = createFileRoute("/")({
 });
 
 
-const EXAMPLES = [
-  "hari ini makan apa ya?",
-  "Boleh saya pulang lebih awal?",
-  "Saya tidak bisa hadir rapat besok",
-  "Terima kasih sudah membantu",
-];
-
 const LEVELS: { key: LevelKey; label: string }[] = [
   { key: "n4", label: "N4" },
   { key: "n3", label: "N3" },
@@ -92,26 +85,33 @@ const LEVELS: { key: LevelKey; label: string }[] = [
   { key: "n1", label: "N1" },
 ];
 
-const LISTENER_OPTIONS = [
-  { value: "", label: "Belum tahu / tidak relevan" },
-  { value: "Diri sendiri", label: "Diri sendiri" },
-  { value: "Teman dekat / sebaya", label: "Teman dekat / sebaya" },
-  { value: "Rekan kerja / kolega", label: "Rekan kerja / kolega" },
-  { value: "Atasan / senior", label: "Atasan / senior" },
-  { value: "Klien / orang baru", label: "Klien / orang baru" },
-  { value: "Orang yang lebih muda", label: "Orang yang lebih muda" },
-];
-
-const MOOD_OPTIONS = [
-  { value: "", label: "Percakapan biasa" },
-  { value: "Santai / sedang bercanda", label: "Santai / sedang bercanda" },
-  { value: "Serius / penting", label: "Serius / penting" },
-  { value: "Sedang emosi / kesal", label: "Sedang emosi / kesal" },
-  { value: "Senang / antusias", label: "Senang / antusias" },
-  { value: "Canggung / tidak nyaman", label: "Canggung / tidak nyaman" },
-];
-
 function Index() {
+  const { t, tList, lang } = useT();
+  const friendlyError = (e: unknown): string => {
+    if (e instanceof Error && (ERR_CODES as string[]).includes(e.message)) {
+      return t(`err.${e.message}`);
+    }
+    return t("err.generic");
+  };
+  const EXAMPLES = tList("examples");
+  const LISTENER_OPTIONS = [
+    { value: "", label: t("opt.listener.unknown") },
+    { value: t("opt.listener.self"), label: t("opt.listener.self") },
+    { value: t("opt.listener.friend"), label: t("opt.listener.friend") },
+    { value: t("opt.listener.colleague"), label: t("opt.listener.colleague") },
+    { value: t("opt.listener.senior"), label: t("opt.listener.senior") },
+    { value: t("opt.listener.client"), label: t("opt.listener.client") },
+    { value: t("opt.listener.younger"), label: t("opt.listener.younger") },
+  ];
+  const MOOD_OPTIONS = [
+    { value: "", label: t("opt.mood.normal") },
+    { value: t("opt.mood.casual"), label: t("opt.mood.casual") },
+    { value: t("opt.mood.serious"), label: t("opt.mood.serious") },
+    { value: t("opt.mood.upset"), label: t("opt.mood.upset") },
+    { value: t("opt.mood.happy"), label: t("opt.mood.happy") },
+    { value: t("opt.mood.awkward"), label: t("opt.mood.awkward") },
+  ];
+
   const [input, setInput] = useState("");
   const [listener, setListener] = useState("");
   const [mood, setMood] = useState("");
