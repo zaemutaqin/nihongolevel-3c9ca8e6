@@ -4,7 +4,7 @@ import { useT, setLang, type Lang } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth";
 import { gtagEvent } from "@/lib/gtag";
-import { Landing } from "./Landing";
+
 import { UserMenu } from "./UserMenu";
 
 type NavItem = { to: string; key: string; Icon: typeof Search; exact?: boolean };
