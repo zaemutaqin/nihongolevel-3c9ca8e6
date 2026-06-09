@@ -1,5 +1,5 @@
 import { Link, Outlet } from "@tanstack/react-router";
-import { Search, History, Star, BarChart3, RotateCw } from "lucide-react";
+import { Search, History, Star, BarChart3, RotateCw, Lock } from "lucide-react";
 import { Toaster } from "@/components/ui/sonner";
 import { useT, setLang, type Lang } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
@@ -11,13 +11,13 @@ import { SiteFooter } from "./SiteFooter";
 
 import { UserMenu } from "./UserMenu";
 
-type NavItem = { to: string; key: string; Icon: typeof Search; exact?: boolean };
+type NavItem = { to: string; key: string; Icon: typeof Search; exact?: boolean; proOnly?: boolean };
 const NAV: NavItem[] = [
   { to: "/", key: "search", Icon: Search, exact: true },
-  { to: "/riwayat", key: "history", Icon: History },
-  { to: "/favorit", key: "favorites", Icon: Star },
-  { to: "/dashboard", key: "dashboard", Icon: BarChart3 },
-  { to: "/review", key: "review", Icon: RotateCw },
+  { to: "/riwayat", key: "history", Icon: History, proOnly: true },
+  { to: "/favorit", key: "favorites", Icon: Star, proOnly: true },
+  { to: "/dashboard", key: "dashboard", Icon: BarChart3, proOnly: true },
+  { to: "/review", key: "review", Icon: RotateCw, proOnly: true },
 ];
 
 function LangToggle({ lang }: { lang: Lang }) {
