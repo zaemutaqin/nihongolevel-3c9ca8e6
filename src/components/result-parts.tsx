@@ -442,6 +442,7 @@ export function MostNaturalCard({
   isFav?: boolean;
 }) {
   const tone = "level-n3";
+  const { t } = useT();
   const japanese = cleanJapanese(data.japanese);
   const [whyOpen, setWhyOpen] = useState(false);
   return (
@@ -458,7 +459,7 @@ export function MostNaturalCard({
           className="text-sm font-bold uppercase tracking-wide"
           style={{ color: `var(--${tone})` }}
         >
-          Yang paling natural
+          {t("mn.label")}
         </h2>
       </div>
       <div className="flex items-start gap-3">
@@ -476,7 +477,7 @@ export function MostNaturalCard({
           color: `var(--${tone})`,
         }}
       >
-        ✓ Inilah yang akan terdengar alami bagi penutur asli
+        {t("mn.badge")}
       </p>
 
       <div className="mt-4">
@@ -491,7 +492,7 @@ export function MostNaturalCard({
             aria-expanded={whyOpen}
             className="w-full flex items-center justify-between px-3 py-2.5 text-sm font-semibold hover:bg-muted/40 transition"
           >
-            <span>Mengapa ini yang paling natural?</span>
+            <span>{t("mn.why")}</span>
             <ChevronDown
               className={cn(
                 "w-4 h-4 text-muted-foreground transition-transform",
@@ -517,7 +518,7 @@ export function MostNaturalCard({
             )}
           >
             <Star className="w-4 h-4" fill={isFav ? "currentColor" : "none"} />
-            {isFav ? "Tersimpan di Favorit" : "⭐ Simpan ke Favorit"}
+            {isFav ? t("mn.savedFav") : t("mn.saveFav")}
           </button>
         </div>
       )}
