@@ -8,6 +8,7 @@ import { gtagEvent } from "@/lib/gtag";
 import { PaymentTestModeBanner } from "./PaymentTestModeBanner";
 import { UpgradeSuccessListener } from "./UpgradeSuccessListener";
 import { SiteFooter } from "./SiteFooter";
+import { FlagID, FlagGB } from "./FlagIcons";
 
 import { UserMenu } from "./UserMenu";
 
@@ -20,23 +21,24 @@ const NAV: NavItem[] = [
   { to: "/review", key: "review", Icon: RotateCw, proOnly: true },
 ];
 
-function LangToggle({ lang }: { lang: Lang }) {
+function LangToggle({ lang, size = "md" }: { lang: Lang; size?: "sm" | "md" }) {
+  const dim = size === "sm" ? "w-7 h-7" : "w-9 h-9";
   return (
-    <div className="inline-flex items-center gap-1">
+    <div className="inline-flex items-center gap-2">
       <button
         onClick={() => {
           setLang("id");
           gtagEvent("language_switch", { language: "id" });
         }}
         className={cn(
-          "w-7 h-7 rounded-full flex items-center justify-center text-base leading-none transition ring-offset-background",
-          lang === "id" ? "ring-2 ring-primary" : "opacity-60 hover:opacity-100",
+          "rounded-full transition shadow-sm hover:scale-105",
+          dim,
+          lang === "id" ? "ring-2 ring-primary ring-offset-2 ring-offset-background" : "opacity-70 hover:opacity-100",
         )}
-        aria-pressed={lang === "id"}
         aria-label="Bahasa Indonesia"
         title="Bahasa Indonesia"
       >
-        🇮🇩
+        <FlagID className="w-full h-full drop-shadow" />
       </button>
       <button
         onClick={() => {
@@ -44,14 +46,14 @@ function LangToggle({ lang }: { lang: Lang }) {
           gtagEvent("language_switch", { language: "en" });
         }}
         className={cn(
-          "w-7 h-7 rounded-full flex items-center justify-center text-base leading-none transition ring-offset-background",
-          lang === "en" ? "ring-2 ring-primary" : "opacity-60 hover:opacity-100",
+          "rounded-full transition shadow-sm hover:scale-105",
+          dim,
+          lang === "en" ? "ring-2 ring-primary ring-offset-2 ring-offset-background" : "opacity-70 hover:opacity-100",
         )}
-        aria-pressed={lang === "en"}
         aria-label="English"
         title="English"
       >
-        🇬🇧
+        <FlagGB className="w-full h-full drop-shadow" />
       </button>
     </div>
   );
