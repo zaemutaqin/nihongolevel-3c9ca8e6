@@ -234,8 +234,10 @@ Rules: ${explLang} = ${explLangFull} (write every "${explLang}" field in ${explL
                 ? "CREDITS_EXHAUSTED"
                 : "AI_UNAVAILABLE";
           console.error("AI gateway error", upstream.status);
-          return errorResponse(code, upstream.status);
+          await audit({ event_type: "translate_fail", ip_address: ip, user_id: userId, input_length: inputLength, success: false, error_code: code });
+          return jsonResponse({ error: code }, upstream.status, allowedOrigin);
         }
+
 
         const stream = new ReadableStream<Uint8Array>({
           async start(controller) {
