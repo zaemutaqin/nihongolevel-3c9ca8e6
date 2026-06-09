@@ -37,26 +37,20 @@ export function LockedFeature() {
             : "Upgrade to Pro for history, favorites and practice."}
         </p>
         <div className="mt-6 flex justify-center">
-          {user ? (
-            <button
-              onClick={() => setShowUpgrade(true)}
-              className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:opacity-90 transition"
-            >
-              <Crown className="w-4 h-4" />
-              {lang === "id" ? "Upgrade ke Pro — $19" : "Upgrade to Pro — $19"}
-            </button>
-          ) : (
-            <div className="space-y-3">
-              <SignInButton />
-              <p className="text-xs text-muted-foreground">
-                {lang === "id"
-                  ? "Login dulu, lalu upgrade ke Pro."
-                  : "Sign in first, then upgrade to Pro."}
-              </p>
-            </div>
-          )}
+          <button
+            onClick={() => setShowUpgrade(true)}
+            className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:opacity-90 transition"
+          >
+            <Crown className="w-4 h-4" />
+            {lang === "id" ? "Upgrade ke Pro — $19" : "Upgrade to Pro — $19"}
+          </button>
         </div>
-      </div>
+        {!user && (
+          <p className="mt-4 text-xs text-muted-foreground">
+            {lang === "id" ? "Sudah Pro? " : "Already Pro? "}
+            <SignInButton size="sm" className="ml-1 align-middle" />
+          </p>
+        )}
       <UpgradeModal open={showUpgrade} onClose={() => setShowUpgrade(false)} />
     </>
   );
