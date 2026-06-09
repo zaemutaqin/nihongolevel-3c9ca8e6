@@ -19,7 +19,21 @@ import { useAuth } from "@/lib/auth";
 import { LockedFeature } from "@/components/LockedFeature";
 
 export const Route = createFileRoute("/review")({
-  head: () => ({ meta: [{ title: "Latihan Harian — NihongoLevel" }] }),
+  head: () => ({
+    meta: [
+      { title: "Latihan Harian — NihongoLevel" },
+      {
+        name: "description",
+        content:
+          "Latihan harian berbasis spaced repetition untuk ekspresi favorit bahasa Jepang kamu — ulang yang paling perlu diingat setiap hari.",
+      },
+      { property: "og:title", content: "Latihan Harian — NihongoLevel" },
+      { property: "og:description", content: "Spaced repetition harian untuk ekspresi favorit bahasa Jepang." },
+      { property: "og:url", content: "/review" },
+    ],
+    links: [{ rel: "canonical", href: "/review" }],
+  }),
+
   component: ReviewPage,
 });
 
