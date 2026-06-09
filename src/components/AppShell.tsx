@@ -80,13 +80,21 @@ export function AppShell() {
       <UpgradeSuccessListener />
       <Toaster />
       {/* Desktop top nav */}
-      <nav className="hidden sm:flex sticky top-0 z-30 border-b border-border bg-background/80 backdrop-blur">
-        <div className="mx-auto max-w-5xl w-full px-4 py-2.5 flex items-center gap-3">
-          <Link to="/" className="font-bold text-base inline-flex items-center gap-2">
-            <span>Nihongo<span className="text-primary">Level</span></span>
-            <ProBadgeInline />
-          </Link>
-          <div className="ml-6 flex items-center gap-0.5">
+      <nav className="hidden sm:block sticky top-0 z-30 border-b border-border bg-background/80 backdrop-blur">
+        <div className="mx-auto max-w-5xl w-full px-4 pt-3 pb-2">
+          {/* Row 1: logo (larger) + lang toggle right */}
+          <div className="flex items-center justify-between">
+            <Link to="/" className="font-extrabold text-2xl inline-flex items-center gap-2 tracking-tight">
+              <span>Nihongo<span className="text-primary">Level</span></span>
+              <ProBadgeInline />
+            </Link>
+            <div className="flex items-center gap-3">
+              <LangToggle lang={lang} />
+              <UserMenu />
+            </div>
+          </div>
+          {/* Row 2: nav below logo, left aligned */}
+          <div className="mt-2 flex items-center gap-0.5">
             {NAV.map(({ to, key, Icon, exact, proOnly }) => {
               const locked = proOnly && !isPro;
               return (
@@ -107,10 +115,6 @@ export function AppShell() {
               );
             })}
           </div>
-          <div className="ml-auto flex items-center gap-3">
-            <LangToggle lang={lang} />
-            <UserMenu />
-          </div>
         </div>
       </nav>
 
@@ -121,7 +125,7 @@ export function AppShell() {
           <ProBadgeInline />
         </Link>
         <div className="flex items-center gap-2">
-          <LangToggle lang={lang} />
+          <LangToggle lang={lang} size="sm" />
           <UserMenu />
         </div>
       </div>
