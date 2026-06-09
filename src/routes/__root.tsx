@@ -78,20 +78,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      {
-        httpEquiv: "Content-Security-Policy",
-        content:
-          "default-src 'self'; " +
-          "script-src 'self' 'unsafe-inline' 'unsafe-eval' https: blob:; " +
-          "worker-src 'self' blob:; " +
-          "connect-src 'self' https: wss: ws:; " +
-          "img-src 'self' data: https: blob:; " +
-          "font-src 'self' https: data:; " +
-          "style-src 'self' 'unsafe-inline' https:; " +
-          "frame-ancestors 'self' https://*.lovable.app https://*.lovable.dev https://lovable.dev; " +
-          "base-uri 'self'; " +
-          "form-action 'self'",
-      },
       { name: "referrer", content: "strict-origin-when-cross-origin" },
 
       { title: "NihongoLevel" },
