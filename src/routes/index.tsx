@@ -1,13 +1,24 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
-import { useState, useEffect, type KeyboardEvent } from "react";
-import { Loader2, ChevronDown, AlertCircle, Sparkles } from "lucide-react";
+import { useState, useEffect, useRef, type KeyboardEvent } from "react";
+import { Loader2, ChevronDown, AlertCircle, Sparkles, Zap } from "lucide-react";
 import {
-  translateSentence,
-  TRANSLATE_ERROR_CODES,
-  type TranslateErrorCode,
+  styleBlockToLevelBlock,
   type TranslationResult,
+  type IntentInfo,
+  type SocialAnalysis,
+  type MostNatural,
+  type AlternativeExpression,
+  type LevelBlock,
+  type RawStyleBlock,
 } from "@/lib/translate.functions";
+
+type TranslateErrorCode =
+  | "FORBIDDEN_ORIGIN"
+  | "RATE_LIMITED"
+  | "CREDITS_EXHAUSTED"
+  | "AI_UNAVAILABLE"
+  | "INVALID_RESPONSE"
+  | "SERVER_MISCONFIGURED";
 
 const ERROR_MESSAGES: Record<TranslateErrorCode, string> = {
   FORBIDDEN_ORIGIN: "Permintaan tidak diizinkan. Buka aplikasi dari situs resmi.",
@@ -33,10 +44,18 @@ import {
   AlternativesSection,
 } from "@/components/result-parts";
 import {
+  IntentBadgeSkeleton,
+  MostNaturalSkeleton,
+  StyleCardSkeleton,
+} from "@/components/result-skeletons";
+import {
   addHistory,
   addFavoriteFromLevel,
   addFavoriteFromMostNatural,
   isFavorited,
+  buildCacheKey,
+  getCachedResult,
+  setCachedResult,
   type HistoryEntry,
   type LevelKey,
 } from "@/lib/storage";
