@@ -49,7 +49,7 @@ export function UpgradeModal({ open, onClose }: UpgradeModalProps) {
           "Unlimited searches",
           "History kept forever",
           "Unlimited favorites",
-          "My Learning & Dashboard",
+          "My Level & Dashboard",
           "Daily Practice",
           "Indonesian + English",
           "All future features included",
