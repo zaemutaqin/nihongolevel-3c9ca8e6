@@ -565,7 +565,7 @@ export function AlternativesSection({ items }: { items: AlternativeExpression[] 
                 </span>
                 <div className="min-w-0 flex-1">
                   <p className="text-xs font-bold text-foreground leading-tight">
-                    {alt.role_label ?? "Pilihan"}
+                    {alt.role_label ?? t("alt.fallback")}
                   </p>
                   {alt.context_label && (
                     <p className="text-[11px] text-muted-foreground mt-0.5">
