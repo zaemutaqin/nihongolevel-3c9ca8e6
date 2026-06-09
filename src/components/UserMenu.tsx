@@ -27,7 +27,18 @@ export function UserMenu() {
   const [code, setCode] = useState("");
   const [activating, setActivating] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
+  const [portalLoading, setPortalLoading] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+
+  const env = getPaddleEnvironment();
+  const fetchSub = useServerFn(getMySubscription);
+  const openPortalFn = useServerFn(createCustomerPortalSession);
+  const { data: sub } = useQuery<SubInfo>({
+    queryKey: ["my-subscription", user?.id, env],
+    queryFn: () => fetchSub({ data: { environment: env } }) as Promise<SubInfo>,
+    enabled: !!user,
+    staleTime: 30_000,
+  });
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -44,6 +55,26 @@ export function UserMenu() {
   const avatar = profile?.avatar_url ?? user.user_metadata?.avatar_url ?? null;
   const isPro = profile?.is_pro ?? false;
   const initial = (name || email || "?")[0].toUpperCase();
+  const hasPaidSub = !!sub;
+  const isPastDue = sub?.status === "past_due";
+  const willCancel = !!sub?.cancel_at_period_end && sub?.status !== "canceled";
+  const periodEnd = sub?.current_period_end ? new Date(sub.current_period_end) : null;
+  const periodEndLabel = periodEnd
+    ? periodEnd.toLocaleDateString(lang === "id" ? "id-ID" : "en-US", { year: "numeric", month: "short", day: "numeric" })
+    : null;
+
+  const openPortal = async () => {
+    setPortalLoading(true);
+    try {
+      const res = await openPortalFn({ data: { environment: env } });
+      window.open(res.url, "_blank", "noopener,noreferrer");
+    } catch (e) {
+      console.error(e);
+      setMsg(lang === "id" ? "Gagal membuka portal" : "Could not open portal");
+    } finally {
+      setPortalLoading(false);
+    }
+  };
 
   const activate = async () => {
     setActivating(true);
