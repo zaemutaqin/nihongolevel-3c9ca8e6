@@ -393,6 +393,111 @@ function Index() {
         )}
       </header>
 
+      <section className="rounded-2xl border border-border bg-card p-6 shadow-sm">
+        <label htmlFor="input" className="block text-sm font-medium mb-2">
+          {t("home.inputLabel")}
+        </label>
+        <textarea
+          id="input"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={onKeyDown}
+          placeholder={t("home.placeholder")}
+          rows={3}
+          className="w-full resize-none rounded-lg border border-input bg-background px-3 py-2.5 text-sm outline-none transition focus:border-ring focus:ring-2 focus:ring-ring/30"
+        />
+
+        <div className="mt-4 rounded-lg border border-border overflow-hidden">
+          <button
+            onClick={() => setContextOpen((v) => !v)}
+            className="w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium hover:bg-muted/40 transition"
+            aria-expanded={contextOpen}
+          >
+            <span>{t("home.addContext")}</span>
+            <ChevronDown
+              className={cn(
+                "w-4 h-4 text-muted-foreground transition-transform",
+                contextOpen && "rotate-180",
+              )}
+            />
+          </button>
+          {contextOpen && (
+            <div className="px-3 pb-3 grid sm:grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-medium mb-1 text-muted-foreground">
+                  {t("home.listenerLabel")}
+                </label>
+                <select
+                  value={listener}
+                  onChange={(e) => setListener(e.target.value)}
+                  className="w-full rounded-lg border border-input bg-background px-2.5 py-2 text-sm outline-none focus:border-ring focus:ring-2 focus:ring-ring/30"
+                >
+                  {LISTENER_OPTIONS.map((o) => (
+                    <option key={o.label} value={o.value}>
+                      {o.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-medium mb-1 text-muted-foreground">
+                  {t("home.moodLabel")}
+                </label>
+                <select
+                  value={mood}
+                  onChange={(e) => setMood(e.target.value)}
+                  className="w-full rounded-lg border border-input bg-background px-2.5 py-2 text-sm outline-none focus:border-ring focus:ring-2 focus:ring-ring/30"
+                >
+                  {MOOD_OPTIONS.map((o) => (
+                    <option key={o.label} value={o.value}>
+                      {o.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <p className="text-xs text-muted-foreground">
+            {t("home.shortcut")} <kbd className="px-1.5 py-0.5 rounded bg-muted text-foreground/80">Ctrl</kbd> +{" "}
+            <kbd className="px-1.5 py-0.5 rounded bg-muted text-foreground/80">Enter</kbd>
+          </p>
+          <button
+            onClick={() => handleTranslate()}
+            disabled={loading}
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            {loading ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                {t("home.searching")}
+              </>
+            ) : (
+              t("home.searchBtn")
+            )}
+          </button>
+        </div>
+
+        <div className="mt-5">
+          <p className="text-xs text-muted-foreground mb-2">{t("home.examplesLabel")}</p>
+          <div className="flex flex-wrap gap-2">
+            {EXAMPLES.map((ex) => (
+              <button
+                key={ex}
+                onClick={() => useExample(ex)}
+                disabled={loading}
+                className="text-xs px-3 py-1.5 rounded-full border border-border bg-background hover:bg-muted transition disabled:opacity-50"
+              >
+                {ex}
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+
 
       {error && (
         <div className="mt-6 flex items-start gap-3 rounded-lg border border-destructive/40 bg-destructive/5 p-4 text-sm text-destructive">
