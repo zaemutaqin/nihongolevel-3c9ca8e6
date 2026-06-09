@@ -194,15 +194,15 @@ const ID: Dict = {
 
   // Review page
   "rev.title": "Latihan Harian",
-  "rev.tab.flash": "Review Ekspresi",
+  "rev.tab.flash": "Ulang Ekspresi",
   "rev.tab.situ": "Latihan Situasi",
   "rev.empty.title": "Belum ada yang perlu diulang",
   "rev.empty.desc": "Tambahkan ekspresi ke favorit untuk mulai latihan.",
   "rev.sessionDone": "Sesi selesai!",
-  "rev.reviewed": "Kamu sudah meninjau",
+  "rev.reviewed": "Kamu sudah mengulang",
   "rev.expressionsToday": "ekspresi hari ini.",
   "rev.newSession": "Mulai sesi baru",
-  "rev.readyToday": "ekspresi siap direview hari ini",
+  "rev.readyToday": "ekspresi siap diulang hari ini",
   "rev.tryRemember": "Coba ingat dalam Bahasa Jepang",
   "rev.showAnswer": "Lihat jawaban",
 
