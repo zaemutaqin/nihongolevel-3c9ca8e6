@@ -400,8 +400,16 @@ function Index() {
           onKeyDown={onKeyDown}
           placeholder={t("home.placeholder")}
           rows={3}
-          className="w-full resize-none rounded-lg border border-input bg-background px-3 py-2.5 text-sm outline-none transition focus:border-ring focus:ring-2 focus:ring-ring/30"
+          disabled={guestBlocked}
+          className="w-full resize-none rounded-lg border border-input bg-background px-3 py-2.5 text-sm outline-none transition focus:border-ring focus:ring-2 focus:ring-ring/30 disabled:opacity-60 disabled:cursor-not-allowed"
         />
+        {!user && (
+          <p className="mt-2 text-xs text-muted-foreground">
+            {lang === "id"
+              ? `Sisa pencarian gratis: ${remaining}/${GUEST_LIMIT}`
+              : `Free searches remaining: ${remaining}/${GUEST_LIMIT}`}
+          </p>
+        )}
 
         <div className="mt-4 rounded-lg border border-border overflow-hidden">
           <button
