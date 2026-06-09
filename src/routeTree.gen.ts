@@ -14,6 +14,7 @@ import { Route as ReviewRouteImport } from './routes/review'
 import { Route as FavoritRouteImport } from './routes/favorit'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiTranslateRouteImport } from './routes/api/translate'
 
 const RiwayatRoute = RiwayatRouteImport.update({
   id: '/riwayat',
@@ -40,6 +41,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiTranslateRoute = ApiTranslateRouteImport.update({
+  id: '/api/translate',
+  path: '/api/translate',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -47,6 +53,7 @@ export interface FileRoutesByFullPath {
   '/favorit': typeof FavoritRoute
   '/review': typeof ReviewRoute
   '/riwayat': typeof RiwayatRoute
+  '/api/translate': typeof ApiTranslateRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -54,6 +61,7 @@ export interface FileRoutesByTo {
   '/favorit': typeof FavoritRoute
   '/review': typeof ReviewRoute
   '/riwayat': typeof RiwayatRoute
+  '/api/translate': typeof ApiTranslateRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,13 +70,33 @@ export interface FileRoutesById {
   '/favorit': typeof FavoritRoute
   '/review': typeof ReviewRoute
   '/riwayat': typeof RiwayatRoute
+  '/api/translate': typeof ApiTranslateRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/favorit' | '/review' | '/riwayat'
+  fullPaths:
+    | '/'
+    | '/dashboard'
+    | '/favorit'
+    | '/review'
+    | '/riwayat'
+    | '/api/translate'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/favorit' | '/review' | '/riwayat'
-  id: '__root__' | '/' | '/dashboard' | '/favorit' | '/review' | '/riwayat'
+  to:
+    | '/'
+    | '/dashboard'
+    | '/favorit'
+    | '/review'
+    | '/riwayat'
+    | '/api/translate'
+  id:
+    | '__root__'
+    | '/'
+    | '/dashboard'
+    | '/favorit'
+    | '/review'
+    | '/riwayat'
+    | '/api/translate'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -77,6 +105,7 @@ export interface RootRouteChildren {
   FavoritRoute: typeof FavoritRoute
   ReviewRoute: typeof ReviewRoute
   RiwayatRoute: typeof RiwayatRoute
+  ApiTranslateRoute: typeof ApiTranslateRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -116,6 +145,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/translate': {
+      id: '/api/translate'
+      path: '/api/translate'
+      fullPath: '/api/translate'
+      preLoaderRoute: typeof ApiTranslateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -125,7 +161,18 @@ const rootRouteChildren: RootRouteChildren = {
   FavoritRoute: FavoritRoute,
   ReviewRoute: ReviewRoute,
   RiwayatRoute: RiwayatRoute,
+  ApiTranslateRoute: ApiTranslateRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
