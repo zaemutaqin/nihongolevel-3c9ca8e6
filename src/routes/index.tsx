@@ -184,6 +184,11 @@ function Index() {
       return;
     }
     gtagEvent("search", { search_term: sentence });
+    if (!user) {
+      const n = Number(localStorage.getItem("nihongo_guest_count") || "0") + 1;
+      localStorage.setItem("nihongo_guest_count", String(n));
+      if (n >= 3) setShowGuestPrompt(true);
+    }
     setError(null);
     setResult(null);
     setHistoryEntry(null);
