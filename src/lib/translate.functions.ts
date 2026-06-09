@@ -1,5 +1,24 @@
 import { createServerFn } from "@tanstack/react-start";
+import { getWebRequest } from "@tanstack/react-start/server";
 import { z } from "zod";
+
+// Safe, user-facing error codes. The client maps these to Indonesian
+// messages; raw server details (config, gateway internals) never leak.
+export const TRANSLATE_ERROR_CODES = {
+  FORBIDDEN_ORIGIN: "FORBIDDEN_ORIGIN",
+  RATE_LIMITED: "RATE_LIMITED",
+  CREDITS_EXHAUSTED: "CREDITS_EXHAUSTED",
+  AI_UNAVAILABLE: "AI_UNAVAILABLE",
+  INVALID_RESPONSE: "INVALID_RESPONSE",
+  SERVER_MISCONFIGURED: "SERVER_MISCONFIGURED",
+} as const;
+export type TranslateErrorCode =
+  (typeof TRANSLATE_ERROR_CODES)[keyof typeof TRANSLATE_ERROR_CODES];
+
+function safeError(code: TranslateErrorCode): Error {
+  // Message is the code itself — safe to surface to the client.
+  return new Error(code);
+}
 
 const InputSchema = z.object({
   sentence: z.string().trim().min(1).max(500),
