@@ -14,16 +14,35 @@ import { useState } from "react";
 import { ChevronDown, Users, Heart, Target, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SpeakerButton } from "@/components/SpeakerButton";
+import { useT } from "@/lib/i18n";
 
 export { cleanJapanese };
 
+// Backwards-compat (Indonesian fallback). Prefer useIntentLabel inside components.
 export const INTENT_LABELS: Record<IntentType, { emoji: string; label: string; short: string }> = {
-  monolog: { emoji: "🧠", label: "Monolog / berpikir sendiri", short: "Monolog" },
-  asking_others: { emoji: "💬", label: "Tanya ke orang lain", short: "Tanya ke orang" },
-  casual_conversation: { emoji: "🤝", label: "Percakapan kasual / akrab", short: "Kasual" },
-  professional_formal: { emoji: "💼", label: "Konteks profesional / formal", short: "Profesional" },
-  joking_relaxed: { emoji: "😄", label: "Bercanda / santai", short: "Bercanda" },
+  monolog: { emoji: "🧠", label: "Monolog", short: "Monolog" },
+  asking_others: { emoji: "💬", label: "Asking", short: "Asking" },
+  casual_conversation: { emoji: "🤝", label: "Casual", short: "Casual" },
+  professional_formal: { emoji: "💼", label: "Professional", short: "Professional" },
+  joking_relaxed: { emoji: "😄", label: "Joking", short: "Joking" },
 };
+
+const INTENT_EMOJI: Record<IntentType, string> = {
+  monolog: "🧠",
+  asking_others: "💬",
+  casual_conversation: "🤝",
+  professional_formal: "💼",
+  joking_relaxed: "😄",
+};
+
+export function useIntentLabel(type: IntentType) {
+  const { t } = useT();
+  return {
+    emoji: INTENT_EMOJI[type] ?? "✨",
+    label: t(`intent.${type}`),
+    short: t(`intent.${type}_short`),
+  };
+}
 
 export const NATURALNESS_LABELS: Record<
   Naturalness,
@@ -34,19 +53,22 @@ export const NATURALNESS_LABELS: Record<
   textbook: { emoji: "❌", label: "Textbook only", tone: "nat-textbook" },
 };
 
-export const STYLE_BY_LEVEL: Record<string, { name: string; tone: string }> = {
-  N4: { name: "Dasar", tone: "level-n4" },
-  N3: { name: "Sehari-hari", tone: "level-n3" },
-  N2: { name: "Ekspresif", tone: "level-n2" },
-  N1: { name: "Mendekati Native", tone: "level-n1" },
+export const STYLE_BY_LEVEL: Record<string, { tone: string }> = {
+  N4: { tone: "level-n4" },
+  N3: { tone: "level-n3" },
+  N2: { tone: "level-n2" },
+  N1: { tone: "level-n1" },
 };
 
 export function styleMeta(level: string) {
-  return STYLE_BY_LEVEL[level?.toUpperCase()] ?? { name: level, tone: "level-n3" };
+  return STYLE_BY_LEVEL[level?.toUpperCase()] ?? { tone: "level-n3" };
 }
 
 export function StylePill({ level, size = "md" }: { level: string; size?: "sm" | "md" }) {
   const meta = styleMeta(level);
+  const { t } = useT();
+  const key = (level || "").toUpperCase();
+  const name = t(`style.${key}`) || key;
   const sizeCls = size === "sm" ? "text-[11px] px-2 py-0.5" : "text-xs px-3 py-1";
   return (
     <span
@@ -57,15 +79,16 @@ export function StylePill({ level, size = "md" }: { level: string; size?: "sm" |
         border: `1px solid color-mix(in oklab, var(--${meta.tone}) 35%, transparent)`,
       }}
     >
-      {meta.name}
+      {name}
     </span>
   );
 }
 
 export function JlptRef({ level, className }: { level: string; className?: string }) {
+  const { t } = useT();
   return (
     <span className={cn("text-[11px] text-muted-foreground", className)}>
-      setara {level?.toUpperCase()}
+      {t("style.equiv")} {level?.toUpperCase()}
     </span>
   );
 }
