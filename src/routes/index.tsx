@@ -97,22 +97,11 @@ const LEVELS: { key: LevelKey; label: string }[] = [
   { key: "n1", label: "N1" },
 ];
 
-const GUEST_LIMIT = 3;
-
 function Index() {
   const { t, tList, lang } = useT();
   const { profile } = useAuth();
   const isPro = !!profile?.is_pro;
 
-  const friendlyError = (e: unknown): string => {
-    const raw = e instanceof Error ? e.message : String(e);
-    const base =
-      e instanceof Error && (ERR_CODES as string[]).includes(e.message)
-        ? t(`err.${e.message}`)
-        : t("err.generic");
-    if (import.meta.env.DEV) return `${base} [${raw}]`;
-    return base;
-  };
   const friendlyError = (e: unknown): string => {
     const raw = e instanceof Error ? e.message : String(e);
     const base =
