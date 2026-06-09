@@ -394,19 +394,9 @@ function Index() {
           onKeyDown={onKeyDown}
           placeholder={t("home.placeholder")}
           rows={3}
-          disabled={guestBlocked}
-          className="w-full resize-none rounded-lg border border-input bg-background px-3 py-2.5 text-sm outline-none transition focus:border-ring focus:ring-2 focus:ring-ring/30 disabled:opacity-60 disabled:cursor-not-allowed"
+          className="w-full resize-none rounded-lg border border-input bg-background px-3 py-2.5 text-sm outline-none transition focus:border-ring focus:ring-2 focus:ring-ring/30"
         />
-        {!isPro && (
-          <div className="mt-3">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-1 text-[11px] font-medium text-muted-foreground">
-              <span className={cn("w-1.5 h-1.5 rounded-full", remaining > 0 ? "bg-primary" : "bg-destructive")} />
-              {lang === "id"
-                ? `Sisa pencarian hari ini: ${remaining}/${GUEST_LIMIT}`
-                : `Searches remaining today: ${remaining}/${GUEST_LIMIT}`}
-            </span>
-          </div>
-        )}
+
 
         <div className="mt-4 rounded-lg border border-border overflow-hidden">
           <button
