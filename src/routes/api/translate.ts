@@ -18,8 +18,8 @@ import {
 
 // Per-tier daily caps. Hourly anomaly cap is a hard block above any tier.
 const GUEST_DAY_MAX = 3;
-const FREE_DAY_MAX = 50;
-const PRO_DAY_MAX = 500;
+const FREE_DAY_MAX = 3;
+const PRO_DAY_MAX = 100000;
 const IP_HOUR_BLOCK = 20;        // > this in 1h → 24h block
 const USER_DAY_FLAG = 100;       // > this in 24h → flag (still allow)
 

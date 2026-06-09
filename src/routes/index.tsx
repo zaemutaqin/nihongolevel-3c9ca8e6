@@ -92,20 +92,21 @@ const GUEST_LIMIT = 3;
 
 function Index() {
   const { t, tList, lang } = useT();
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
+  const isPro = !!profile?.is_pro;
   const [guestCount, setGuestCount] = useState(0);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    if (user) {
+    if (isPro) {
       localStorage.setItem("nihongo_guest_count", "0");
       setGuestCount(0);
     } else {
       setGuestCount(Number(localStorage.getItem("nihongo_guest_count") || "0"));
     }
-  }, [user]);
+  }, [isPro, user]);
 
-  const guestBlocked = !user && guestCount >= GUEST_LIMIT;
+  const guestBlocked = !isPro && guestCount >= GUEST_LIMIT;
   const remaining = Math.max(0, GUEST_LIMIT - guestCount);
   const friendlyError = (e: unknown): string => {
     if (e instanceof Error && (ERR_CODES as string[]).includes(e.message)) {
@@ -193,14 +194,14 @@ function Index() {
   };
 
   const handleTranslate = async (text?: string) => {
-    if (!user && guestCount >= GUEST_LIMIT) return;
+    if (!isPro && guestCount >= GUEST_LIMIT) return;
     const sentence = (text ?? input).trim();
     if (!sentence) {
       setError(t("home.errEmpty"));
       return;
     }
     gtagEvent("search", { search_term: sentence });
-    if (!user) {
+    if (!isPro) {
       const n = guestCount + 1;
       localStorage.setItem("nihongo_guest_count", String(n));
       setGuestCount(n);
@@ -403,11 +404,11 @@ function Index() {
           disabled={guestBlocked}
           className="w-full resize-none rounded-lg border border-input bg-background px-3 py-2.5 text-sm outline-none transition focus:border-ring focus:ring-2 focus:ring-ring/30 disabled:opacity-60 disabled:cursor-not-allowed"
         />
-        {!user && (
+        {!isPro && (
           <p className="mt-2 text-xs text-muted-foreground">
             {lang === "id"
-              ? `Sisa pencarian gratis: ${remaining}/${GUEST_LIMIT}`
-              : `Free searches remaining: ${remaining}/${GUEST_LIMIT}`}
+              ? `Sisa pencarian hari ini: ${remaining}/${GUEST_LIMIT}`
+              : `Searches remaining today: ${remaining}/${GUEST_LIMIT}`}
           </p>
         )}
 
