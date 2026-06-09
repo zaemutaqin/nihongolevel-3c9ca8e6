@@ -14,6 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      guest_rate_limits: {
+        Row: {
+          count: number
+          day: string
+          ip: string
+          updated_at: string
+        }
+        Insert: {
+          count?: number
+          day?: string
+          ip: string
+          updated_at?: string
+        }
+        Update: {
+          count?: number
+          day?: string
+          ip?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       nihongo_data: {
         Row: {
           data: Json
@@ -76,7 +97,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      activate_pro: { Args: { _code: string }; Returns: boolean }
+      [_ in never]: never
     }
     Enums: {
       [_ in never]: never
