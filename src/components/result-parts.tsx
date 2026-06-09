@@ -437,9 +437,10 @@ export function MostNaturalCard({
 }) {
   const tone = "level-n3";
   const japanese = cleanJapanese(data.japanese);
+  const [whyOpen, setWhyOpen] = useState(false);
   return (
     <div
-      className="rounded-2xl border-2 p-6 sm:p-8 shadow-md"
+      className="rounded-2xl border-2 p-6 sm:p-8 shadow-md natural-pulse-border"
       style={{
         borderColor: `var(--${tone})`,
         background: `linear-gradient(135deg, color-mix(in oklab, var(--${tone}) 14%, transparent), color-mix(in oklab, var(--${tone}) 4%, transparent))`,
@@ -453,15 +454,6 @@ export function MostNaturalCard({
         >
           Yang paling natural
         </h2>
-        <span
-          className="text-[11px] font-medium px-2 py-0.5 rounded-full"
-          style={{
-            backgroundColor: `color-mix(in oklab, var(--${tone}) 14%, transparent)`,
-            color: `var(--${tone})`,
-          }}
-        >
-          Ini yang akan diucapkan penutur asli
-        </span>
       </div>
       <div className="flex items-start gap-3">
         <p className="font-jp text-3xl sm:text-4xl leading-snug text-foreground flex-1 break-words">
@@ -470,32 +462,63 @@ export function MostNaturalCard({
         <SpeakerButton text={japanese} />
       </div>
       <p className="mt-2 italic text-sm text-muted-foreground">{data.romaji}</p>
+
+      <p
+        className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full"
+        style={{
+          backgroundColor: `color-mix(in oklab, var(--${tone}) 16%, transparent)`,
+          color: `var(--${tone})`,
+        }}
+      >
+        ✓ Inilah yang akan terdengar alami bagi penutur asli
+      </p>
+
       <div className="mt-4">
         <NaturalnessBar value="native" />
       </div>
       <p className="mt-4 text-sm text-foreground/80">{data.reason}</p>
+
       {data.native_note && (
-        <p className="mt-2 text-sm text-foreground/70 italic">{data.native_note}</p>
+        <div className="mt-3 rounded-lg border border-border/60 bg-background/60 overflow-hidden">
+          <button
+            onClick={() => setWhyOpen((v) => !v)}
+            aria-expanded={whyOpen}
+            className="w-full flex items-center justify-between px-3 py-2.5 text-sm font-semibold hover:bg-muted/40 transition"
+          >
+            <span>Mengapa ini yang paling natural?</span>
+            <ChevronDown
+              className={cn(
+                "w-4 h-4 text-muted-foreground transition-transform",
+                whyOpen && "rotate-180",
+              )}
+            />
+          </button>
+          {whyOpen && (
+            <p className="px-3 pb-3 text-sm text-foreground/80 italic">{data.native_note}</p>
+          )}
+        </div>
       )}
+
       {onFavorite && (
         <div className="mt-4">
           <button
             onClick={onFavorite}
             className={cn(
-              "inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold border transition",
+              "inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold border transition shadow-sm",
               isFav
                 ? "bg-amber-100 border-amber-300 text-amber-800"
                 : "bg-background border-border text-foreground hover:bg-muted",
             )}
           >
-            <Star className="w-3.5 h-3.5" fill={isFav ? "currentColor" : "none"} />
-            {isFav ? "Tersimpan" : "Simpan favorit"}
+            <Star className="w-4 h-4" fill={isFav ? "currentColor" : "none"} />
+            {isFav ? "Tersimpan di Favorit" : "⭐ Simpan ke Favorit"}
           </button>
         </div>
       )}
     </div>
   );
 }
+
 
 // ============= Alternatives =============
 const RANK_CIRCLE = ["①", "②", "③", "④", "⑤"];

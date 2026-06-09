@@ -160,3 +160,18 @@
   font-family: "Noto Sans JP", ui-sans-serif, system-ui, sans-serif;
   font-feature-settings: "palt";
 }
+
+@keyframes natural-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 color-mix(in oklab, var(--level-n3) 35%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 6px color-mix(in oklab, var(--level-n3) 0%, transparent),
+                0 0 18px 2px color-mix(in oklab, var(--level-n3) 28%, transparent);
+  }
+}
+
+@utility natural-pulse-border {
+  animation: natural-pulse 2.8s ease-in-out infinite;
+}
+
