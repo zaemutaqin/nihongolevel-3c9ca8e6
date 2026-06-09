@@ -314,22 +314,23 @@ Rules:
       }
 
       if (res.status === 429) {
-        throw new Error("Terlalu banyak permintaan. Coba lagi dalam beberapa saat.");
+        throw safeError(TRANSLATE_ERROR_CODES.RATE_LIMITED);
       }
       if (res.status === 402) {
-        throw new Error("Kredit AI habis. Silakan tambahkan kredit di workspace settings.");
+        throw safeError(TRANSLATE_ERROR_CODES.CREDITS_EXHAUSTED);
       }
-      throw new Error(`AI Gateway error (${res.status})`);
+      throw safeError(TRANSLATE_ERROR_CODES.AI_UNAVAILABLE);
     }
 
     if (!res || !res.ok) {
-      throw new Error("AI Gateway tidak tersedia. Coba lagi nanti.");
+      throw safeError(TRANSLATE_ERROR_CODES.AI_UNAVAILABLE);
     }
 
     const json = await res.json();
     const text: string | undefined = json?.choices?.[0]?.message?.content;
     if (!text) {
-      throw new Error("Empty response from AI Gateway");
+      console.error("Empty response from AI Gateway");
+      throw safeError(TRANSLATE_ERROR_CODES.INVALID_RESPONSE);
     }
 
     const cleaned = text
@@ -343,7 +344,7 @@ Rules:
       raw = JSON.parse(cleaned) as RawResult;
     } catch (e) {
       console.error("Failed to parse Gemini JSON:", cleaned);
-      throw new Error("Format respons tidak valid dari AI");
+      throw safeError(TRANSLATE_ERROR_CODES.INVALID_RESPONSE);
     }
 
     const styles = raw.styles ?? ({} as Record<StyleKey, RawStyleBlock>);
