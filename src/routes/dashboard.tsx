@@ -42,14 +42,14 @@ export const Route = createFileRoute("/dashboard")({
 
 function DashboardPage() {
   const { t } = useT();
-  const { user } = useAuth();
+  const { profile } = useAuth();
   const [history] = useLocalCollection<HistoryEntry>(getHistory);
   const [favs] = useLocalCollection<FavoriteEntry>(getFavorites);
   const [needsReview] = useLocalCollection<FavoriteEntry>(getFavoritesNeedsReview7d);
   const [oldest] = useLocalCollection(getOldestReviewedFavorites);
   const navigate = useNavigate();
 
-  if (!user) return <LockedFeature />;
+  if (!profile?.is_pro) return <LockedFeature />;
 
   const streak = useMemo(() => getStreakDays(), [history]);
   const week = useMemo(() => getSearchesThisWeek(), [history]);

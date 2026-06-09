@@ -36,11 +36,11 @@ export const Route = createFileRoute("/favorit")({
 
 function FavoritPage() {
   const { t } = useT();
-  const { user } = useAuth();
+  const { profile } = useAuth();
   const [favs] = useLocalCollection<FavoriteEntry>(getFavorites);
   const [filter, setFilter] = useState<IntentType | "all">("all");
 
-  if (!user) return <LockedFeature />;
+  if (!profile?.is_pro) return <LockedFeature />;
 
   const FILTERS: { value: IntentType | "all"; label: string }[] = [
     { value: "all", label: t("fav.filter.all") },

@@ -14,7 +14,7 @@ import {
 import { useT } from "@/lib/i18n";
 import { gtagEvent } from "@/lib/gtag";
 import { useAuth } from "@/lib/auth";
-import { GuestPrompt } from "@/components/GuestPrompt";
+
 
 type TranslateErrorCode =
   | "FORBIDDEN_ORIGIN"
@@ -97,26 +97,11 @@ const LEVELS: { key: LevelKey; label: string }[] = [
   { key: "n1", label: "N1" },
 ];
 
-const GUEST_LIMIT = 3;
-
 function Index() {
   const { t, tList, lang } = useT();
-  const { user, profile } = useAuth();
+  const { profile } = useAuth();
   const isPro = !!profile?.is_pro;
-  const [guestCount, setGuestCount] = useState(0);
 
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    if (isPro) {
-      localStorage.setItem("nihongo_guest_count", "0");
-      setGuestCount(0);
-    } else {
-      setGuestCount(Number(localStorage.getItem("nihongo_guest_count") || "0"));
-    }
-  }, [isPro, user]);
-
-  const guestBlocked = !isPro && guestCount >= GUEST_LIMIT;
-  const remaining = Math.max(0, GUEST_LIMIT - guestCount);
   const friendlyError = (e: unknown): string => {
     const raw = e instanceof Error ? e.message : String(e);
     const base =
@@ -207,18 +192,12 @@ function Index() {
   };
 
   const handleTranslate = async (text?: string) => {
-    if (!isPro && guestCount >= GUEST_LIMIT) return;
     const sentence = (text ?? input).trim();
     if (!sentence) {
       setError(t("home.errEmpty"));
       return;
     }
     gtagEvent("search", { search_term: sentence });
-    if (!isPro) {
-      const n = guestCount + 1;
-      localStorage.setItem("nihongo_guest_count", String(n));
-      setGuestCount(n);
-    }
     setError(null);
     setResult(null);
     setHistoryEntry(null);
@@ -415,19 +394,9 @@ function Index() {
           onKeyDown={onKeyDown}
           placeholder={t("home.placeholder")}
           rows={3}
-          disabled={guestBlocked}
-          className="w-full resize-none rounded-lg border border-input bg-background px-3 py-2.5 text-sm outline-none transition focus:border-ring focus:ring-2 focus:ring-ring/30 disabled:opacity-60 disabled:cursor-not-allowed"
+          className="w-full resize-none rounded-lg border border-input bg-background px-3 py-2.5 text-sm outline-none transition focus:border-ring focus:ring-2 focus:ring-ring/30"
         />
-        {!isPro && (
-          <div className="mt-3">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-1 text-[11px] font-medium text-muted-foreground">
-              <span className={cn("w-1.5 h-1.5 rounded-full", remaining > 0 ? "bg-primary" : "bg-destructive")} />
-              {lang === "id"
-                ? `Sisa pencarian hari ini: ${remaining}/${GUEST_LIMIT}`
-                : `Searches remaining today: ${remaining}/${GUEST_LIMIT}`}
-            </span>
-          </div>
-        )}
+
 
         <div className="mt-4 rounded-lg border border-border overflow-hidden">
           <button
@@ -488,7 +457,7 @@ function Index() {
           </p>
           <button
             onClick={() => handleTranslate()}
-            disabled={loading || guestBlocked}
+            disabled={loading}
             className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {loading ? (
@@ -622,7 +591,7 @@ function Index() {
       <footer className="mt-16 pb-6 text-center text-xs text-muted-foreground">
         {t("home.footer")}
       </footer>
-      {guestBlocked && <GuestPrompt />}
+      
     </div>
   );
 }

@@ -17,11 +17,13 @@ import {
 } from "@/lib/security.server";
 
 // Per-tier daily caps. Hourly anomaly cap is a hard block above any tier.
-const GUEST_DAY_MAX = 3;
-const FREE_DAY_MAX = 3;
+// Translator is open: guests get a generous IP-based daily cap to deter
+// automated abuse; logged-in users (free or Pro) are effectively unlimited.
+const GUEST_DAY_MAX = 20;
+const FREE_DAY_MAX = 100000;
 const PRO_DAY_MAX = 100000;
-const IP_HOUR_BLOCK = 20;        // > this in 1h → 24h block
-const USER_DAY_FLAG = 100;       // > this in 24h → flag (still allow)
+const IP_HOUR_BLOCK = 60;        // > this in 1h → 24h block
+const USER_DAY_FLAG = 500;       // > this in 24h → flag (still allow)
 
 const JAPANESE_RE = /[\u3000-\u9fff\u3400-\u4dbf\u30a0-\u30ff\u3040-\u309f]/;
 
