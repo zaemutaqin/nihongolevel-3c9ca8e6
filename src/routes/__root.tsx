@@ -82,12 +82,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         httpEquiv: "Content-Security-Policy",
         content:
           "default-src 'self'; " +
-          "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com; " +
-          "connect-src 'self' https://*.lovable.app https://*.supabase.co https://www.google-analytics.com; " +
+          "script-src 'self' 'unsafe-inline' 'unsafe-eval' https: blob:; " +
+          "worker-src 'self' blob:; " +
+          "connect-src 'self' https: wss: ws:; " +
           "img-src 'self' data: https: blob:; " +
-          "font-src 'self' https://fonts.gstatic.com data:; " +
-          "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
-          "frame-ancestors 'none'; " +
+          "font-src 'self' https: data:; " +
+          "style-src 'self' 'unsafe-inline' https:; " +
+          "frame-ancestors 'self' https://*.lovable.app https://*.lovable.dev https://lovable.dev; " +
           "base-uri 'self'; " +
           "form-action 'self'",
       },
