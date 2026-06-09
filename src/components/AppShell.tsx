@@ -8,6 +8,7 @@ import { gtagEvent } from "@/lib/gtag";
 import { PaymentTestModeBanner } from "./PaymentTestModeBanner";
 import { UpgradeSuccessListener } from "./UpgradeSuccessListener";
 import { SiteFooter } from "./SiteFooter";
+import { FlagID, FlagGB } from "./FlagIcons";
 
 import { UserMenu } from "./UserMenu";
 
@@ -20,23 +21,24 @@ const NAV: NavItem[] = [
   { to: "/review", key: "review", Icon: RotateCw, proOnly: true },
 ];
 
-function LangToggle({ lang }: { lang: Lang }) {
+function LangToggle({ lang, size = "md" }: { lang: Lang; size?: "sm" | "md" }) {
+  const dim = size === "sm" ? "w-7 h-7" : "w-9 h-9";
   return (
-    <div className="inline-flex items-center gap-1">
+    <div className="inline-flex items-center gap-2">
       <button
         onClick={() => {
           setLang("id");
           gtagEvent("language_switch", { language: "id" });
         }}
         className={cn(
-          "w-7 h-7 rounded-full flex items-center justify-center text-base leading-none transition ring-offset-background",
-          lang === "id" ? "ring-2 ring-primary" : "opacity-60 hover:opacity-100",
+          "rounded-full transition shadow-sm hover:scale-105",
+          dim,
+          lang === "id" ? "ring-2 ring-primary ring-offset-2 ring-offset-background" : "opacity-70 hover:opacity-100",
         )}
-        aria-pressed={lang === "id"}
         aria-label="Bahasa Indonesia"
         title="Bahasa Indonesia"
       >
-        🇮🇩
+        <FlagID className="w-full h-full drop-shadow" />
       </button>
       <button
         onClick={() => {
@@ -44,14 +46,14 @@ function LangToggle({ lang }: { lang: Lang }) {
           gtagEvent("language_switch", { language: "en" });
         }}
         className={cn(
-          "w-7 h-7 rounded-full flex items-center justify-center text-base leading-none transition ring-offset-background",
-          lang === "en" ? "ring-2 ring-primary" : "opacity-60 hover:opacity-100",
+          "rounded-full transition shadow-sm hover:scale-105",
+          dim,
+          lang === "en" ? "ring-2 ring-primary ring-offset-2 ring-offset-background" : "opacity-70 hover:opacity-100",
         )}
-        aria-pressed={lang === "en"}
         aria-label="English"
         title="English"
       >
-        🇬🇧
+        <FlagGB className="w-full h-full drop-shadow" />
       </button>
     </div>
   );
@@ -78,13 +80,21 @@ export function AppShell() {
       <UpgradeSuccessListener />
       <Toaster />
       {/* Desktop top nav */}
-      <nav className="hidden sm:flex sticky top-0 z-30 border-b border-border bg-background/80 backdrop-blur">
-        <div className="mx-auto max-w-5xl w-full px-4 py-2.5 flex items-center gap-3">
-          <Link to="/" className="font-bold text-base inline-flex items-center gap-2">
-            <span>Nihongo<span className="text-primary">Level</span></span>
-            <ProBadgeInline />
-          </Link>
-          <div className="ml-6 flex items-center gap-0.5">
+      <nav className="hidden sm:block sticky top-0 z-30 border-b border-border bg-background/80 backdrop-blur">
+        <div className="mx-auto max-w-5xl w-full px-4 pt-3 pb-2">
+          {/* Row 1: logo (larger) + lang toggle right */}
+          <div className="flex items-center justify-between">
+            <Link to="/" className="font-extrabold text-2xl inline-flex items-center gap-2 tracking-tight">
+              <span>Nihongo<span className="text-primary">Level</span></span>
+              <ProBadgeInline />
+            </Link>
+            <div className="flex items-center gap-3">
+              <LangToggle lang={lang} />
+              <UserMenu />
+            </div>
+          </div>
+          {/* Row 2: nav below logo, left aligned */}
+          <div className="mt-2 flex items-center gap-0.5">
             {NAV.map(({ to, key, Icon, exact, proOnly }) => {
               const locked = proOnly && !isPro;
               return (
@@ -105,10 +115,6 @@ export function AppShell() {
               );
             })}
           </div>
-          <div className="ml-auto flex items-center gap-3">
-            <LangToggle lang={lang} />
-            <UserMenu />
-          </div>
         </div>
       </nav>
 
@@ -119,7 +125,7 @@ export function AppShell() {
           <ProBadgeInline />
         </Link>
         <div className="flex items-center gap-2">
-          <LangToggle lang={lang} />
+          <LangToggle lang={lang} size="sm" />
           <UserMenu />
         </div>
       </div>

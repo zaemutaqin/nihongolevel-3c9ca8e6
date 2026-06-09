@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect, useRef, type KeyboardEvent } from "react";
-import { AlertCircle, Sparkles, Zap, Loader2, ChevronDown } from "lucide-react";
+import { AlertCircle, Zap, Loader2, ChevronDown } from "lucide-react";
 import {
   styleBlockToLevelBlock,
   type TranslationResult,
@@ -374,12 +374,8 @@ function Index() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-8 sm:py-12">
       <header className="text-center mb-8">
-        <div className="inline-flex items-center gap-1.5 mb-3 px-2 py-0.5 rounded-full bg-muted/60 text-muted-foreground text-[10px] font-medium">
-          <Sparkles className="w-3 h-3" />
-          {t("misc.poweredBy")}
-        </div>
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
-          NihongoLevel — Belajar Bicara Bahasa Jepang Natural
+          Belajar Bicara Bahasa Jepang Natural
         </h1>
 
         <p className="mt-2 text-sm text-muted-foreground">{t("home.subtitle")}</p>
@@ -591,9 +587,7 @@ function Index() {
         </div>
       )}
 
-      <footer className="mt-16 pb-6 text-center text-xs text-muted-foreground">
-        {t("home.footer")}
-      </footer>
+      
       
     </div>
   );
