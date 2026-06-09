@@ -73,13 +73,13 @@ export function TermsPage() {
           We retain all rights, title, and interest in the Service, including the software, content, branding, and documentation. We grant you a limited, non-exclusive, non-transferable right to use the Service within the plan you have signed up for.
         </p>
 
-        <h2>7. Payments, subscriptions, and Merchant of Record</h2>
+        <h2>7. Payments and Merchant of Record</h2>
         <p>
-          Our order process is conducted by our online reseller <strong>Paddle.com</strong>. Paddle.com is the Merchant of Record for all our orders. Paddle provides all customer service inquiries and handles returns. Payment, billing, tax, cancellation, and refund mechanics are governed by Paddle's{" "}
+          Our order process is conducted by our online reseller <strong>Paddle.com</strong>. Paddle.com is the Merchant of Record for all our orders. Paddle provides all customer service inquiries and handles returns. Payment, billing, tax, and refund mechanics are governed by Paddle's{" "}
           <a href="https://www.paddle.com/legal/checkout-buyer-terms" target="_blank" rel="noopener noreferrer">Buyer Terms</a>.
         </p>
         <p>
-          Pro subscriptions renew automatically each billing period (monthly or yearly, as selected) until canceled. You can cancel at any time; access continues until the end of the current period. Prices, fees, and applicable taxes are shown at checkout.
+          NihongoLevel Pro is sold as a one-time purchase that grants lifetime access to Pro features for the purchasing account. There are no recurring charges, no renewals, and no automatic billing. Prices, fees, and applicable taxes are shown at checkout.
         </p>
 
         <h2>8. Refunds</h2>
