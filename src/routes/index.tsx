@@ -410,7 +410,7 @@ function Index() {
 
         <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <p className="text-xs text-muted-foreground">
-            Tekan <kbd className="px-1.5 py-0.5 rounded bg-muted text-foreground/80">Ctrl</kbd> +{" "}
+            {t("home.shortcut")} <kbd className="px-1.5 py-0.5 rounded bg-muted text-foreground/80">Ctrl</kbd> +{" "}
             <kbd className="px-1.5 py-0.5 rounded bg-muted text-foreground/80">Enter</kbd>
           </p>
           <button
@@ -421,16 +421,16 @@ function Index() {
             {loading ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                Mencari...
+                {t("home.searching")}
               </>
             ) : (
-              "Cari ekspresi"
+              t("home.searchBtn")
             )}
           </button>
         </div>
 
         <div className="mt-5">
-          <p className="text-xs text-muted-foreground mb-2">Contoh cepat:</p>
+          <p className="text-xs text-muted-foreground mb-2">{t("home.examplesLabel")}</p>
           <div className="flex flex-wrap gap-2">
             {EXAMPLES.map((ex) => (
               <button
