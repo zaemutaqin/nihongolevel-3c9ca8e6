@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect, useRef, type KeyboardEvent } from "react";
-import { Loader2, ChevronDown, AlertCircle, Sparkles, Zap } from "lucide-react";
+import { Loader2, ChevronDown, AlertCircle, Sparkles, Zap, LogIn } from "lucide-react";
 import {
   styleBlockToLevelBlock,
   type TranslationResult,
@@ -14,6 +14,8 @@ import {
 import { useT } from "@/lib/i18n";
 import { gtagEvent } from "@/lib/gtag";
 import { useAuth } from "@/lib/auth";
+import { SignInButton } from "@/components/SignInButton";
+
 
 
 type TranslateErrorCode =
