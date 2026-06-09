@@ -558,6 +558,14 @@ function Index() {
       <footer className="mt-16 pb-6 text-center text-xs text-muted-foreground">
         {t("home.footer")}
       </footer>
+      {showGuestPrompt && (
+        <GuestPrompt
+          onDismiss={() => {
+            localStorage.setItem("nihongo_guest_count", "0");
+            setShowGuestPrompt(false);
+          }}
+        />
+      )}
     </div>
   );
 }
