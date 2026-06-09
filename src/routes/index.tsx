@@ -193,6 +193,7 @@ function Index() {
   };
 
   const handleTranslate = async (text?: string) => {
+    if (!user && guestCount >= GUEST_LIMIT) return;
     const sentence = (text ?? input).trim();
     if (!sentence) {
       setError(t("home.errEmpty"));
@@ -200,9 +201,9 @@ function Index() {
     }
     gtagEvent("search", { search_term: sentence });
     if (!user) {
-      const n = Number(localStorage.getItem("nihongo_guest_count") || "0") + 1;
+      const n = guestCount + 1;
       localStorage.setItem("nihongo_guest_count", String(n));
-      if (n >= 3) setShowGuestPrompt(true);
+      setGuestCount(n);
     }
     setError(null);
     setResult(null);
