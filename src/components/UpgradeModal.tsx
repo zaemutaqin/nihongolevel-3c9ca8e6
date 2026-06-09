@@ -71,7 +71,7 @@ export function UpgradeModal({ open, onClose }: UpgradeModalProps) {
     });
   };
 
-  return (
+  return createPortal(
     <div
       className="fixed inset-0 z-[9999] overflow-y-auto bg-black/60 backdrop-blur-md"
       role="dialog"
@@ -80,7 +80,7 @@ export function UpgradeModal({ open, onClose }: UpgradeModalProps) {
     >
       <div className="flex min-h-full items-center justify-center p-4 sm:p-6">
         <div
-          className="relative w-[95%] sm:w-full max-w-md my-8 rounded-2xl bg-card border border-border shadow-2xl animate-in fade-in zoom-in-95 duration-200"
+          className="relative w-[95%] sm:w-full max-w-[480px] my-8 rounded-2xl bg-card border border-border shadow-2xl animate-in fade-in zoom-in-95 duration-200 max-h-[85vh] overflow-y-auto"
           onClick={(e) => e.stopPropagation()}
         >
           <button
