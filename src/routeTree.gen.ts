@@ -15,6 +15,7 @@ import { Route as FavoritRouteImport } from './routes/favorit'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiTranslateRouteImport } from './routes/api/translate'
+import { Route as ApiActivateProRouteImport } from './routes/api/activate-pro'
 
 const RiwayatRoute = RiwayatRouteImport.update({
   id: '/riwayat',
@@ -46,6 +47,11 @@ const ApiTranslateRoute = ApiTranslateRouteImport.update({
   path: '/api/translate',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiActivateProRoute = ApiActivateProRouteImport.update({
+  id: '/api/activate-pro',
+  path: '/api/activate-pro',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -53,6 +59,7 @@ export interface FileRoutesByFullPath {
   '/favorit': typeof FavoritRoute
   '/review': typeof ReviewRoute
   '/riwayat': typeof RiwayatRoute
+  '/api/activate-pro': typeof ApiActivateProRoute
   '/api/translate': typeof ApiTranslateRoute
 }
 export interface FileRoutesByTo {
@@ -61,6 +68,7 @@ export interface FileRoutesByTo {
   '/favorit': typeof FavoritRoute
   '/review': typeof ReviewRoute
   '/riwayat': typeof RiwayatRoute
+  '/api/activate-pro': typeof ApiActivateProRoute
   '/api/translate': typeof ApiTranslateRoute
 }
 export interface FileRoutesById {
@@ -70,6 +78,7 @@ export interface FileRoutesById {
   '/favorit': typeof FavoritRoute
   '/review': typeof ReviewRoute
   '/riwayat': typeof RiwayatRoute
+  '/api/activate-pro': typeof ApiActivateProRoute
   '/api/translate': typeof ApiTranslateRoute
 }
 export interface FileRouteTypes {
@@ -80,6 +89,7 @@ export interface FileRouteTypes {
     | '/favorit'
     | '/review'
     | '/riwayat'
+    | '/api/activate-pro'
     | '/api/translate'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -88,6 +98,7 @@ export interface FileRouteTypes {
     | '/favorit'
     | '/review'
     | '/riwayat'
+    | '/api/activate-pro'
     | '/api/translate'
   id:
     | '__root__'
@@ -96,6 +107,7 @@ export interface FileRouteTypes {
     | '/favorit'
     | '/review'
     | '/riwayat'
+    | '/api/activate-pro'
     | '/api/translate'
   fileRoutesById: FileRoutesById
 }
@@ -105,6 +117,7 @@ export interface RootRouteChildren {
   FavoritRoute: typeof FavoritRoute
   ReviewRoute: typeof ReviewRoute
   RiwayatRoute: typeof RiwayatRoute
+  ApiActivateProRoute: typeof ApiActivateProRoute
   ApiTranslateRoute: typeof ApiTranslateRoute
 }
 
@@ -152,6 +165,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiTranslateRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/activate-pro': {
+      id: '/api/activate-pro'
+      path: '/api/activate-pro'
+      fullPath: '/api/activate-pro'
+      preLoaderRoute: typeof ApiActivateProRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -161,8 +181,19 @@ const rootRouteChildren: RootRouteChildren = {
   FavoritRoute: FavoritRoute,
   ReviewRoute: ReviewRoute,
   RiwayatRoute: RiwayatRoute,
+  ApiActivateProRoute: ApiActivateProRoute,
   ApiTranslateRoute: ApiTranslateRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
