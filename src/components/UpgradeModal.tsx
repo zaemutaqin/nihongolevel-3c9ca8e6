@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { X, Check, Loader2, Crown } from "lucide-react";
 import { useLang } from "@/lib/i18n";
 import { useAuth } from "@/lib/auth";
@@ -19,7 +20,23 @@ export function UpgradeModal({ open, onClose }: UpgradeModalProps) {
   const { openCheckout, loading } = usePaddleCheckout();
   const [plan, setPlan] = useState<Plan>("yearly");
 
+  // Lock body scroll + ESC to close while open
+  useEffect(() => {
+    if (!open) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open, onClose]);
+
   if (!open) return null;
+  if (typeof document === "undefined") return null;
 
   const title =
     lang === "id"
