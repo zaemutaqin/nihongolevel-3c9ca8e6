@@ -1,8 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteFooter } from "@/components/SiteFooter";
 
-export const Route = createFileRoute("/terms")({
-  head: () => ({
+export const termsHead = () => ({
     meta: [
       { title: "Terms of Service — NihongoLevel" },
       {
@@ -17,11 +16,14 @@ export const Route = createFileRoute("/terms")({
           "The rules and conditions for using NihongoLevel, operated by zaenal mutaqin.",
       },
     ],
-  }),
+  });
+
+export const Route = createFileRoute("/terms")({
+  head: termsHead,
   component: TermsPage,
 });
 
-function TermsPage() {
+export function TermsPage() {
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       <header className="flex items-center justify-between px-6 py-4 border-b border-border">
