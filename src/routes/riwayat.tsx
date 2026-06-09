@@ -26,6 +26,8 @@ import {
 import { SpeakerButton } from "@/components/SpeakerButton";
 import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/lib/auth";
+import { LockedFeature } from "@/components/LockedFeature";
 
 export const Route = createFileRoute("/riwayat")({
   head: () => ({ meta: [{ title: "Riwayat — NihongoLevel" }] }),
