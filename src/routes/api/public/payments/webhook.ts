@@ -6,16 +6,23 @@ async function getSupabase() {
   return supabaseAdmin;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function setProStatus(userId: string, isPro: boolean) {
+// Only live subscriptions grant Pro on the published app.
+// Sandbox subscriptions are still recorded for testing but don't flip is_pro.
+async function setProStatus(userId: string, isPro: boolean, env: PaddleEnv) {
+  if (env !== "live") return;
   const update: { is_pro: boolean; pro_activated_at?: string } = { is_pro: isPro };
   if (isPro) update.pro_activated_at = new Date().toISOString();
   await (await getSupabase()).from("profiles").update(update).eq("id", userId);
 }
 
+// Active = paid and in good standing OR in dunning (don't revoke during retries).
+function statusGrantsAccess(status: string): boolean {
+  return status === "active" || status === "trialing" || status === "past_due";
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function handleSubscriptionCreated(data: any, env: PaddleEnv) {
-  const { id, customerId, items, status, currentBillingPeriod, customData } = data;
+  const { id, customerId, items, status, currentBillingPeriod, customData, scheduledChange } = data;
   const userId = customData?.userId;
   if (!userId) {
     console.error("No userId in customData");
@@ -38,13 +45,14 @@ async function handleSubscriptionCreated(data: any, env: PaddleEnv) {
       status,
       current_period_start: currentBillingPeriod?.startsAt,
       current_period_end: currentBillingPeriod?.endsAt,
+      cancel_at_period_end: scheduledChange?.action === "cancel",
       environment: env,
       updated_at: new Date().toISOString(),
     },
     { onConflict: "paddle_subscription_id" },
   );
-  if (status === "active" || status === "trialing") {
-    await setProStatus(userId, true);
+  if (statusGrantsAccess(status)) {
+    await setProStatus(userId, true, env);
   }
 }
 
@@ -64,9 +72,22 @@ async function handleSubscriptionUpdated(data: any, env: PaddleEnv) {
     .eq("environment", env);
 
   const userId = customData?.userId;
-  if (userId) {
-    const isActive = status === "active" || status === "trialing";
-    await setProStatus(userId, isActive);
+  if (!userId) return;
+
+  if (statusGrantsAccess(status)) {
+    // active / trialing / past_due — keep Pro on. Dunning preserves access.
+    await setProStatus(userId, true, env);
+  } else if (status === "canceled") {
+    // Honor grace period: keep Pro until current_period_end (reconciliation job revokes later).
+    const endsAt = currentBillingPeriod?.endsAt
+      ? new Date(currentBillingPeriod.endsAt).getTime()
+      : Date.now() - 1;
+    if (endsAt <= Date.now()) {
+      await setProStatus(userId, false, env);
+    }
+  } else {
+    // paused or other non-access-granting states
+    await setProStatus(userId, false, env);
   }
 }
 
@@ -77,20 +98,23 @@ async function handleSubscriptionCanceled(data: any, env: PaddleEnv) {
     .from("subscriptions")
     .update({
       status: "canceled",
+      current_period_end: currentBillingPeriod?.endsAt,
+      cancel_at_period_end: true,
       updated_at: new Date().toISOString(),
     })
     .eq("paddle_subscription_id", id)
     .eq("environment", env);
 
   const userId = customData?.userId;
-  if (userId) {
-    // Grace period — keep Pro until current_period_end. If already past, revoke.
-    const endsAt = currentBillingPeriod?.endsAt
-      ? new Date(currentBillingPeriod.endsAt).getTime()
-      : 0;
-    if (endsAt < Date.now()) {
-      await setProStatus(userId, false);
-    }
+  if (!userId) return;
+
+  // Only revoke immediately if the paid period has already ended.
+  // Otherwise the reconciliation cron handles revocation at period_end.
+  const endsAt = currentBillingPeriod?.endsAt
+    ? new Date(currentBillingPeriod.endsAt).getTime()
+    : 0;
+  if (endsAt > 0 && endsAt <= Date.now()) {
+    await setProStatus(userId, false, env);
   }
 }
 
