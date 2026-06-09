@@ -61,14 +61,22 @@ import {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "NihongoLevel — Bicara seperti orang Jepang" },
+      { title: "NihongoLevel — Belajar Bicara Bahasa Jepang Natural" },
       {
         name: "description",
         content:
-          "Belajar berbicara seperti orang Jepang — bukan sekadar lulus JLPT. Lihat ekspresi paling natural untuk setiap situasi sehari-hari.",
+          "Cari ekspresi bahasa Jepang paling natural untuk setiap situasi sehari-hari — lengkap dengan level kesopanan (N1–N4) dan analisis konteks sosial.",
       },
+      { property: "og:title", content: "NihongoLevel — Belajar Bicara Bahasa Jepang Natural" },
+      {
+        property: "og:description",
+        content:
+          "Cari ekspresi bahasa Jepang paling natural untuk setiap situasi, dengan level kesopanan dan konteks sosial.",
+      },
+      { property: "og:url", content: "/" },
     ],
     links: [
+      { rel: "canonical", href: "/" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
@@ -77,6 +85,7 @@ export const Route = createFileRoute("/")({
       },
     ],
   }),
+
   component: Index,
 });
 
