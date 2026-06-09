@@ -8,7 +8,7 @@ async function getSupabase() {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function setProStatus(userId: string, isPro: boolean) {
-  const update: Record<string, unknown> = { is_pro: isPro };
+  const update: { is_pro: boolean; pro_activated_at?: string } = { is_pro: isPro };
   if (isPro) update.pro_activated_at = new Date().toISOString();
   await (await getSupabase()).from("profiles").update(update).eq("id", userId);
 }
