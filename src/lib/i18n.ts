@@ -273,6 +273,7 @@ const EN: Dict = {
   "nav.dashboard_short": "My Level",
   "nav.review_short": "Practice",
 
+  "home.title": "Learn to Speak Natural Japanese",
   "home.subtitle": "Learn to speak like a native Japanese",
   "home.inputLabel": "Sentence in English",
   "home.placeholder": "Type a situation or sentence in English...",
