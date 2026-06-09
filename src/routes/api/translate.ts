@@ -252,8 +252,35 @@ Rules: ${explLang} = ${explLangFull} (write every "${explLang}" field in ${explL
                 const full = JSON.parse(cleaned);
                 emit({ type: "done", full });
               } catch (e) {
-                console.error("Failed to parse final JSON", e, "RAW:", cleaned);
-                emit({ type: "error", code: "INVALID_RESPONSE" });
+                // Fallback: reassemble from extracted pieces (handles truncation).
+                const intent = tryExtract(textBuf, "intent")?.value;
+                const social = tryExtract(textBuf, "social_analysis")?.value;
+                const most = tryExtract(textBuf, "most_natural")?.value;
+                const alts = tryExtract(textBuf, "alternatives", true)?.value;
+                const stylesMatch = /"styles"\s*:\s*\{/.exec(textBuf);
+                const styles: Record<string, unknown> = {};
+                if (stylesMatch) {
+                  const inner = textBuf.slice(stylesMatch.index + stylesMatch[0].length - 1);
+                  for (const sk of STYLE_KEYS) {
+                    const r = tryExtract(inner, sk);
+                    if (r) styles[sk] = r.value;
+                  }
+                }
+                if (intent && social && most && Object.keys(styles).length === 4) {
+                  emit({
+                    type: "done",
+                    full: {
+                      intent,
+                      social_analysis: social,
+                      most_natural: most,
+                      styles,
+                      alternatives: alts ?? [],
+                    },
+                  });
+                } else {
+                  console.error("Failed to parse final JSON", e, "RAW:", cleaned);
+                  emit({ type: "error", code: "INVALID_RESPONSE" });
+                }
               }
             } catch (e) {
               console.error("Stream error", e);
