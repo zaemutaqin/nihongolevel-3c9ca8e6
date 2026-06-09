@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { X, Check, Loader2, Crown } from "lucide-react";
 import { useLang } from "@/lib/i18n";
 import { useAuth } from "@/lib/auth";
@@ -19,7 +20,23 @@ export function UpgradeModal({ open, onClose }: UpgradeModalProps) {
   const { openCheckout, loading } = usePaddleCheckout();
   const [plan, setPlan] = useState<Plan>("yearly");
 
+  // Lock body scroll + ESC to close while open
+  useEffect(() => {
+    if (!open) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open, onClose]);
+
   if (!open) return null;
+  if (typeof document === "undefined") return null;
 
   const title =
     lang === "id"
@@ -54,7 +71,7 @@ export function UpgradeModal({ open, onClose }: UpgradeModalProps) {
     });
   };
 
-  return (
+  return createPortal(
     <div
       className="fixed inset-0 z-[9999] overflow-y-auto bg-black/60 backdrop-blur-md"
       role="dialog"
@@ -63,7 +80,7 @@ export function UpgradeModal({ open, onClose }: UpgradeModalProps) {
     >
       <div className="flex min-h-full items-center justify-center p-4 sm:p-6">
         <div
-          className="relative w-[95%] sm:w-full max-w-md my-8 rounded-2xl bg-card border border-border shadow-2xl animate-in fade-in zoom-in-95 duration-200"
+          className="relative w-[95%] sm:w-full max-w-[480px] my-8 rounded-2xl bg-card border border-border shadow-2xl animate-in fade-in zoom-in-95 duration-200 max-h-[85vh] overflow-y-auto"
           onClick={(e) => e.stopPropagation()}
         >
           <button
@@ -158,7 +175,8 @@ export function UpgradeModal({ open, onClose }: UpgradeModalProps) {
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 
