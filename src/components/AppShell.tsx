@@ -131,19 +131,27 @@ export function AppShell() {
       {/* Mobile bottom nav */}
       <nav className="sm:hidden fixed bottom-0 inset-x-0 z-30 border-t border-border bg-background/95 backdrop-blur">
         <div className="grid grid-cols-5">
-          {NAV.map(({ to, key, Icon, exact }) => (
-            <Link
-              key={to}
-              to={to}
-              activeOptions={{ exact: !!exact }}
-              activeProps={{ className: "text-primary" }}
-              inactiveProps={{ className: "text-muted-foreground" }}
-              className="flex flex-col items-center justify-center gap-0.5 py-2.5 text-[10px] font-medium"
-            >
-              <Icon className="w-5 h-5" />
-              {t(`nav.${key}_short`)}
-            </Link>
-          ))}
+          {NAV.map(({ to, key, Icon, exact, proOnly }) => {
+            const locked = proOnly && !isPro;
+            return (
+              <Link
+                key={to}
+                to={to}
+                activeOptions={{ exact: !!exact }}
+                activeProps={{ className: "text-primary" }}
+                inactiveProps={{ className: "text-muted-foreground" }}
+                className="relative flex flex-col items-center justify-center gap-0.5 py-2.5 text-[10px] font-medium"
+              >
+                <span className="relative">
+                  <Icon className="w-5 h-5" />
+                  {locked && (
+                    <Lock className="absolute -top-1 -right-2 w-3 h-3 text-muted-foreground" />
+                  )}
+                </span>
+                {t(`nav.${key}_short`)}
+              </Link>
+            );
+          })}
         </div>
       </nav>
     </div>
