@@ -71,15 +71,6 @@ export function Landing() {
           <Link to="/pricing" className="hidden sm:inline text-sm font-semibold text-muted-foreground hover:text-foreground transition">
             Pricing
           </Link>
-          <Link to="/privacy-policy" className="hidden sm:inline text-sm font-semibold text-muted-foreground hover:text-foreground transition">
-            Privacy Policy
-          </Link>
-          <Link to="/terms-of-service" className="hidden sm:inline text-sm font-semibold text-muted-foreground hover:text-foreground transition">
-            Terms of Service
-          </Link>
-          <Link to="/refund-policy" className="hidden sm:inline text-sm font-semibold text-muted-foreground hover:text-foreground transition">
-            Refund Policy
-          </Link>
           <LangToggle />
         </div>
       </header>
