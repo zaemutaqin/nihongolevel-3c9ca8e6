@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      audit_logs: {
+        Row: {
+          error_code: string | null
+          event_type: string
+          id: number
+          input_length: number | null
+          ip_address: string | null
+          metadata: Json
+          success: boolean
+          ts: string
+          user_id: string | null
+        }
+        Insert: {
+          error_code?: string | null
+          event_type: string
+          id?: number
+          input_length?: number | null
+          ip_address?: string | null
+          metadata?: Json
+          success?: boolean
+          ts?: string
+          user_id?: string | null
+        }
+        Update: {
+          error_code?: string | null
+          event_type?: string
+          id?: number
+          input_length?: number | null
+          ip_address?: string | null
+          metadata?: Json
+          success?: boolean
+          ts?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       guest_rate_limits: {
         Row: {
           count: number
