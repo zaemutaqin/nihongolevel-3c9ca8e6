@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useState, type KeyboardEvent } from "react";
+import { useState, useEffect, type KeyboardEvent } from "react";
 import { Loader2, ChevronDown, AlertCircle, Sparkles } from "lucide-react";
 import {
   translateSentence,
@@ -26,11 +26,11 @@ import {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "NihongoLevel — Belajar Bahasa Jepang per Level JLPT" },
+      { title: "NihongoLevel — Bicara seperti orang Jepang" },
       {
         name: "description",
         content:
-          "Terjemahkan kalimat Bahasa Indonesia ke Bahasa Jepang dalam 4 tingkat JLPT (N4–N1) dengan analisis sosial dan alternatif sesuai konteks.",
+          "Belajar berbicara seperti orang Jepang — bukan sekadar lulus JLPT. Lihat ekspresi paling natural untuk setiap situasi sehari-hari.",
       },
     ],
     links: [
@@ -44,6 +44,7 @@ export const Route = createFileRoute("/")({
   }),
   component: Index,
 });
+
 
 const EXAMPLES = [
   "hari ini makan apa ya?",
