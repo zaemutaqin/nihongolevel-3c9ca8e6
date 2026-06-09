@@ -46,11 +46,12 @@ export function LockedFeature() {
           </button>
         </div>
         {!user && (
-          <p className="mt-4 text-xs text-muted-foreground">
-            {lang === "id" ? "Sudah Pro? " : "Already Pro? "}
-            <SignInButton size="sm" className="ml-1 align-middle" />
-          </p>
+          <div className="mt-4 flex items-center justify-center gap-2 text-xs text-muted-foreground">
+            <span>{lang === "id" ? "Sudah Pro?" : "Already Pro?"}</span>
+            <SignInButton size="sm" />
+          </div>
         )}
+      </div>
       <UpgradeModal open={showUpgrade} onClose={() => setShowUpgrade(false)} />
     </>
   );
