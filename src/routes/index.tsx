@@ -14,7 +14,7 @@ import {
 import { useT } from "@/lib/i18n";
 import { gtagEvent } from "@/lib/gtag";
 import { useAuth } from "@/lib/auth";
-import { GuestPrompt } from "@/components/GuestPrompt";
+
 
 type TranslateErrorCode =
   | "FORBIDDEN_ORIGIN"
