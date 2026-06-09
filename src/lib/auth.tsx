@@ -85,6 +85,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = async () => {
     await supabase.auth.signOut();
+    // Clear local user data so next signed-in user doesn't see it
+    ["nihongo_history", "nihongo_favorites", "nihongo_review_queue", "nihongo_challenge_results"].forEach((k) => {
+      localStorage.removeItem(k);
+      window.dispatchEvent(new CustomEvent("nihongo:storage", { detail: { key: k } }));
+    });
     setUser(null);
     setProfile(null);
   };
