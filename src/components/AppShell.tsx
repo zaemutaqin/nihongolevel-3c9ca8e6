@@ -13,7 +13,7 @@ import { UserMenu } from "./UserMenu";
 
 type NavItem = { to: string; key: string; Icon: typeof Search; exact?: boolean; proOnly?: boolean };
 const NAV: NavItem[] = [
-  { to: "/", key: "search", Icon: Search, exact: true },
+  { to: "/", key: "home", Icon: Home, exact: true },
   { to: "/riwayat", key: "history", Icon: History, proOnly: true },
   { to: "/favorit", key: "favorites", Icon: Star, proOnly: true },
   { to: "/dashboard", key: "dashboard", Icon: BarChart3, proOnly: true },
