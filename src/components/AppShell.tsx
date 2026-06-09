@@ -6,9 +6,10 @@ const NAV: NavItem[] = [
   { to: "/", label: "Cari", Icon: Search, exact: true },
   { to: "/riwayat", label: "Riwayat", Icon: History },
   { to: "/favorit", label: "Favorit", Icon: Star },
-  { to: "/dashboard", label: "Dashboard", Icon: BarChart3 },
-  { to: "/review", label: "Review", Icon: RotateCw },
+  { to: "/dashboard", label: "Perjalanan", Icon: BarChart3 },
+  { to: "/review", label: "Latihan", Icon: RotateCw },
 ];
+
 
 export function AppShell() {
   return (
