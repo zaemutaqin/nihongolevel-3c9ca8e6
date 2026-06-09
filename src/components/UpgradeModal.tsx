@@ -40,7 +40,7 @@ export function UpgradeModal({ open, onClose }: UpgradeModalProps) {
           "Pencarian unlimited",
           "Riwayat tersimpan selamanya",
           "Favorit unlimited",
-          "Perjalanan Belajarmu",
+          "Levelku",
           "Latihan Harian",
           "Bahasa ID + EN",
           "Semua fitur baru di masa depan",
