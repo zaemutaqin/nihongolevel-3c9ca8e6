@@ -1,8 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteFooter } from "@/components/SiteFooter";
 
-export const Route = createFileRoute("/refund")({
-  head: () => ({
+export const refundHead = () => ({
     meta: [
       { title: "Refund Policy — NihongoLevel" },
       {
@@ -17,11 +16,14 @@ export const Route = createFileRoute("/refund")({
           "30-day money-back guarantee. Refunds handled by Paddle as our Merchant of Record.",
       },
     ],
-  }),
+  });
+
+export const Route = createFileRoute("/refund")({
+  head: refundHead,
   component: RefundPage,
 });
 
-function RefundPage() {
+export function RefundPage() {
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       <header className="flex items-center justify-between px-6 py-4 border-b border-border">
@@ -66,7 +68,7 @@ function RefundPage() {
         <h2>What is not refundable</h2>
         <p>
           Refund requests made <strong>more than 30 days</strong> after the order date are reviewed on a case-by-case basis by Paddle and may be declined. Refunds may also be declined where there is evidence of fraud or serious breach of our{" "}
-          <Link to="/terms">Terms of Service</Link>.
+          <Link to="/terms-of-service">Terms of Service</Link>.
         </p>
 
         <h2>Your statutory rights</h2>

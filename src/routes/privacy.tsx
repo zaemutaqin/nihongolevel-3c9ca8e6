@@ -1,27 +1,29 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteFooter } from "@/components/SiteFooter";
 
+export const privacyHead = () => ({
+  meta: [
+    { title: "Privacy Policy — NihongoLevel" },
+    {
+      name: "description",
+      content:
+        "Privacy Policy for NihongoLevel, operated by zaenal mutaqin. What personal data we collect, why, who we share it with (including Paddle as Merchant of Record), and your rights.",
+    },
+    { property: "og:title", content: "Privacy Policy — NihongoLevel" },
+    {
+      property: "og:description",
+      content:
+        "How NihongoLevel handles your personal data, including data sharing with Paddle as our Merchant of Record.",
+    },
+  ],
+});
+
 export const Route = createFileRoute("/privacy")({
-  head: () => ({
-    meta: [
-      { title: "Privacy Notice — NihongoLevel" },
-      {
-        name: "description",
-        content:
-          "Privacy Notice for NihongoLevel, operated by zaenal mutaqin. What personal data we collect, why, who we share it with (including Paddle as Merchant of Record), and your rights.",
-      },
-      { property: "og:title", content: "Privacy Notice — NihongoLevel" },
-      {
-        property: "og:description",
-        content:
-          "How NihongoLevel handles your personal data, including data sharing with Paddle as our Merchant of Record.",
-      },
-    ],
-  }),
+  head: privacyHead,
   component: PrivacyPage,
 });
 
-function PrivacyPage() {
+export function PrivacyPage() {
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       <header className="flex items-center justify-between px-6 py-4 border-b border-border">
@@ -34,7 +36,7 @@ function PrivacyPage() {
       </header>
 
       <main className="flex-1 mx-auto w-full max-w-2xl px-4 py-10 prose prose-sm dark:prose-invert">
-        <h1>Privacy Notice</h1>
+        <h1>Privacy Policy</h1>
         <p className="text-sm text-muted-foreground">Last updated: {new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</p>
 
         <h2>1. Who is the data controller</h2>
@@ -75,7 +77,7 @@ function PrivacyPage() {
         <h2>5. Who we share data with</h2>
         <ul>
           <li><strong>Paddle.com</strong> — our Merchant of Record. Paddle receives data necessary to process payments, manage subscriptions, handle taxes, issue invoices, and provide order/refund support. See <a href="https://www.paddle.com/legal/privacy" target="_blank" rel="noopener noreferrer">Paddle's Privacy Notice</a>.</li>
-          <li><strong>Hosting and infrastructure providers</strong> — Lovable / Supabase (database, authentication, file storage) and Cloudflare (edge network and serverless runtime).</li>
+          <li><strong>Hosting and infrastructure providers</strong> — Lovable Cloud (database, authentication, file storage) and Cloudflare (edge network and serverless runtime).</li>
           <li><strong>AI providers</strong> — Google (Gemini) and the Lovable AI Gateway, which process the text of your searches to generate translations and explanations.</li>
           <li><strong>Analytics providers</strong> — to understand aggregated usage.</li>
           <li><strong>Professional advisers</strong> — legal, accounting, and tax advisers when reasonably necessary.</li>
@@ -118,7 +120,7 @@ function PrivacyPage() {
 
         <h2>12. Changes</h2>
         <p>
-          We may update this Privacy Notice from time to time. Material changes will be communicated through the Service. The "Last updated" date at the top shows when this notice was last revised.
+          We may update this Privacy Policy from time to time. Material changes will be communicated through the Service. The "Last updated" date at the top shows when this policy was last revised.
         </p>
 
         <h2>13. Contact</h2>
@@ -132,3 +134,4 @@ function PrivacyPage() {
     </div>
   );
 }
+

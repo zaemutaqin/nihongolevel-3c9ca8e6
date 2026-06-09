@@ -1,8 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteFooter } from "@/components/SiteFooter";
 
-export const Route = createFileRoute("/terms")({
-  head: () => ({
+export const termsHead = () => ({
     meta: [
       { title: "Terms of Service — NihongoLevel" },
       {
@@ -17,11 +16,14 @@ export const Route = createFileRoute("/terms")({
           "The rules and conditions for using NihongoLevel, operated by zaenal mutaqin.",
       },
     ],
-  }),
+  });
+
+export const Route = createFileRoute("/terms")({
+  head: termsHead,
   component: TermsPage,
 });
 
-function TermsPage() {
+export function TermsPage() {
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       <header className="flex items-center justify-between px-6 py-4 border-b border-border">
@@ -82,7 +84,7 @@ function TermsPage() {
 
         <h2>8. Refunds</h2>
         <p>
-          See our <Link to="/refund">Refund Policy</Link>. Refunds are processed by Paddle.
+          See our <Link to="/refund-policy">Refund Policy</Link>. Refunds are processed by Paddle.
         </p>
 
         <h2>9. Service availability and content accuracy</h2>
@@ -97,7 +99,7 @@ function TermsPage() {
 
         <h2>11. Suspension and termination</h2>
         <p>
-          We may suspend or terminate your access if you materially breach these Terms, fail to pay, pose a security or fraud risk, or seriously or repeatedly violate our policies. You may stop using the Service at any time. When access ends, your locally-stored data on your device remains yours; cloud-stored data will be deleted in accordance with our <Link to="/privacy">Privacy Notice</Link>.
+          We may suspend or terminate your access if you materially breach these Terms, fail to pay, pose a security or fraud risk, or seriously or repeatedly violate our policies. You may stop using the Service at any time. When access ends, your locally-stored data on your device remains yours; cloud-stored data will be deleted in accordance with our <Link to="/privacy-policy">Privacy Policy</Link>.
         </p>
 
         <h2>12. Limitation of liability</h2>
