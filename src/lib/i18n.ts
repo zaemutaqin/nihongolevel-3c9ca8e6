@@ -48,6 +48,7 @@ const ID: Dict = {
   "nav.review_short": "Latihan",
 
   // Home
+  "home.title": "Belajar Bicara Bahasa Jepang Natural",
   "home.subtitle": "Belajar berbicara seperti orang Jepang",
   "home.inputLabel": "Kalimat Bahasa Indonesia",
   "home.placeholder": "Ketik situasi atau kalimat dalam Bahasa Indonesia...",
@@ -272,6 +273,7 @@ const EN: Dict = {
   "nav.dashboard_short": "My Level",
   "nav.review_short": "Practice",
 
+  "home.title": "Learn to Speak Natural Japanese",
   "home.subtitle": "Learn to speak like a native Japanese",
   "home.inputLabel": "Sentence in English",
   "home.placeholder": "Type a situation or sentence in English...",
