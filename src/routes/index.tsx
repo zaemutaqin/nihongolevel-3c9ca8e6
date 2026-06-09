@@ -148,11 +148,7 @@ function Index() {
       setOpen({ n4: false, n3: false, n2: false, n1: false });
     } catch (e) {
       console.error(e);
-      setError(
-        e instanceof Error
-          ? `Gagal menerjemahkan: ${e.message}`
-          : "Gagal menerjemahkan kalimat. Coba lagi.",
-      );
+      setError(friendlyError(e));
     } finally {
       setLoading(false);
     }
