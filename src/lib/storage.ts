@@ -54,6 +54,35 @@ export interface ReviewItem {
 const HISTORY_KEY = "nihongo_history";
 const FAVORITES_KEY = "nihongo_favorites";
 const REVIEW_KEY = "nihongo_review_queue";
+const RESULT_CACHE_KEY = "nihongo_result_cache";
+const RESULT_CACHE_TTL_MS = 24 * 60 * 60 * 1000;
+const RESULT_CACHE_MAX = 10;
+
+interface CacheEntry {
+  key: string;
+  ts: number;
+  result: TranslationResult;
+}
+
+export function buildCacheKey(sentence: string, listener?: string, mood?: string): string {
+  return `${sentence.trim().toLowerCase()}|${(listener ?? "").trim()}|${(mood ?? "").trim()}`;
+}
+
+export function getCachedResult(key: string): TranslationResult | null {
+  const all = read<CacheEntry>(RESULT_CACHE_KEY);
+  const now = Date.now();
+  const fresh = all.filter((e) => now - e.ts < RESULT_CACHE_TTL_MS);
+  if (fresh.length !== all.length) write(RESULT_CACHE_KEY, fresh);
+  return fresh.find((e) => e.key === key)?.result ?? null;
+}
+
+export function setCachedResult(key: string, result: TranslationResult): void {
+  const now = Date.now();
+  const all = read<CacheEntry>(RESULT_CACHE_KEY)
+    .filter((e) => e.key !== key && now - e.ts < RESULT_CACHE_TTL_MS);
+  all.unshift({ key, ts: now, result });
+  write(RESULT_CACHE_KEY, all.slice(0, RESULT_CACHE_MAX));
+}
 
 function read<T>(key: string): T[] {
   if (typeof window === "undefined") return [];
