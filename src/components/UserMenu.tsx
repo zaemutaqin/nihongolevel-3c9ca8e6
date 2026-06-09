@@ -99,7 +99,7 @@ export function UserMenu() {
             <div className="mt-3">
               {isPro ? (
                 <span className="inline-flex items-center gap-1 rounded-full bg-yellow-400/15 text-yellow-700 dark:text-yellow-300 px-2 py-0.5 text-xs font-semibold">
-                  <Crown className="w-3 h-3" /> Pro
+                  <Crown className="w-3 h-3" /> Pro ✓
                 </span>
               ) : (
                 <span className="inline-flex items-center gap-1 rounded-full bg-muted text-muted-foreground px-2 py-0.5 text-xs font-semibold">
@@ -110,13 +110,20 @@ export function UserMenu() {
           </div>
 
           {!isPro && (
-            <div className="p-3 border-b border-border">
+            <div className="p-3 border-b border-border space-y-2">
+              <button
+                onClick={() => { setOpen(false); setShowUpgrade(true); }}
+                className="w-full inline-flex items-center justify-center gap-2 px-3 py-2 rounded-md bg-primary text-primary-foreground text-sm font-semibold hover:opacity-90 transition"
+              >
+                <Crown className="w-4 h-4" />
+                {lang === "id" ? "Upgrade ke Pro" : "Upgrade to Pro"}
+              </button>
               {!showProInput ? (
                 <button
                   onClick={() => { setShowProInput(true); setMsg(null); }}
-                  className="w-full inline-flex items-center gap-2 px-2 py-2 rounded-md text-sm hover:bg-muted transition"
+                  className="w-full inline-flex items-center gap-2 px-2 py-1.5 rounded-md text-xs text-muted-foreground hover:bg-muted transition"
                 >
-                  <KeyRound className="w-4 h-4" />
+                  <KeyRound className="w-3.5 h-3.5" />
                   {lang === "id" ? "Punya kode akses Pro?" : "Have a Pro access code?"}
                 </button>
               ) : (
@@ -131,14 +138,14 @@ export function UserMenu() {
                   <button
                     onClick={activate}
                     disabled={activating || !code.trim()}
-                    className="w-full inline-flex items-center justify-center gap-2 px-3 py-2 rounded-md bg-primary text-primary-foreground text-sm font-semibold disabled:opacity-50"
+                    className="w-full inline-flex items-center justify-center gap-2 px-3 py-2 rounded-md border border-border text-sm font-semibold disabled:opacity-50"
                   >
                     {activating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
                     {lang === "id" ? "Aktifkan Pro" : "Activate Pro"}
                   </button>
                 </div>
               )}
-              {msg && <p className="mt-2 text-xs text-muted-foreground">{msg}</p>}
+              {msg && <p className="text-xs text-muted-foreground">{msg}</p>}
             </div>
           )}
 
@@ -151,6 +158,7 @@ export function UserMenu() {
           </button>
         </div>
       )}
+      <UpgradeModal open={showUpgrade} onClose={() => setShowUpgrade(false)} />
     </div>
   );
 }
