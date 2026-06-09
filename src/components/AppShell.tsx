@@ -81,19 +81,25 @@ export function AppShell() {
             <ProBadgeInline />
           </Link>
           <div className="flex gap-1">
-            {NAV.map(({ to, key, Icon, exact }) => (
-              <Link
-                key={to}
-                to={to}
-                activeOptions={{ exact: !!exact }}
-                activeProps={{ className: "bg-primary text-primary-foreground" }}
-                inactiveProps={{ className: "text-foreground/70 hover:bg-muted" }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition"
-              >
-                <Icon className="w-4 h-4" />
-                {t(`nav.${key}_short`)}
-              </Link>
-            ))}
+            {NAV.map(({ to, key, Icon, exact, proOnly }) => {
+              const locked = proOnly && !isPro;
+              return (
+                <Link
+                  key={to}
+                  to={to}
+                  activeOptions={{ exact: !!exact }}
+                  activeProps={{ className: "bg-primary text-primary-foreground" }}
+                  inactiveProps={{ className: "text-foreground/70 hover:bg-muted" }}
+                  className="relative inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition"
+                >
+                  <Icon className="w-4 h-4" />
+                  {t(`nav.${key}_short`)}
+                  {locked && (
+                    <Lock className="w-3 h-3 text-muted-foreground" aria-label="Pro" />
+                  )}
+                </Link>
+              );
+            })}
           </div>
           <div className="ml-auto flex items-center gap-3">
             <LangToggle lang={lang} />
