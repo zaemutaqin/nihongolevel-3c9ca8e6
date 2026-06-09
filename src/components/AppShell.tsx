@@ -22,19 +22,21 @@ const NAV: NavItem[] = [
 
 function LangToggle({ lang }: { lang: Lang }) {
   return (
-    <div className="inline-flex items-center gap-0.5 rounded-full border border-border bg-background p-0.5 text-xs font-semibold">
+    <div className="inline-flex items-center gap-1">
       <button
         onClick={() => {
           setLang("id");
           gtagEvent("language_switch", { language: "id" });
         }}
         className={cn(
-          "px-2 py-0.5 rounded-full transition",
-          lang === "id" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground",
+          "w-7 h-7 rounded-full flex items-center justify-center text-base leading-none transition ring-offset-background",
+          lang === "id" ? "ring-2 ring-primary" : "opacity-60 hover:opacity-100",
         )}
         aria-pressed={lang === "id"}
+        aria-label="Bahasa Indonesia"
+        title="Bahasa Indonesia"
       >
-        🇮🇩 ID
+        🇮🇩
       </button>
       <button
         onClick={() => {
@@ -42,12 +44,14 @@ function LangToggle({ lang }: { lang: Lang }) {
           gtagEvent("language_switch", { language: "en" });
         }}
         className={cn(
-          "px-2 py-0.5 rounded-full transition",
-          lang === "en" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground",
+          "w-7 h-7 rounded-full flex items-center justify-center text-base leading-none transition ring-offset-background",
+          lang === "en" ? "ring-2 ring-primary" : "opacity-60 hover:opacity-100",
         )}
         aria-pressed={lang === "en"}
+        aria-label="English"
+        title="English"
       >
-        🇬🇧 EN
+        🇬🇧
       </button>
     </div>
   );
