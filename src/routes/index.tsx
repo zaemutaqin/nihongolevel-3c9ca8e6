@@ -498,12 +498,12 @@ function Index() {
         <div className="mt-8 space-y-6" key={favTick}>
           <div className="flex items-center justify-between gap-3">
             <h2 className="text-base font-bold text-foreground">
-              Bagaimana orang Jepang mengatakannya
+              {t("home.resultHeader")}
             </h2>
             {fromCache && (
               <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-[11px] font-medium text-muted-foreground">
                 <Zap className="w-3 h-3" />
-                Dari cache
+                {t("home.fromCache")}
               </span>
             )}
           </div>
@@ -520,7 +520,7 @@ function Index() {
           />
           <section>
             <h3 className="text-sm font-bold uppercase tracking-wide mb-3 text-foreground/80">
-              Pilihan ekspresi berdasarkan gaya komunikasi
+              {t("home.styleSubheader")}
             </h3>
             <div className="space-y-4">
               {LEVELS.map(({ key, label }) => (
