@@ -4,12 +4,14 @@ import { useAuth } from "@/lib/auth";
 import { useLang } from "@/lib/i18n";
 import { supabase } from "@/integrations/supabase/client";
 import { SignInButton } from "./SignInButton";
+import { UpgradeModal } from "./UpgradeModal";
 
 export function UserMenu() {
   const { user, profile, signOut, refreshProfile } = useAuth();
   const lang = useLang();
   const [open, setOpen] = useState(false);
   const [showProInput, setShowProInput] = useState(false);
+  const [showUpgrade, setShowUpgrade] = useState(false);
   const [code, setCode] = useState("");
   const [activating, setActivating] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
