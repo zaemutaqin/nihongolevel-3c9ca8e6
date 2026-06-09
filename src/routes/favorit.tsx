@@ -58,11 +58,12 @@ function FavoritPage() {
 
       {filtered.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-border bg-card/50 p-10 text-center">
-          <p className="font-semibold">Belum ada favorit</p>
+          <p className="font-semibold">Belum ada ekspresi favorit</p>
           <p className="mt-1 text-sm text-muted-foreground">
-            Simpan ekspresi favorit dari halaman Cari atau Riwayat untuk meninjaunya di sini.
+            Tandai ekspresi yang ingin kamu gunakan dalam kehidupan nyata.
           </p>
         </div>
+
       ) : (
         <div className="space-y-4">
           {filtered.map((f) => (
