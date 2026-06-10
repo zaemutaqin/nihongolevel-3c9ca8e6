@@ -110,7 +110,7 @@ export function AppShell() {
                     <Icon className="w-4 h-4" />
                     <span>{t(`nav.${key}_short`)}</span>
                     {locked && (
-                      <Lock className="w-3 h-3 text-muted-foreground/70" aria-label="Pro" />
+                      <Lock className="w-3 h-3 text-muted-foreground" aria-label="Pro" />
                     )}
                   </Link>
                 );
