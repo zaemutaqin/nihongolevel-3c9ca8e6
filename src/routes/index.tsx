@@ -1,618 +1,181 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState, useEffect, useRef, type KeyboardEvent } from "react";
-import { AlertCircle, Zap, Loader2, ChevronDown } from "lucide-react";
-import {
-  styleBlockToLevelBlock,
-  type TranslationResult,
-  type IntentInfo,
-  type SocialAnalysis,
-  type MostNatural,
-  type AlternativeExpression,
-  type LevelBlock,
-  type RawStyleBlock,
-} from "@/lib/translate.functions";
+import { Lock, Mic, MessageCircle, Search } from "lucide-react";
+import { SCENARIOS } from "@/lib/hanashite-scenarios";
 import { useT } from "@/lib/i18n";
-import { gtagEvent } from "@/lib/gtag";
 import { useAuth } from "@/lib/auth";
 import { SignInButton } from "@/components/SignInButton";
-
-
-
-type TranslateErrorCode =
-  | "FORBIDDEN_ORIGIN"
-  | "RATE_LIMITED"
-  | "CREDITS_EXHAUSTED"
-  | "AI_UNAVAILABLE"
-  | "INVALID_RESPONSE"
-  | "SERVER_MISCONFIGURED";
-
-const ERR_CODES: TranslateErrorCode[] = [
-  "FORBIDDEN_ORIGIN",
-  "RATE_LIMITED",
-  "CREDITS_EXHAUSTED",
-  "AI_UNAVAILABLE",
-  "INVALID_RESPONSE",
-  "SERVER_MISCONFIGURED",
-];
-
-import { cn } from "@/lib/utils";
-import {
-  IntentBadge,
-  SocialAnalysisCard,
-  LevelCard,
-  MostNaturalCard,
-  AlternativesSection,
-} from "@/components/result-parts";
-import {
-  IntentBadgeSkeleton,
-  MostNaturalSkeleton,
-  StyleCardSkeleton,
-} from "@/components/result-skeletons";
-import {
-  addHistory,
-  addFavoriteFromLevel,
-  addFavoriteFromMostNatural,
-  isFavorited,
-  buildCacheKey,
-  getCachedResult,
-  setCachedResult,
-  type HistoryEntry,
-  type LevelKey,
-} from "@/lib/storage";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "NihongoLevel — Belajar Bicara Bahasa Jepang Natural" },
+      { title: "NihongoLevel — Latih Bicara Bahasa Jepang dengan AI" },
       {
         name: "description",
         content:
-          "Cari ekspresi bahasa Jepang paling natural untuk setiap situasi sehari-hari — lengkap dengan level kesopanan (N1–N4) dan analisis konteks sosial.",
+          "Latih percakapan bahasa Jepang dengan AI dalam berbagai situasi — pesan ramen, meeting kantor, tanya arah. Dapat feedback grammar dan keigo instan.",
       },
-      { property: "og:title", content: "NihongoLevel — Belajar Bicara Bahasa Jepang Natural" },
+      { property: "og:title", content: "NihongoLevel — Latih Bicara Bahasa Jepang dengan AI" },
       {
         property: "og:description",
         content:
-          "Cari ekspresi bahasa Jepang paling natural untuk setiap situasi, dengan level kesopanan dan konteks sosial.",
+          "Latih bicara bahasa Jepang dengan AI tanpa rasa malu. Skenario realistis + feedback langsung.",
       },
       { property: "og:url", content: "/" },
     ],
-    links: [
-      { rel: "canonical", href: "/" },
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Inter:wght@400;500;600;700&display=swap",
-      },
-    ],
+    links: [{ rel: "canonical", href: "/" }],
   }),
-
-  component: Index,
+  component: HomeIndex,
 });
 
-
-const LEVELS: { key: LevelKey; label: string }[] = [
-  { key: "n4", label: "N4" },
-  { key: "n3", label: "N3" },
-  { key: "n2", label: "N2" },
-  { key: "n1", label: "N1" },
-];
-
-function Index() {
-  const { t, tList, lang } = useT();
-  const { profile } = useAuth();
+function HomeIndex() {
+  const { lang } = useT();
+  const { user, profile } = useAuth();
   const isPro = !!profile?.is_pro;
-
-  const friendlyError = (e: unknown): string => {
-    const raw = e instanceof Error ? e.message : String(e);
-    const base =
-      e instanceof Error && (ERR_CODES as string[]).includes(e.message)
-        ? t(`err.${e.message}`)
-        : t("err.generic");
-    // Show technical code in dev/preview so we can actually debug
-    if (import.meta.env.DEV) return `${base} [${raw}]`;
-    return base;
-  };
-  const EXAMPLES = tList("examples");
-  const LISTENER_OPTIONS = [
-    { value: "", label: t("opt.listener.unknown") },
-    { value: t("opt.listener.self"), label: t("opt.listener.self") },
-    { value: t("opt.listener.friend"), label: t("opt.listener.friend") },
-    { value: t("opt.listener.colleague"), label: t("opt.listener.colleague") },
-    { value: t("opt.listener.senior"), label: t("opt.listener.senior") },
-    { value: t("opt.listener.client"), label: t("opt.listener.client") },
-    { value: t("opt.listener.younger"), label: t("opt.listener.younger") },
-  ];
-  const MOOD_OPTIONS = [
-    { value: "", label: t("opt.mood.normal") },
-    { value: t("opt.mood.casual"), label: t("opt.mood.casual") },
-    { value: t("opt.mood.serious"), label: t("opt.mood.serious") },
-    { value: t("opt.mood.upset"), label: t("opt.mood.upset") },
-    { value: t("opt.mood.happy"), label: t("opt.mood.happy") },
-    { value: t("opt.mood.awkward"), label: t("opt.mood.awkward") },
-  ];
-
-  const [input, setInput] = useState("");
-  const [listener, setListener] = useState("");
-  const [mood, setMood] = useState("");
-  const [contextOpen, setContextOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [fromCache, setFromCache] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<TranslationResult | null>(null);
-  const [historyEntry, setHistoryEntry] = useState<HistoryEntry | null>(null);
-  const [favTick, setFavTick] = useState(0);
-  const [open, setOpen] = useState<Record<LevelKey, boolean>>({
-    n4: false,
-    n3: false,
-    n2: false,
-    n1: false,
-  });
-
-  // Progressive (partial) result fields populated while the AI is streaming.
-  const [partialIntent, setPartialIntent] = useState<IntentInfo | null>(null);
-  const [partialSocial, setPartialSocial] = useState<SocialAnalysis | null>(null);
-  const [partialMostNatural, setPartialMostNatural] = useState<MostNatural | null>(null);
-  const [partialAlts, setPartialAlts] = useState<AlternativeExpression[]>([]);
-  const [partialLevels, setPartialLevels] = useState<Partial<Record<LevelKey, LevelBlock>>>({});
-  const abortRef = useRef<AbortController | null>(null);
-
-  const STYLE_TO_LEVEL_KEY: Record<string, LevelKey> = {
-    dasar: "n4",
-    sehari_hari: "n3",
-    ekspresif: "n2",
-    mendekati_native: "n1",
-  };
-
-  // Pick up prefill written by Dashboard suggestion chips
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const pre = sessionStorage.getItem("nihongo_prefill");
-    if (pre) {
-      sessionStorage.removeItem("nihongo_prefill");
-      setInput(pre);
-    }
-  }, []);
-
-  const resetPartial = () => {
-    setPartialIntent(null);
-    setPartialSocial(null);
-    setPartialMostNatural(null);
-    setPartialAlts([]);
-    setPartialLevels({});
-  };
-
-  const finalize = (sentence: string, full: TranslationResult, cached: boolean) => {
-    setResult(full);
-    const entry = addHistory(sentence, full);
-    setHistoryEntry(entry);
-    setOpen({ n4: false, n3: false, n2: false, n1: false });
-    if (!cached) {
-      setCachedResult(buildCacheKey(sentence, listener, mood), full);
-    }
-  };
-
-  const handleTranslate = async (text?: string) => {
-    const sentence = (text ?? input).trim();
-    if (!sentence) {
-      setError(t("home.errEmpty"));
-      return;
-    }
-    gtagEvent("search", { search_term: sentence });
-    setError(null);
-    setResult(null);
-    setHistoryEntry(null);
-    resetPartial();
-
-    // 1) Cache hit → instant render
-    const ckey = buildCacheKey(sentence, listener, mood);
-    const cached = getCachedResult(ckey);
-    if (cached) {
-      setFromCache(true);
-      setLoading(false);
-      finalize(sentence, cached, true);
-      return;
-    }
-    setFromCache(false);
-    setLoading(true);
-
-    // 2) Stream from the server route — with one automatic retry on failure
-    abortRef.current?.abort();
-    const ctrl = new AbortController();
-    abortRef.current = ctrl;
-
-    const NON_RETRYABLE = new Set([
-      "FORBIDDEN_ORIGIN",
-      "RATE_LIMITED",
-      "CREDITS_EXHAUSTED",
-      "SERVER_MISCONFIGURED",
-    ]);
-
-    const attempt = async (): Promise<TranslationResult> => {
-      resetPartial();
-      const res = await fetch("/api/translate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          sentence,
-          listener: listener || undefined,
-          mood: mood || undefined,
-          lang,
-        }),
-        signal: ctrl.signal,
-      });
-      if (!res.ok || !res.body) {
-        let code = "AI_UNAVAILABLE";
-        try {
-          const j = await res.json();
-          if (j?.error) code = j.error;
-        } catch {
-          /* noop */
-        }
-        throw new Error(code);
-      }
-
-      const reader = res.body.getReader();
-      const dec = new TextDecoder();
-      let buf = "";
-      let finalFull: TranslationResult | null = null;
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        buf += dec.decode(value, { stream: true });
-        let nl: number;
-        while ((nl = buf.indexOf("\n")) !== -1) {
-          const line = buf.slice(0, nl).trim();
-          buf = buf.slice(nl + 1);
-          if (!line) continue;
-          let ev: { type: string; [k: string]: unknown };
-          try {
-            ev = JSON.parse(line);
-          } catch {
-            continue;
-          }
-          if (ev.type === "section") {
-            const k = ev.key as string;
-            if (k === "intent") setPartialIntent(ev.value as IntentInfo);
-            else if (k === "social_analysis") setPartialSocial(ev.value as SocialAnalysis);
-            else if (k === "most_natural") setPartialMostNatural(ev.value as MostNatural);
-            else if (k === "alternatives")
-              setPartialAlts((ev.value as AlternativeExpression[]) ?? []);
-          } else if (ev.type === "style") {
-            const sk = ev.styleKey as string;
-            const lk = STYLE_TO_LEVEL_KEY[sk];
-            if (lk) {
-              const block = styleBlockToLevelBlock(ev.value as RawStyleBlock);
-              setPartialLevels((prev) => ({ ...prev, [lk]: block }));
-            }
-          } else if (ev.type === "done") {
-            const raw = ev.full as {
-              intent: IntentInfo;
-              social_analysis: SocialAnalysis;
-              most_natural: MostNatural;
-              alternatives?: (AlternativeExpression & { style?: string })[];
-              styles?: Record<string, RawStyleBlock>;
-            };
-            const styles = raw.styles ?? {};
-            const styleToLvl: Record<string, "N4" | "N3" | "N2" | "N1"> = {
-              dasar: "N4",
-              sehari_hari: "N3",
-              ekspresif: "N2",
-              mendekati_native: "N1",
-            };
-            const alts: AlternativeExpression[] = (raw.alternatives ?? []).map((a, i) => ({
-              rank: a.rank ?? i + 1,
-              role_label: a.role_label,
-              context_label: a.context_label,
-              japanese: a.japanese,
-              romaji: a.romaji,
-              explanation: a.explanation,
-              level: a.style ? styleToLvl[a.style] ?? "N3" : a.level ?? "N3",
-            }));
-            finalFull = {
-              intent: raw.intent,
-              social_analysis: raw.social_analysis,
-              most_natural: {
-                ...raw.most_natural,
-                level: raw.most_natural?.level ?? "N3",
-              },
-              alternatives: alts,
-              n4: styleBlockToLevelBlock(styles.dasar),
-              n3: styleBlockToLevelBlock(styles.sehari_hari),
-              n2: styleBlockToLevelBlock(styles.ekspresif),
-              n1: styleBlockToLevelBlock(styles.mendekati_native),
-            };
-          } else if (ev.type === "error") {
-            throw new Error((ev.code as string) || "AI_UNAVAILABLE");
-          }
-        }
-      }
-
-      if (!finalFull) throw new Error("INVALID_RESPONSE");
-      return finalFull;
-    };
-
-    try {
-      let finalFull: TranslationResult;
-      try {
-        finalFull = await attempt();
-      } catch (e) {
-        if ((e as Error)?.name === "AbortError") throw e;
-        const code = (e as Error)?.message;
-        if (NON_RETRYABLE.has(code)) throw e;
-        console.warn("[translate] first attempt failed, retrying once:", code);
-        finalFull = await attempt();
-      }
-      finalize(sentence, finalFull, false);
-    } catch (e) {
-      if ((e as Error)?.name === "AbortError") return;
-      console.error(e);
-      setError(friendlyError(e));
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const onKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
-      e.preventDefault();
-      handleTranslate();
-    }
-  };
-
-  const useExample = (ex: string) => {
-    setInput(ex);
-    handleTranslate(ex);
-  };
-
-  const favMostNatural = historyEntry
-    ? isFavorited(historyEntry.id, "most_natural")
-    : false;
+  const isId = lang === "id";
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-8 sm:py-12">
       <header className="text-center mb-8">
+        <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary mb-3">
+          <Mic className="w-3.5 h-3.5" />
+          {isId ? "Fitur Utama" : "Main Feature"}
+        </div>
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
-          {t("home.title")}
+          話してルーム <span className="text-primary">Hanashite Room</span>
         </h1>
-
-        <p className="mt-2 text-sm text-muted-foreground">{t("home.subtitle")}</p>
+        <p className="mt-2 text-sm text-muted-foreground max-w-xl mx-auto">
+          {isId
+            ? "Latih bicara bahasa Jepang dengan AI dalam situasi nyata. Tanpa rasa malu, dengan feedback grammar & keigo instan."
+            : "Practice speaking Japanese with AI in real-life scenarios. Zero anxiety, instant grammar & keigo feedback."}
+        </p>
       </header>
 
-      <section className="rounded-2xl border border-border bg-card p-6 shadow-sm">
-        <label htmlFor="input" className="block text-sm font-medium mb-2">
-          {t("home.inputLabel")}
-        </label>
-        <textarea
-          id="input"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={onKeyDown}
-          placeholder={t("home.placeholder")}
-          rows={3}
-          className="w-full resize-none rounded-lg border border-input bg-background px-3 py-2.5 text-sm outline-none transition focus:border-ring focus:ring-2 focus:ring-ring/30"
-        />
+      {!user && (
+        <div className="mb-6 rounded-xl border border-border bg-card p-5 text-center">
+          <p className="text-sm text-muted-foreground mb-3">
+            {isId
+              ? "Masuk dulu untuk mulai berlatih bicara."
+              : "Sign in to start practicing your speaking."}
+          </p>
+          <SignInButton />
+        </div>
+      )}
 
-        <div className="mt-4 rounded-lg border border-border overflow-hidden">
-          <button
-            onClick={() => setContextOpen((v) => !v)}
-            className="w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium hover:bg-muted/40 transition"
-            aria-expanded={contextOpen}
-          >
-            <span>{t("home.addContext")}</span>
-            <ChevronDown
-              className={cn(
-                "w-4 h-4 text-muted-foreground transition-transform",
-                contextOpen && "rotate-180",
-              )}
-            />
-          </button>
-          {contextOpen && (
-            <div className="px-3 pb-3 grid sm:grid-cols-2 gap-3">
-              <div>
-                <label className="block text-xs font-medium mb-1 text-muted-foreground">
-                  {t("home.listenerLabel")}
-                </label>
-                <select
-                  value={listener}
-                  onChange={(e) => setListener(e.target.value)}
-                  className="w-full rounded-lg border border-input bg-background px-2.5 py-2 text-sm outline-none focus:border-ring focus:ring-2 focus:ring-ring/30"
-                >
-                  {LISTENER_OPTIONS.map((o) => (
-                    <option key={o.label} value={o.value}>
-                      {o.label}
-                    </option>
-                  ))}
-                </select>
+      <section className="grid gap-4 sm:grid-cols-2">
+        {SCENARIOS.map((s) => {
+          const locked = !s.free && !isPro;
+          const title = isId ? s.title_id : s.title_en;
+          const situation = isId ? s.situation_id : s.situation_en;
+          const role = isId ? s.role_id : s.role_en;
+          const tone = isId ? s.tone_id : s.tone_en;
+          return (
+            <div
+              key={s.id}
+              className="relative rounded-2xl border border-border bg-card p-5 shadow-sm flex flex-col"
+            >
+              <div className="flex items-start justify-between gap-2 mb-2">
+                <div className="text-3xl">{s.emoji}</div>
+                {s.free ? (
+                  <span className="rounded-full bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 px-2 py-0.5 text-[10px] font-bold uppercase">
+                    Free
+                  </span>
+                ) : (
+                  <span className="rounded-full bg-yellow-400/20 text-yellow-700 dark:text-yellow-300 px-2 py-0.5 text-[10px] font-bold uppercase">
+                    Pro
+                  </span>
+                )}
               </div>
-              <div>
-                <label className="block text-xs font-medium mb-1 text-muted-foreground">
-                  {t("home.moodLabel")}
-                </label>
-                <select
-                  value={mood}
-                  onChange={(e) => setMood(e.target.value)}
-                  className="w-full rounded-lg border border-input bg-background px-2.5 py-2 text-sm outline-none focus:border-ring focus:ring-2 focus:ring-ring/30"
-                >
-                  {MOOD_OPTIONS.map((o) => (
-                    <option key={o.label} value={o.value}>
-                      {o.label}
-                    </option>
-                  ))}
-                </select>
+              <h3 className="font-bold text-base">{title}</h3>
+              <p className="mt-1 text-xs text-muted-foreground flex-1">{situation}</p>
+              <div className="mt-3 flex flex-wrap gap-1.5 text-[11px]">
+                <span className="rounded-full bg-muted px-2 py-0.5">👤 {role}</span>
+                <span className="rounded-full bg-muted px-2 py-0.5">🎯 {tone}</span>
+              </div>
+
+              <div className="mt-4">
+                {locked ? (
+                  <Link
+                    to="/pricing"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-border bg-muted/50 px-3 py-2 text-sm font-medium text-foreground hover:bg-muted transition"
+                  >
+                    <Lock className="w-4 h-4" />
+                    {isId ? "Upgrade ke Pro" : "Upgrade to Pro"}
+                  </Link>
+                ) : (
+                  <Link
+                    to="/hanashite/$scenarioId"
+                    params={{ scenarioId: s.id }}
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:opacity-90 transition aria-disabled:opacity-50 aria-disabled:pointer-events-none"
+                    aria-disabled={!user}
+                  >
+                    <MessageCircle className="w-4 h-4" />
+                    {isId ? "Mulai Berlatih" : "Start Practice"}
+                  </Link>
+                )}
               </div>
             </div>
-          )}
-        </div>
-
-        <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <p className="text-xs text-muted-foreground">
-            {t("home.shortcut")} <kbd className="px-1.5 py-0.5 rounded bg-muted text-foreground/80">Ctrl</kbd> +{" "}
-            <kbd className="px-1.5 py-0.5 rounded bg-muted text-foreground/80">Enter</kbd>
-          </p>
-          <button
-            onClick={() => handleTranslate()}
-            disabled={loading}
-            className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-60 disabled:cursor-not-allowed"
-          >
-            {loading ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                {t("home.searching")}
-              </>
-            ) : (
-              t("home.searchBtn")
-            )}
-          </button>
-        </div>
-
-        <div className="mt-5">
-          <p className="text-xs text-muted-foreground mb-2">{t("home.examplesLabel")}</p>
-          <div className="flex flex-wrap gap-2">
-            {EXAMPLES.map((ex) => (
-              <button
-                key={ex}
-                onClick={() => useExample(ex)}
-                disabled={loading}
-                className="text-xs px-3 py-1.5 rounded-full border border-border bg-background hover:bg-muted transition disabled:opacity-50"
-              >
-                {ex}
-              </button>
-            ))}
-          </div>
-        </div>
+          );
+        })}
       </section>
 
-
-
-      {error && (
-        <div className="mt-6 flex items-start gap-3 rounded-lg border border-destructive/40 bg-destructive/5 p-4 text-sm text-destructive">
-          <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
-          <p>{error}</p>
-        </div>
-      )}
-
-      {loading && !result && (
-        <div className="mt-8 space-y-6">
-          <h2 className="text-base font-bold text-foreground">
-            {t("home.resultHeader")}
-          </h2>
-          {partialIntent ? <IntentBadge intent={partialIntent} /> : <IntentBadgeSkeleton />}
-          {partialSocial && <SocialAnalysisCard data={partialSocial} />}
-          {partialMostNatural ? (
-            <MostNaturalCard
-              data={{ ...partialMostNatural, level: partialMostNatural.level ?? "N3" }}
-              isFav={false}
-              onFavorite={() => {}}
-            />
-          ) : (
-            <MostNaturalSkeleton />
-          )}
-          <section>
-            <h3 className="text-sm font-bold uppercase tracking-wide mb-3 text-foreground/80">
-              {t("home.styleSubheader")}
-            </h3>
-            <div className="space-y-4">
-              {LEVELS.map(({ key, label }) =>
-                partialLevels[key] ? (
-                  <LevelCard
-                    key={key}
-                    level={label}
-                    data={partialLevels[key]!}
-                    open={false}
-                    onToggle={() => {}}
-                    isFav={false}
-                    onFavorite={() => {}}
-                  />
-                ) : (
-                  <StyleCardSkeleton key={key} label={label} />
-                ),
-              )}
-            </div>
-          </section>
-        </div>
-      )}
-
-      {result && historyEntry && (
-        <div className="mt-8 space-y-6" key={favTick}>
-          <div className="flex items-center justify-between gap-3">
-            <h2 className="text-base font-bold text-foreground">
-              {t("home.resultHeader")}
-            </h2>
-            {fromCache && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-[11px] font-medium text-muted-foreground">
-                <Zap className="w-3 h-3" />
-                {t("home.fromCache")}
-              </span>
-            )}
-          </div>
-          <IntentBadge intent={result.intent} />
-          {result.social_analysis && <SocialAnalysisCard data={result.social_analysis} />}
-          <MostNaturalCard
-            data={result.most_natural}
-            isFav={favMostNatural}
-            onFavorite={() => {
-              addFavoriteFromMostNatural(historyEntry);
-              setFavTick((t) => t + 1);
-              gtagEvent("save_favorite");
-            }}
-          />
-          <section>
-            <h3 className="text-sm font-bold uppercase tracking-wide mb-3 text-foreground/80">
-              {t("home.styleSubheader")}
-            </h3>
-            <div className="space-y-4">
-              {LEVELS.map(({ key, label }) => (
-                <LevelCard
-                  key={key}
-                  level={label}
-                  data={result[key]}
-                  open={open[key]}
-                  onToggle={() => setOpen((s) => ({ ...s, [key]: !s[key] }))}
-                  isFav={isFavorited(historyEntry.id, "level", label)}
-                  onFavorite={() => {
-                    addFavoriteFromLevel(historyEntry, key);
-                    setFavTick((t) => t + 1);
-                    gtagEvent("save_favorite");
-                  }}
-                />
-              ))}
-            </div>
-          </section>
-          {result.alternatives?.length > 0 && (
-            <AlternativesSection items={result.alternatives} />
-          )}
-        </div>
-      )}
-
-      {/* SEO content links — help Google discover reference pages */}
-      <nav className="mt-12 rounded-xl border border-border bg-card p-5" aria-label="Referensi bahasa Jepang">
+      <section className="mt-10 rounded-xl border border-border bg-card p-5">
         <h2 className="text-sm font-bold uppercase tracking-wide mb-3 text-foreground/80">
-          {lang === "id" ? "Jelajahi Lebih Lanjut" : "Explore More"}
+          {isId ? "Cara Pakai" : "How it works"}
+        </h2>
+        <ol className="space-y-2 text-sm text-muted-foreground">
+          <li>
+            <span className="font-semibold text-foreground">1.</span>{" "}
+            {isId
+              ? "Pilih skenario yang ingin kamu latih."
+              : "Pick a scenario you want to practice."}
+          </li>
+          <li>
+            <span className="font-semibold text-foreground">2.</span>{" "}
+            {isId
+              ? "Bicara langsung pakai mic (atau ketik) — AI akan membalas dalam bahasa Jepang."
+              : "Speak with your mic (or type) — the AI replies in Japanese."}
+          </li>
+          <li>
+            <span className="font-semibold text-foreground">3.</span>{" "}
+            {isId
+              ? "Klik tombol suara untuk dengar pengucapan AI."
+              : "Tap the speaker to hear the AI's pronunciation."}
+          </li>
+          <li>
+            <span className="font-semibold text-foreground">4.</span>{" "}
+            {isId
+              ? "Selesai sesi → dapat skor kesopanan + koreksi grammar."
+              : "End session → get politeness score + grammar corrections."}
+          </li>
+        </ol>
+      </section>
+
+      <nav className="mt-10 rounded-xl border border-border bg-card p-5" aria-label={isId ? "Fitur lain" : "Other features"}>
+        <h2 className="text-sm font-bold uppercase tracking-wide mb-3 text-foreground/80">
+          {isId ? "Fitur Lainnya" : "More Tools"}
         </h2>
         <ul className="space-y-3">
           <li>
-            <Link to="/hanashite" className="text-sm text-primary hover:underline font-semibold">
-              {lang === "id"
-                ? "🎙️ Hanashite Room — Latih Bicara dengan AI (Baru!)"
-                : "🎙️ Hanashite Room — Practice Speaking with AI (New!)"}
+            <Link to="/translate" className="text-sm text-primary hover:underline font-semibold inline-flex items-center gap-1.5">
+              <Search className="w-4 h-4" />
+              {isId
+                ? "Cari Ekspresi Jepang Natural (N1–N4)"
+                : "Find Natural Japanese Expressions (N1–N4)"}
             </Link>
             <p className="text-xs text-muted-foreground mt-0.5">
-              {lang === "id"
-                ? "Simulasi percakapan Jepang dengan AI: pesan ramen, meeting kantor, tanya arah. Dapat feedback grammar & keigo instan."
-                : "Japanese conversation simulator with AI: order ramen, office meetings, ask for directions. Instant grammar & keigo feedback."}
+              {isId
+                ? "Terjemahkan kalimat sehari-hari ke bahasa Jepang dengan level kesopanan dan analisis konteks sosial."
+                : "Translate everyday phrases into Japanese with politeness levels and social context analysis."}
             </p>
           </li>
           <li>
             <Link to="/tabel-hiragana" className="text-sm text-primary hover:underline">
-              {lang === "id"
+              {isId
                 ? "📖 Tabel Huruf Hiragana Lengkap dan Cara Membacanya"
                 : "📖 Complete Hiragana Chart with Pronunciation"}
             </Link>
             <p className="text-xs text-muted-foreground mt-0.5">
-              {lang === "id"
+              {isId
                 ? "Referensi interaktif 71+ huruf hiragana dengan romaji dan audio."
                 : "Interactive reference for 71+ hiragana characters with romaji and audio."}
             </p>

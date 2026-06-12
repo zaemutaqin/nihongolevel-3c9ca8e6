@@ -90,7 +90,7 @@ function DashboardPage() {
 
   const handleSuggest = (text: string) => {
     sessionStorage.setItem("nihongo_prefill", text);
-    navigate({ to: "/" });
+    navigate({ to: "/translate" });
   };
 
 

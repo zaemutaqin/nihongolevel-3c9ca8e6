@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TranslateRouteImport } from './routes/translate'
 import { Route as TermsOfServiceRouteImport } from './routes/terms-of-service'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as TabelHiraganaRouteImport } from './routes/tabel-hiragana'
@@ -24,7 +25,6 @@ import { Route as PanduanWisataRouteImport } from './routes/panduan-wisata'
 import { Route as FavoritRouteImport } from './routes/favorit'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as HanashiteIndexRouteImport } from './routes/hanashite.index'
 import { Route as HanashiteScenarioIdRouteImport } from './routes/hanashite.$scenarioId'
 import { Route as ApiTranslateRouteImport } from './routes/api/translate'
 import { Route as ApiHanashiteRouteImport } from './routes/api/hanashite'
@@ -32,6 +32,11 @@ import { Route as ApiActivateProRouteImport } from './routes/api/activate-pro'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicPaymentsReconcileRouteImport } from './routes/api/public/payments/reconcile'
 
+const TranslateRoute = TranslateRouteImport.update({
+  id: '/translate',
+  path: '/translate',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TermsOfServiceRoute = TermsOfServiceRouteImport.update({
   id: '/terms-of-service',
   path: '/terms-of-service',
@@ -107,15 +112,10 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const HanashiteIndexRoute = HanashiteIndexRouteImport.update({
-  id: '/hanashite/',
-  path: '/hanashite/',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const HanashiteScenarioIdRoute = HanashiteScenarioIdRouteImport.update({
-  id: '/$scenarioId',
-  path: '/$scenarioId',
-  getParentRoute: () => HanashiteRoute,
+  id: '/hanashite/$scenarioId',
+  path: '/hanashite/$scenarioId',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ApiTranslateRoute = ApiTranslateRouteImport.update({
   id: '/api/translate',
@@ -161,11 +161,11 @@ export interface FileRoutesByFullPath {
   '/tabel-hiragana': typeof TabelHiraganaRoute
   '/terms': typeof TermsRoute
   '/terms-of-service': typeof TermsOfServiceRoute
+  '/translate': typeof TranslateRoute
   '/api/activate-pro': typeof ApiActivateProRoute
   '/api/hanashite': typeof ApiHanashiteRoute
   '/api/translate': typeof ApiTranslateRoute
   '/hanashite/$scenarioId': typeof HanashiteScenarioIdRoute
-  '/hanashite/': typeof HanashiteIndexRoute
   '/api/public/payments/reconcile': typeof ApiPublicPaymentsReconcileRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -185,11 +185,11 @@ export interface FileRoutesByTo {
   '/tabel-hiragana': typeof TabelHiraganaRoute
   '/terms': typeof TermsRoute
   '/terms-of-service': typeof TermsOfServiceRoute
+  '/translate': typeof TranslateRoute
   '/api/activate-pro': typeof ApiActivateProRoute
   '/api/hanashite': typeof ApiHanashiteRoute
   '/api/translate': typeof ApiTranslateRoute
   '/hanashite/$scenarioId': typeof HanashiteScenarioIdRoute
-  '/hanashite': typeof HanashiteIndexRoute
   '/api/public/payments/reconcile': typeof ApiPublicPaymentsReconcileRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -210,11 +210,11 @@ export interface FileRoutesById {
   '/tabel-hiragana': typeof TabelHiraganaRoute
   '/terms': typeof TermsRoute
   '/terms-of-service': typeof TermsOfServiceRoute
+  '/translate': typeof TranslateRoute
   '/api/activate-pro': typeof ApiActivateProRoute
   '/api/hanashite': typeof ApiHanashiteRoute
   '/api/translate': typeof ApiTranslateRoute
   '/hanashite/$scenarioId': typeof HanashiteScenarioIdRoute
-  '/hanashite/': typeof HanashiteIndexRoute
   '/api/public/payments/reconcile': typeof ApiPublicPaymentsReconcileRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -236,11 +236,11 @@ export interface FileRouteTypes {
     | '/tabel-hiragana'
     | '/terms'
     | '/terms-of-service'
+    | '/translate'
     | '/api/activate-pro'
     | '/api/hanashite'
     | '/api/translate'
     | '/hanashite/$scenarioId'
-    | '/hanashite/'
     | '/api/public/payments/reconcile'
     | '/api/public/payments/webhook'
   fileRoutesByTo: FileRoutesByTo
@@ -260,11 +260,11 @@ export interface FileRouteTypes {
     | '/tabel-hiragana'
     | '/terms'
     | '/terms-of-service'
+    | '/translate'
     | '/api/activate-pro'
     | '/api/hanashite'
     | '/api/translate'
     | '/hanashite/$scenarioId'
-    | '/hanashite'
     | '/api/public/payments/reconcile'
     | '/api/public/payments/webhook'
   id:
@@ -284,11 +284,11 @@ export interface FileRouteTypes {
     | '/tabel-hiragana'
     | '/terms'
     | '/terms-of-service'
+    | '/translate'
     | '/api/activate-pro'
     | '/api/hanashite'
     | '/api/translate'
     | '/hanashite/$scenarioId'
-    | '/hanashite/'
     | '/api/public/payments/reconcile'
     | '/api/public/payments/webhook'
   fileRoutesById: FileRoutesById
@@ -309,16 +309,24 @@ export interface RootRouteChildren {
   TabelHiraganaRoute: typeof TabelHiraganaRoute
   TermsRoute: typeof TermsRoute
   TermsOfServiceRoute: typeof TermsOfServiceRoute
+  TranslateRoute: typeof TranslateRoute
   ApiActivateProRoute: typeof ApiActivateProRoute
   ApiHanashiteRoute: typeof ApiHanashiteRoute
   ApiTranslateRoute: typeof ApiTranslateRoute
-  HanashiteIndexRoute: typeof HanashiteIndexRoute
+  HanashiteScenarioIdRoute: typeof HanashiteScenarioIdRoute
   ApiPublicPaymentsReconcileRoute: typeof ApiPublicPaymentsReconcileRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/translate': {
+      id: '/translate'
+      path: '/translate'
+      fullPath: '/translate'
+      preLoaderRoute: typeof TranslateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/terms-of-service': {
       id: '/terms-of-service'
       path: '/terms-of-service'
@@ -424,19 +432,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/hanashite/': {
-      id: '/hanashite/'
-      path: '/hanashite'
-      fullPath: '/hanashite/'
-      preLoaderRoute: typeof HanashiteIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/hanashite/$scenarioId': {
       id: '/hanashite/$scenarioId'
-      path: '/$scenarioId'
+      path: '/hanashite/$scenarioId'
       fullPath: '/hanashite/$scenarioId'
       preLoaderRoute: typeof HanashiteScenarioIdRouteImport
-      parentRoute: typeof HanashiteRoute
+      parentRoute: typeof rootRouteImport
     }
     '/api/translate': {
       id: '/api/translate'
@@ -492,23 +493,14 @@ const rootRouteChildren: RootRouteChildren = {
   TabelHiraganaRoute: TabelHiraganaRoute,
   TermsRoute: TermsRoute,
   TermsOfServiceRoute: TermsOfServiceRoute,
+  TranslateRoute: TranslateRoute,
   ApiActivateProRoute: ApiActivateProRoute,
   ApiHanashiteRoute: ApiHanashiteRoute,
   ApiTranslateRoute: ApiTranslateRoute,
-  HanashiteIndexRoute: HanashiteIndexRoute,
+  HanashiteScenarioIdRoute: HanashiteScenarioIdRoute,
   ApiPublicPaymentsReconcileRoute: ApiPublicPaymentsReconcileRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
