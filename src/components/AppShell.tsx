@@ -11,6 +11,7 @@ import { SiteFooter } from "./SiteFooter";
 import { FlagID, FlagGB } from "./FlagIcons";
 
 import { UserMenu } from "./UserMenu";
+import { StreakReminder } from "./StreakReminder";
 
 type NavItem = { to: string; key: string; Icon: typeof Search; exact?: boolean; proOnly?: boolean };
 const NAV: NavItem[] = [
