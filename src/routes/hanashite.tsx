@@ -103,8 +103,8 @@ function HanashiteIndex() {
                   <Link
                     to="/hanashite/$scenarioId"
                     params={{ scenarioId: s.id }}
-                    disabled={!user}
-                    className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:opacity-90 transition disabled:opacity-50 disabled:pointer-events-none"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:opacity-90 transition aria-disabled:opacity-50 aria-disabled:pointer-events-none"
+                    aria-disabled={!user}
                   >
                     <MessageCircle className="w-4 h-4" />
                     {isId ? "Mulai Berlatih" : "Start Practice"}
