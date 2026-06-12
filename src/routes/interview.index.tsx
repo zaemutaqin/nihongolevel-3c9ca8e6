@@ -218,7 +218,7 @@ function InterviewIndex() {
                 return (
                   <li
                     key={h.id}
-                    className="flex items-center justify-between rounded-lg border border-border bg-card p-4"
+                    className="flex items-center justify-between rounded-lg border border-border bg-white p-4"
                   >
                     <div className="min-w-0">
                       <div className="font-semibold text-sm truncate">{h.scenario_title}</div>
