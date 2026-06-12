@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { useT } from "@/lib/i18n";
 import { useAuth } from "@/lib/auth";
-import { SignInButton } from "@/components/SignInButton";
+
 import heroIllustration from "@/assets/hero-illustration.png";
 
 export const Route = createFileRoute("/")({
