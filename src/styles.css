@@ -70,19 +70,19 @@
   --card-foreground: oklch(0.20 0.02 25);
   --popover: oklch(0.985 0.008 75);
   --popover-foreground: oklch(0.20 0.02 25);
-  --primary: oklch(0.20 0.02 25);               /* deep ink as primary */
-  --primary-foreground: oklch(0.97 0.012 75);
-  --secondary: oklch(0.86 0.06 5);              /* soft pink #F4B8C8 */
+  --primary: oklch(0.92 0.20 125);              /* lime #D9F26B brand */
+  --primary-foreground: oklch(0.20 0.02 25);
+  --secondary: oklch(0.88 0.06 320);            /* lavender #E8D5F2 */
   --secondary-foreground: oklch(0.20 0.02 25);
   --muted: oklch(0.92 0.014 75);
   --muted-foreground: oklch(0.42 0.018 30);
-  --accent: oklch(0.88 0.20 125);               /* lime #D9F26B */
+  --accent: oklch(0.86 0.06 5);                 /* pink #F4B8C8 */
   --accent-foreground: oklch(0.20 0.02 25);
   --destructive: oklch(0.56 0.22 27);
   --destructive-foreground: oklch(0.98 0.014 85);
   --border: oklch(0.20 0.02 25 / 0.12);
   --input: oklch(0.20 0.02 25 / 0.16);
-  --ring: oklch(0.20 0.02 25);
+  --ring: oklch(0.92 0.20 125);
   --brand-pink: oklch(0.86 0.06 5);             /* #F4B8C8 */
   --brand-lavender: oklch(0.88 0.06 320);       /* #E8D5F2 */
   --brand-lime: oklch(0.92 0.20 125);           /* #D9F26B */
