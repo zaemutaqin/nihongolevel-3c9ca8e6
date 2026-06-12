@@ -14,13 +14,13 @@ export const Route = createFileRoute("/pricing")({
       {
         name: "description",
         content:
-          "Free with 3 daily searches. Pro $4.99/month or $50 lifetime — unlimited searches, history, favorites, daily practice.",
+          "Free with 3 daily searches. Pro $20 one-time — unlimited searches, history, favorites, daily practice, forever.",
       },
       { property: "og:title", content: "Pricing — NihongoLevel Pro" },
       {
         property: "og:description",
         content:
-          "Free with 3 searches per day. Pro: $4.99/month or $50 one-time lifetime access. Cancel anytime.",
+          "Free with 3 searches per day. Pro: $20 one-time lifetime access. 30-day money back guarantee.",
       },
       { property: "og:url", content: "/pricing" },
     ],
@@ -33,7 +33,7 @@ function PricingPage() {
   const lang = useLang();
   const { user } = useAuth();
   const { openCheckout, loading } = usePaddleCheckout();
-  const [busyPlan, setBusyPlan] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
 
   const features =
     lang === "id"
@@ -54,8 +54,8 @@ function PricingPage() {
           { label: "Indonesian + English", free: "✓", pro: "✓" },
         ];
 
-  const handleBuy = async (priceId: "pro_monthly" | "pro_lifetime") => {
-    setBusyPlan(priceId);
+  const handleBuy = async () => {
+    setBusy(true);
     try {
       if (!user) {
         await lovable.auth.signInWithOAuth("google", {
@@ -64,12 +64,12 @@ function PricingPage() {
         return;
       }
       await openCheckout({
-        priceId,
+        priceId: "pro_lifetime",
         customerEmail: user.email ?? undefined,
         userId: user.id,
       });
     } finally {
-      setBusyPlan(null);
+      setBusy(false);
     }
   };
 
@@ -84,24 +84,24 @@ function PricingPage() {
         </Link>
       </header>
 
-      <main className="flex-1 mx-auto w-full max-w-5xl px-4 py-10">
+      <main className="flex-1 mx-auto w-full max-w-4xl px-4 py-10">
         <div className="text-center">
           <div className="inline-flex items-center gap-1.5 rounded-full bg-yellow-400/15 text-yellow-700 dark:text-yellow-300 px-3 py-1 text-xs font-semibold mb-3">
             <Crown className="w-3.5 h-3.5" /> NihongoLevel Pro
           </div>
           <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
             {lang === "id"
-              ? "Pilih cara terbaik untuk Anda"
-              : "Pick the plan that fits you"}
+              ? "Sederhana. Bayar sekali, milik selamanya."
+              : "Simple. Pay once, yours forever."}
           </h1>
           <p className="mt-3 text-muted-foreground">
             {lang === "id"
-              ? "Mulai gratis. Tambah Pro bulanan, atau bayar sekali untuk akses seumur hidup."
-              : "Start free. Go Pro monthly, or pay once for lifetime access."}
+              ? "Mulai gratis. Upgrade ke Pro dengan satu kali pembayaran."
+              : "Start free. Upgrade to Pro with a single one-time payment."}
           </p>
         </div>
 
-        <div className="mt-10 grid sm:grid-cols-3 gap-4">
+        <div className="mt-10 grid sm:grid-cols-2 gap-4">
           {/* Free */}
           <div className="rounded-2xl border border-border bg-card p-6">
             <div className="text-xs font-semibold uppercase text-muted-foreground">
@@ -124,75 +124,38 @@ function PricingPage() {
             </ul>
           </div>
 
-          {/* Monthly */}
-          <div className="rounded-2xl border border-border bg-card p-6 relative">
-            <div className="text-xs font-semibold uppercase text-primary">
-              {lang === "id" ? "Pro Bulanan" : "Pro Monthly"}
-            </div>
-            <div className="mt-2 flex items-baseline gap-1">
-              <span className="text-4xl font-bold">$4.99</span>
-              <span className="text-sm text-muted-foreground">
-                {lang === "id" ? "/bulan" : "/month"}
-              </span>
-            </div>
-            <p className="mt-1 text-sm font-semibold text-primary">
-              {lang === "id" ? "Batal kapan saja" : "Cancel anytime"}
-            </p>
-            <p className="mt-2 text-sm text-muted-foreground">
-              {lang === "id"
-                ? "Untuk yang ingin coba dulu sebelum komit."
-                : "For trying Pro before committing."}
-            </p>
-            <ul className="mt-4 space-y-2 text-sm">
-              <Li>{lang === "id" ? "Semua fitur Pro" : "All Pro features"}</Li>
-              <Li>{lang === "id" ? "Akses penuh selama berlangganan" : "Full access while active"}</Li>
-            </ul>
-            <button
-              onClick={() => handleBuy("pro_monthly")}
-              disabled={loading || busyPlan !== null}
-              className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-lg border-2 border-primary text-primary py-3 text-sm font-semibold hover:bg-primary hover:text-primary-foreground transition disabled:opacity-60"
-            >
-              {busyPlan === "pro_monthly" ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-              {lang === "id" ? "Langganan — $4.99/bln" : "Subscribe — $4.99/mo"}
-            </button>
-          </div>
-
           {/* Lifetime */}
           <div className="rounded-2xl border-2 border-primary bg-card p-6 relative">
             <span className="absolute -top-2 right-4 inline-flex items-center gap-1 rounded-full bg-primary text-primary-foreground px-2 py-0.5 text-[10px] font-bold uppercase">
-              {lang === "id" ? "Hemat 10× lipat" : "Best value"}
+              {lang === "id" ? "Sekali Bayar" : "One-time"}
             </span>
             <div className="text-xs font-semibold uppercase text-primary">
               {lang === "id" ? "Pro Seumur Hidup" : "Pro Lifetime"}
             </div>
             <div className="mt-2 flex items-baseline gap-1">
-              <span className="text-4xl font-bold">$50</span>
+              <span className="text-4xl font-bold">$20</span>
               <span className="text-sm text-muted-foreground">
                 {lang === "id" ? "sekali bayar" : "one-time"}
               </span>
             </div>
             <p className="mt-1 text-sm font-semibold text-primary">
               {lang === "id"
-                ? "≈ 10 bulan · selamanya milik Anda"
-                : "≈ 10 months · yours forever"}
-            </p>
-            <p className="mt-2 text-sm text-muted-foreground">
-              {lang === "id"
-                ? "Pilihan paling hemat jika Anda serius."
-                : "The best value for serious learners."}
+                ? "Bayar sekali · selamanya milik Anda"
+                : "Pay once · yours forever"}
             </p>
             <ul className="mt-4 space-y-2 text-sm">
-              <Li>{lang === "id" ? "Semua fitur Pro" : "All Pro features"}</Li>
+              <Li>{lang === "id" ? "Pencarian tanpa batas" : "Unlimited searches"}</Li>
+              <Li>{lang === "id" ? "Riwayat & favorit selamanya" : "History & favorites forever"}</Li>
               <Li>{lang === "id" ? "Semua fitur baru di masa depan" : "All future features included"}</Li>
               <Li>{lang === "id" ? "Tanpa langganan" : "No subscription"}</Li>
             </ul>
             <button
-              onClick={() => handleBuy("pro_lifetime")}
-              disabled={loading || busyPlan !== null}
+              onClick={handleBuy}
+              disabled={loading || busy}
               className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary text-primary-foreground py-3 text-sm font-semibold hover:opacity-90 transition disabled:opacity-60"
             >
-              {busyPlan === "pro_lifetime" ? <Loader2 className="w-4 h-4 animate-spin" /> : <Crown className="w-4 h-4" />}
-              {lang === "id" ? "Beli — $50 selamanya" : "Buy — $50 lifetime"}
+              {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Crown className="w-4 h-4" />}
+              {lang === "id" ? "Beli — $20 selamanya" : "Buy — $20 lifetime"}
             </button>
           </div>
         </div>
