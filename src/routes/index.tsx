@@ -52,8 +52,8 @@ function HomeIndex() {
         <header className="mb-28 sm:mb-36 grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-12 lg:gap-16 items-center">
           <div>
             <span
-              className="inline-block text-[11px] font-bold uppercase tracking-[0.24em] mb-6 pb-1"
-              style={{ borderBottom: `2px solid ${ACCENT}`, color: ACCENT }}
+              className="inline-block text-[11px] font-bold uppercase tracking-[0.24em] mb-6 px-4 py-2 rounded-full"
+              style={{ background: "#FDECEC", color: ACCENT, border: `1px solid ${ACCENT}33` }}
             >
               {isId ? "AI Coach untuk Pekerja Indonesia" : "AI Coach for Workers"}
             </span>
