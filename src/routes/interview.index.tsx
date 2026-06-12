@@ -28,7 +28,7 @@ type SessionRow = {
 export const Route = createFileRoute("/interview/")({
   head: () => ({
     meta: [
-      { title: "AI Interview Simulator — Latih Wawancara Kerja Jepang | NihongoLevel" },
+      { title: "Interview Simulator — Wawancara Kerja Jepang | NihongoLevel" },
       {
         name: "description",
         content:

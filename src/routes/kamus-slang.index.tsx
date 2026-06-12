@@ -8,7 +8,7 @@ import { HanashiteTeaserBanner } from "@/components/HanashiteTeaserBanner";
 export const Route = createFileRoute("/kamus-slang/")({
   head: () => ({
     meta: [
-      { title: "Kamus Slang Jepang — Arti Kata Gaul Anime & Dorama | NihongoLevel" },
+      { title: "Kamus Slang Jepang — Arti Kata Gaul Anime | NihongoLevel" },
       {
         name: "description",
         content:
