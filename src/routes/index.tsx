@@ -7,10 +7,6 @@ import {
   ChevronDown,
   MessageSquare,
   Sparkles,
-  Building2,
-  UtensilsCrossed,
-  Stethoscope,
-  Store,
 } from "lucide-react";
 import { useT } from "@/lib/i18n";
 import { useAuth } from "@/lib/auth";
@@ -89,7 +85,7 @@ function HomeIndex() {
             <div className="flex flex-col sm:flex-row gap-3">
               <Link
                 to="/interview"
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 text-base sm:text-lg font-black text-white hover:opacity-90 transition"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full text-base sm:text-lg font-bold text-white hover:opacity-90 transition"
                 style={{ background: ACCENT }}
               >
                 {isId ? "Coba Interview Simulator" : "Try Interview Simulator"}
@@ -97,7 +93,7 @@ function HomeIndex() {
               </Link>
               <Link
                 to="/translate"
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 text-base sm:text-lg font-bold hover:bg-black/5 transition"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full text-base sm:text-lg font-bold hover:bg-black/5 transition"
                 style={{ color: INK }}
               >
                 {isId ? "Mulai Gratis" : "Start Free"}
@@ -163,27 +159,26 @@ function HomeIndex() {
               {isId ? "Skenario Populer" : "Popular Scenarios"}
             </h2>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-x-8 gap-y-10">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
             {[
-              { to: "/interview" as const, icon: Briefcase, label: isId ? "Wawancara Kerja" : "Job Interview" },
-              { to: "/hanashite/sc_konbini" as const, icon: Store, label: "Konbini" },
-              { to: "/hanashite/sc_ramen" as const, icon: UtensilsCrossed, label: isId ? "Restoran" : "Restaurant" },
-              { to: "/hanashite/sc_apato" as const, icon: Building2, label: isId ? "Apartemen" : "Apartment" },
-              { to: "/hanashite/sc_clinic" as const, icon: Stethoscope, label: isId ? "Rumah Sakit" : "Hospital" },
-            ].map(({ to, icon: Icon, label }) => (
+              { to: "/interview" as const, emoji: "💼", label: isId ? "Wawancara Kerja" : "Job Interview" },
+              { to: "/hanashite/sc_konbini" as const, emoji: "🏪", label: "Konbini" },
+              { to: "/hanashite/sc_ramen" as const, emoji: "🍜", label: isId ? "Restoran" : "Restaurant" },
+              { to: "/hanashite/sc_apato" as const, emoji: "🏠", label: isId ? "Apartemen" : "Apartment" },
+              { to: "/hanashite/sc_clinic" as const, emoji: "🏥", label: isId ? "Rumah Sakit" : "Hospital" },
+            ].map(({ to, emoji, label }) => (
               <Link
                 key={to}
                 to={to}
-                className="group flex flex-col items-center text-center"
+                className="group flex flex-col items-center justify-center text-center bg-white rounded-2xl py-8 px-4 hover:-translate-y-1 transition-transform"
+                style={{ border: `1px solid rgba(15,23,42,0.08)` }}
               >
-                <Icon
-                  className="w-14 h-14 mb-4 transition-transform group-hover:scale-110"
-                  style={{ color: INK }}
-                  strokeWidth={1.5}
-                />
+                <span className="text-4xl mb-4" aria-hidden>
+                  {emoji}
+                </span>
                 <span
-                  className="text-base font-black leading-tight group-hover:underline underline-offset-4 decoration-2"
-                  style={{ textDecorationColor: ACCENT }}
+                  className="text-sm font-bold leading-tight"
+                  style={{ color: INK }}
                 >
                   {label}
                 </span>
@@ -247,17 +242,17 @@ function HomeIndex() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
             {/* FREE — minimal */}
             <div
-              className="p-8 sm:p-10 flex flex-col"
-              style={{ border: `1px solid ${INK}`, background: "transparent" }}
+              className="p-8 sm:p-10 flex flex-col rounded-3xl bg-white"
+              style={{ border: `1px solid rgba(15,23,42,0.08)` }}
             >
               <div className="text-xs font-bold uppercase tracking-[0.24em] mb-6" style={{ color: INK_SOFT }}>
                 Free
               </div>
               <div className="flex items-baseline gap-2 mb-2">
                 <span className="text-6xl font-black tracking-tight">$0</span>
-                <span className="text-sm" style={{ color: INK_SOFT }}>
-                  {isId ? "selamanya" : "forever"}
-                </span>
+              </div>
+              <div className="text-sm mb-4" style={{ color: INK_SOFT }}>
+                {isId ? "selamanya" : "forever"}
               </div>
               <p className="text-sm mb-8" style={{ color: INK_SOFT }}>
                 {isId ? "Cocok untuk mencoba sebelum upgrade." : "Perfect for trying before you upgrade."}
@@ -268,15 +263,15 @@ function HomeIndex() {
                   : ["10 translator requests / day", "2 interview sessions / day", "2 life-sim sessions / day", "Basic history"]
                 ).map((f) => (
                   <li key={f} className="flex items-start gap-3 text-sm">
-                    <span className="mt-2 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: INK }} />
+                    <span className="mt-0.5 flex-shrink-0" style={{ color: ACCENT }}>✓</span>
                     <span>{f}</span>
                   </li>
                 ))}
               </ul>
               <Link
                 to="/translate"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-bold hover:bg-black/5 transition"
-                style={{ border: `1px solid ${INK}`, color: INK }}
+                className="inline-flex items-center justify-center gap-2 px-6 py-4 rounded-full text-sm font-bold hover:bg-black/5 transition"
+                style={{ background: "#EEF7FB", color: INK }}
               >
                 {isId ? "Mulai Gratis" : "Start Free"}
               </Link>
@@ -284,12 +279,12 @@ function HomeIndex() {
 
             {/* PRO — dominant red color block */}
             <div
-              className="p-8 sm:p-10 flex flex-col relative"
+              className="p-8 sm:p-10 flex flex-col relative rounded-3xl"
               style={{ background: ACCENT, color: CREAM }}
             >
               <div
-                className="absolute top-0 right-0 text-[10px] font-black uppercase tracking-[0.24em] px-3 py-1.5"
-                style={{ background: INK, color: CREAM }}
+                className="absolute top-6 right-6 text-[10px] font-bold uppercase tracking-[0.2em] px-3 py-1.5 rounded-full"
+                style={{ background: "rgba(0,0,0,0.25)", color: CREAM }}
               >
                 Lifetime Access
               </div>
@@ -298,9 +293,9 @@ function HomeIndex() {
               </div>
               <div className="flex items-baseline gap-2 mb-2">
                 <span className="text-6xl font-black tracking-tight">$19</span>
-                <span className="text-sm opacity-90">
-                  {isId ? "sekali bayar" : "one-time"}
-                </span>
+              </div>
+              <div className="text-sm mb-4 opacity-90">
+                {isId ? "sekali bayar" : "one-time"}
               </div>
               <p className="text-sm mb-8 opacity-90">
                 {isId ? "Bayar sekali, akses semua fitur selamanya." : "Pay once, unlock everything forever."}
@@ -311,14 +306,14 @@ function HomeIndex() {
                   : ["Unlimited translator", "Unlimited interviews", "All scenarios unlocked", "Full history & analytics"]
                 ).map((f) => (
                   <li key={f} className="flex items-start gap-3 text-sm">
-                    <span className="mt-2 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: CREAM }} />
+                    <span className="mt-0.5 flex-shrink-0">✓</span>
                     <span>{f}</span>
                   </li>
                 ))}
               </ul>
               <Link
                 to="/pricing"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-black hover:opacity-90 transition"
+                className="inline-flex items-center justify-center gap-2 px-6 py-4 rounded-full text-sm font-bold hover:opacity-90 transition"
                 style={{ background: CREAM, color: ACCENT }}
               >
                 {isId ? "Upgrade ke Pro" : "Upgrade to Pro"}
@@ -402,8 +397,16 @@ function WhyItem({
   desc: string;
 }) {
   return (
-    <div>
-      <Icon className="w-12 h-12 mb-5" style={{ color: ACCENT }} strokeWidth={1.5} />
+    <div
+      className="p-7 rounded-2xl"
+      style={{ background: "#FAEDE8" }}
+    >
+      <div
+        className="w-11 h-11 rounded-xl flex items-center justify-center mb-5"
+        style={{ background: "rgba(220,38,38,0.12)" }}
+      >
+        <Icon className="w-5 h-5" style={{ color: ACCENT }} strokeWidth={2} />
+      </div>
       <h3 className="font-black text-xl mb-2 tracking-tight" style={{ color: INK }}>
         {title}
       </h3>
