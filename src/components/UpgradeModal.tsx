@@ -107,8 +107,7 @@ export function UpgradeModal({ open, onClose }: UpgradeModalProps) {
             <div className="inline-flex items-center gap-1.5 rounded-full bg-yellow-400/15 text-yellow-700 dark:text-yellow-300 px-3 py-1 text-xs font-semibold mb-3">
               <Crown className="w-3.5 h-3.5" /> NihongoLevel Pro
             </div>
-            <h2 className="text-xl font-bold leading-snug">
-              {lang === "id" ? "Pilih paket Pro" : "Choose your Pro plan"}
+          {lang === "id" ? "Upgrade ke Pro" : "Upgrade to Pro"}
             </h2>
 
             <ul className="mt-5 space-y-2 text-sm text-left">
