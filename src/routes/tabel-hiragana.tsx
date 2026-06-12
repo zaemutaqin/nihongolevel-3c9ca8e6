@@ -39,6 +39,8 @@ export const Route = createFileRoute("/tabel-hiragana")({
             "Tabel hiragana lengkap dengan romaji dan pelafalan audio untuk pemula bahasa Jepang.",
           inLanguage: "id",
           url: "https://nihongolevel.lovable.app/tabel-hiragana",
+          datePublished: "2025-06-12",
+          dateModified: "2025-06-12",
           author: { "@type": "Organization", name: "NihongoLevel" },
           publisher: {
             "@type": "Organization",
@@ -52,6 +54,39 @@ export const Route = createFileRoute("/tabel-hiragana")({
             "@type": "WebPage",
             "@id": "https://nihongolevel.lovable.app/tabel-hiragana",
           },
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: [
+            {
+              "@type": "Question",
+              name: "Berapa jumlah huruf hiragana?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Hiragana dasar (gojuon) terdiri dari 46 huruf. Dengan dakuten, handakuten, dan yoon, totalnya mencapai sekitar 71+ variasi bunyi.",
+              },
+            },
+            {
+              "@type": "Question",
+              name: "Apa perbedaan hiragana dan katakana?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Hiragana digunakan untuk kata asli Jepang dan partikel grammar. Katakana digunakan untuk kata serapan dari bahasa asing, nama hewan/ilmu, dan penekanan.",
+              },
+            },
+            {
+              "@type": "Question",
+              name: "Berapa lama waktu yang dibutuhkan untuk menghafal hiragana?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Dengan latihan 15-30 menit per hari, kebanyakan pemula bisa menghafal semua hiragana dalam 1-2 minggu.",
+              },
+            },
+          ],
         }),
       },
     ],
