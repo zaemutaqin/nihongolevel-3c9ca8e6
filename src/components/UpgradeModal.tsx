@@ -69,14 +69,14 @@ export function UpgradeModal({ open, onClose }: UpgradeModalProps) {
     }
   };
 
-  const handleUpgrade = async () => {
-    gtagEvent("upgrade_clicked", { signed_in: user ? "yes" : "no" });
+  const handleUpgrade = async (priceId: "pro_lifetime" | "pro_monthly") => {
+    gtagEvent("upgrade_clicked", { signed_in: user ? "yes" : "no", plan: priceId });
     if (!user) {
       await triggerSignIn();
       return;
     }
     await openCheckout({
-      priceId: "pro_lifetime",
+      priceId,
       customerEmail: user.email ?? undefined,
       userId: user.id,
     });
@@ -108,19 +108,10 @@ export function UpgradeModal({ open, onClose }: UpgradeModalProps) {
               <Crown className="w-3.5 h-3.5" /> NihongoLevel Pro
             </div>
             <h2 className="text-xl font-bold leading-snug">
-              {lang === "id" ? "Akses Seumur Hidup" : "Lifetime Access"}
+              {lang === "id" ? "Pilih paket Pro" : "Choose your Pro plan"}
             </h2>
 
-            <div className="mt-5 flex items-baseline justify-center gap-1">
-              <span className="text-5xl font-extrabold">$19</span>
-            </div>
-            <p className="mt-1 text-sm text-muted-foreground">
-              {lang === "id"
-                ? "Bayar sekali, akses selamanya"
-                : "Pay once, access forever"}
-            </p>
-
-            <ul className="mt-6 space-y-2 text-sm text-left">
+            <ul className="mt-5 space-y-2 text-sm text-left">
               {features.map((f) => (
                 <li key={f} className="flex items-start gap-2">
                   <Check className="w-4 h-4 text-primary mt-0.5 shrink-0" />
@@ -129,28 +120,62 @@ export function UpgradeModal({ open, onClose }: UpgradeModalProps) {
               ))}
             </ul>
 
-            <div className="mt-6">
+            <div className="mt-6 grid gap-3">
+              {/* Monthly */}
               <button
-                onClick={handleUpgrade}
+                onClick={() => handleUpgrade("pro_monthly")}
                 disabled={loading || signingIn}
-                className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-primary text-primary-foreground py-3 text-sm font-semibold hover:opacity-90 transition disabled:opacity-60"
+                className="w-full rounded-xl border-2 border-border bg-background hover:border-primary p-4 text-left transition disabled:opacity-60"
               >
-                {loading || signingIn ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <Crown className="w-4 h-4" />
-                )}
-                {lang === "id" ? "Beli Sekarang — $19" : "Buy Now — $19"}
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="text-xs font-semibold uppercase text-muted-foreground">
+                      {lang === "id" ? "Bulanan" : "Monthly"}
+                    </div>
+                    <div className="text-xl font-bold">
+                      $4.99<span className="text-xs font-medium text-muted-foreground">{lang === "id" ? "/bulan" : "/mo"}</span>
+                    </div>
+                    <div className="text-[11px] text-muted-foreground">
+                      {lang === "id" ? "Batal kapan saja" : "Cancel anytime"}
+                    </div>
+                  </div>
+                  {(loading || signingIn) ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+                </div>
               </button>
 
-              <p className="mt-3 text-[11px] text-muted-foreground flex items-center justify-center gap-1.5">
+              {/* Lifetime */}
+              <button
+                onClick={() => handleUpgrade("pro_lifetime")}
+                disabled={loading || signingIn}
+                className="relative w-full rounded-xl border-2 border-primary bg-primary/5 hover:bg-primary/10 p-4 text-left transition disabled:opacity-60"
+              >
+                <span className="absolute -top-2 right-3 inline-flex items-center rounded-full bg-primary text-primary-foreground px-2 py-0.5 text-[10px] font-bold uppercase">
+                  {lang === "id" ? "Hemat" : "Best value"}
+                </span>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="text-xs font-semibold uppercase text-primary">
+                      {lang === "id" ? "Seumur Hidup" : "Lifetime"}
+                    </div>
+                    <div className="text-xl font-bold">
+                      $50<span className="text-xs font-medium text-muted-foreground"> {lang === "id" ? "sekali bayar" : "one-time"}</span>
+                    </div>
+                    <div className="text-[11px] text-muted-foreground">
+                      {lang === "id" ? "≈ 10 bulan · selamanya" : "≈ 10 months · forever"}
+                    </div>
+                  </div>
+                  <Crown className="w-4 h-4 text-primary" />
+                </div>
+              </button>
+
+              <p className="mt-1 text-[11px] text-muted-foreground flex items-center justify-center gap-1.5">
                 <ShieldCheck className="w-3.5 h-3.5" />
                 {lang === "id"
-                  ? "Pembayaran aman via Paddle · Sekali bayar, selamanya aktif"
-                  : "Secure payment via Paddle · Pay once, active forever"}
+                  ? "Pembayaran aman via Paddle"
+                  : "Secure payment via Paddle"}
               </p>
 
-              <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-green-500/10 text-green-700 dark:text-green-400 px-3 py-1 text-[11px] font-semibold">
+              <div className="inline-flex items-center justify-center gap-1.5 rounded-full bg-green-500/10 text-green-700 dark:text-green-400 px-3 py-1 text-[11px] font-semibold mx-auto">
                 <ShieldCheck className="w-3 h-3" />
                 {lang === "id"
                   ? "Jaminan uang kembali 30 hari"

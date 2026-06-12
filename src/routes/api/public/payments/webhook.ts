@@ -60,20 +60,66 @@ async function handleTransactionCompleted(data: any, env: PaddleEnv) {
   await grantLifetimePro(userId, env);
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function handleSubscriptionEvent(data: any, env: PaddleEnv) {
+  const { id, customerId, items, status, currentBillingPeriod, scheduledChange, customData } = data;
+  const userId = customData?.userId;
+  if (!userId) {
+    console.warn("subscription event: missing customData.userId", { id });
+    return;
+  }
+  const item = items?.[0];
+  const priceId = item?.price?.importMeta?.externalId;
+  const productId = item?.price?.productId ?? item?.product?.id ?? "nihongolevel_pro";
+  if (!priceId) {
+    console.warn("subscription event: missing price externalId — skipping", { id });
+    return;
+  }
+  await (await getSupabase()).from("subscriptions").upsert(
+    {
+      user_id: userId,
+      paddle_subscription_id: id,
+      paddle_customer_id: customerId ?? "",
+      product_id: productId,
+      price_id: priceId,
+      status: status ?? "active",
+      current_period_start: currentBillingPeriod?.startsAt ?? null,
+      current_period_end: currentBillingPeriod?.endsAt ?? null,
+      cancel_at_period_end: scheduledChange?.action === "cancel",
+      environment: env,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: "paddle_subscription_id" },
+  );
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function handleSubscriptionCanceled(data: any, env: PaddleEnv) {
+  await (await getSupabase())
+    .from("subscriptions")
+    .update({ status: "canceled", updated_at: new Date().toISOString() })
+    .eq("paddle_subscription_id", data.id)
+    .eq("environment", env);
+}
+
 async function handleWebhook(req: Request, env: PaddleEnv) {
   const event = await verifyWebhook(req, env);
   switch (event.eventType) {
     case EventName.TransactionCompleted:
+    case EventName.TransactionPaid:
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await handleTransactionCompleted(event.data as any, env);
       break;
-    case EventName.TransactionPaid:
-      // Some accounts emit TransactionPaid before TransactionCompleted.
+    case EventName.SubscriptionCreated:
+    case EventName.SubscriptionUpdated:
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await handleTransactionCompleted(event.data as any, env);
+      await handleSubscriptionEvent(event.data as any, env);
+      break;
+    case EventName.SubscriptionCanceled:
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await handleSubscriptionCanceled(event.data as any, env);
       break;
     default:
-      // Legacy subscription events (no longer used for lifetime model) — ignore.
       console.log("Unhandled event:", event.eventType);
   }
 }
