@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Sparkles, History, MessageCircle, Loader2, Check } from "lucide-react";
+import { Loader2, Check, ArrowRight } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { lovable } from "@/integrations/lovable";
 import { useT, setLang, useLang, type Lang } from "@/lib/i18n";
@@ -9,17 +9,17 @@ import { SiteFooter } from "./SiteFooter";
 function LangToggle() {
   const lang = useLang();
   return (
-    <div className="inline-flex items-center gap-0.5 rounded-full border border-border bg-background p-0.5 text-xs font-semibold">
+    <div className="inline-flex items-center gap-0 border border-foreground/80 text-[11px] font-semibold uppercase tracking-[0.18em]">
       {(["id", "en"] as Lang[]).map((l) => (
         <button
           key={l}
           onClick={() => setLang(l)}
           className={cn(
-            "px-2 py-0.5 rounded-full transition",
-            lang === l ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground",
+            "px-2.5 py-1 transition",
+            lang === l ? "bg-foreground text-background" : "text-foreground hover:bg-foreground/10",
           )}
         >
-          {l === "id" ? "🇮🇩 ID" : "🇬🇧 EN"}
+          {l === "id" ? "ID" : "EN"}
         </button>
       ))}
     </div>
@@ -27,7 +27,7 @@ function LangToggle() {
 }
 
 export function Landing() {
-  const { t, lang } = useT();
+  const { lang } = useT();
   const [signingIn, setSigningIn] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
@@ -42,156 +42,233 @@ export function Landing() {
         setErr(result.error.message || "Failed to sign in");
         setSigningIn(false);
       }
-      // If redirected: nothing to do
     } catch (e) {
       setErr(e instanceof Error ? e.message : "Failed to sign in");
       setSigningIn(false);
     }
   };
 
-  const features = lang === "id"
+  const id = lang === "id";
+
+  const features = id
     ? [
-        { icon: Sparkles, title: "Ekspresi natural", desc: "Yang benar-benar diucapkan orang Jepang, bukan terjemahan kaku." },
-        { icon: History, title: "Riwayat pribadi", desc: "Semua pencarianmu tersimpan dan tersinkron di semua perangkat." },
-        { icon: MessageCircle, title: "Latihan situasi", desc: "Ulang ekspresi favorit dengan latihan harian yang dipersonalisasi." },
+        { num: "01", title: "Ekspresi natural", desc: "Yang benar-benar diucapkan orang Jepang — bukan terjemahan kaku dari buku teks." },
+        { num: "02", title: "Riwayat pribadi", desc: "Setiap pencarian tersimpan, tersinkron rapi di seluruh perangkat Anda." },
+        { num: "03", title: "Latihan situasi", desc: "Ulang ekspresi favorit dengan latihan harian yang dipersonalisasi." },
       ]
     : [
-        { icon: Sparkles, title: "Natural expressions", desc: "What Japanese people actually say — not stiff textbook translations." },
-        { icon: History, title: "Personal history", desc: "All your searches saved and synced across every device." },
-        { icon: MessageCircle, title: "Situation practice", desc: "Review your favorite expressions with personalized daily practice." },
+        { num: "01", title: "Natural expressions", desc: "What Japanese people actually say — not stiff textbook translations." },
+        { num: "02", title: "Personal history", desc: "Every search saved and synced cleanly across every device." },
+        { num: "03", title: "Situation practice", desc: "Replay your favorite expressions with personalized daily practice." },
       ];
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <header className="flex items-center justify-between px-6 py-4">
-        <div className="font-bold text-lg">
-          Nihongo<span className="text-primary">Level</span>
-        </div>
-        <div className="flex items-center gap-4">
-          <Link to="/pricing" className="hidden sm:inline text-sm font-semibold text-muted-foreground hover:text-foreground transition">
-            Pricing
-          </Link>
+    <div className="min-h-screen bg-background text-foreground antialiased">
+      {/* ====== TOP NAV ====== */}
+      <header className="border-b border-foreground/15">
+        <div className="mx-auto max-w-7xl px-6 sm:px-10 py-4 flex items-center justify-between">
+          <nav className="hidden sm:flex items-center gap-8 text-[11px] font-semibold uppercase tracking-[0.22em] text-foreground/70">
+            <a href="#about" className="hover:text-foreground transition">{id ? "Tentang" : "About"}</a>
+            <a href="#features" className="hover:text-foreground transition">{id ? "Program" : "Features"}</a>
+            <Link to="/pricing" className="hover:text-foreground transition">{id ? "Harga" : "Pricing"}</Link>
+          </nav>
+          <div className="sm:hidden text-[11px] font-semibold uppercase tracking-[0.22em]">Menu</div>
           <LangToggle />
         </div>
       </header>
 
-      <main className="mx-auto max-w-2xl px-6 pt-8 pb-16 text-center">
-        <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight">
-          Nihongo<span className="text-primary">Level</span>
-        </h1>
-        <p className="mt-3 text-lg text-muted-foreground">
-          {lang === "id" ? "Belajar berbicara seperti orang Jepang" : "Learn to speak like a native Japanese"}
-        </p>
-
-        <div className="mt-8 flex flex-col items-center gap-3">
-          <button
-            onClick={handleGoogle}
-            disabled={signingIn}
-            className="inline-flex items-center justify-center gap-3 rounded-xl border border-border bg-card px-6 py-3 text-base font-semibold shadow-sm hover:bg-muted disabled:opacity-60 transition"
-          >
-            {signingIn ? (
-              <Loader2 className="w-5 h-5 animate-spin" />
-            ) : (
-              <svg className="w-5 h-5" viewBox="0 0 24 24" aria-hidden="true">
-                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.76h3.56c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.56-2.76c-.99.66-2.25 1.06-3.72 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23z"/>
-                <path fill="#FBBC05" d="M5.84 14.11A6.6 6.6 0 0 1 5.5 12c0-.73.13-1.44.34-2.11V7.05H2.18A11 11 0 0 0 1 12c0 1.78.43 3.46 1.18 4.95l3.66-2.84z"/>
-                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.2 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.05l3.66 2.84C6.71 7.31 9.14 5.38 12 5.38z"/>
-              </svg>
-            )}
-            {lang === "id" ? "Masuk" : "Sign in"}
-          </button>
-          <p className="text-xs text-muted-foreground">
-            {lang === "id"
-              ? "Gratis untuk memulai. Tidak perlu kartu kredit."
-              : "Free to start. No credit card needed."}
-          </p>
-          {err && <p className="text-sm text-destructive">{err}</p>}
-        </div>
-
-        <div className="mt-14 grid sm:grid-cols-3 gap-4 text-left">
-          {features.map((f) => (
-            <div key={f.title} className="rounded-2xl border border-border bg-card p-5">
-              <f.icon className="w-6 h-6 text-primary mb-3" />
-              <div className="font-semibold">{f.title}</div>
-              <div className="mt-1 text-sm text-muted-foreground">{f.desc}</div>
-            </div>
-          ))}
-        </div>
-
-        <section className="mt-16 text-left">
-          <h2 className="text-2xl font-bold text-center">
-            {lang === "id" ? "Harga sederhana" : "Simple pricing"}
-          </h2>
-          <p className="mt-2 text-center text-sm text-muted-foreground">
-            {lang === "id"
-              ? "Mulai gratis. Upgrade kapan saja, batalkan kapan saja."
-              : "Start free. Upgrade anytime, cancel anytime."}
-          </p>
-          <div className="mt-6 grid sm:grid-cols-2 gap-4">
-            <div className="rounded-2xl border border-border bg-card p-5">
-              <div className="text-xs font-semibold uppercase text-muted-foreground">
-                {lang === "id" ? "Gratis" : "Free"}
-              </div>
-              <div className="mt-2 flex items-baseline gap-1">
-                <span className="text-3xl font-bold">$0</span>
-                <span className="text-sm text-muted-foreground">
-                  {lang === "id" ? "selamanya" : "forever"}
-                </span>
-              </div>
-              <ul className="mt-3 space-y-1.5 text-sm">
-                <li className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-primary mt-0.5 shrink-0" />
-                  {lang === "id" ? "3 pencarian per hari" : "3 searches per day"}
-                </li>
-                <li className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-primary mt-0.5 shrink-0" />
-                  {lang === "id" ? "Bahasa ID & EN" : "Indonesian & English"}
-                </li>
-              </ul>
-            </div>
-            <div className="rounded-2xl border-2 border-primary bg-card p-5 relative">
-              <span className="absolute -top-2 right-3 inline-flex items-center rounded-full bg-primary text-primary-foreground px-2 py-0.5 text-[10px] font-bold uppercase">
-                {lang === "id" ? "Terpopuler" : "Most popular"}
+      {/* ====== HERO — magazine split ====== */}
+      <section className="relative border-b border-foreground/15">
+        <div className="mx-auto max-w-7xl grid lg:grid-cols-12 gap-0">
+          {/* Left — logo block */}
+          <div className="lg:col-span-7 px-6 sm:px-10 py-12 lg:py-20 relative">
+            <h1 className="font-display text-[clamp(3.5rem,11vw,9rem)] leading-[0.88] tracking-tight">
+              <span className="block">Nihongo</span>
+              <span className="block italic relative">
+                Level
+                <span className="absolute left-0 -bottom-3 h-2 w-40 bg-primary" aria-hidden />
               </span>
-              <div className="text-xs font-semibold uppercase text-primary">Pro</div>
-              <div className="mt-2 flex items-baseline gap-1">
-                <span className="text-3xl font-bold">$19</span>
-                <span className="text-sm text-muted-foreground">
-                  {lang === "id" ? "sekali bayar" : "one-time"}
-                </span>
-              </div>
-              <p className="text-xs font-semibold text-primary mt-0.5">
-                {lang === "id" ? "Akses seumur hidup" : "Lifetime access"}
-              </p>
-              <ul className="mt-3 space-y-1.5 text-sm">
-                <li className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-primary mt-0.5 shrink-0" />
-                  {lang === "id" ? "Pencarian tanpa batas" : "Unlimited searches"}
-                </li>
-                <li className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-primary mt-0.5 shrink-0" />
-                  {lang === "id" ? "Riwayat & favorit selamanya" : "History & favorites forever"}
-                </li>
-                <li className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-primary mt-0.5 shrink-0" />
-                  {lang === "id" ? "My Level & Latihan Harian" : "My Level & Daily Practice"}
-                </li>
-              </ul>
-            </div>
+            </h1>
+
+            <p className="mt-10 max-w-md text-base text-foreground/70 leading-relaxed">
+              {id
+                ? "Sebuah alat yang menjembatani buku teks dengan percakapan jalanan — Jepang seperti yang benar-benar diucapkan."
+                : "A tool that bridges the textbook and the street — Japanese as it is actually spoken."}
+            </p>
           </div>
-          <div className="mt-5 text-center">
+
+          {/* Right — solid red block with date + vertical text */}
+          <aside className="lg:col-span-5 bg-primary text-primary-foreground px-6 sm:px-10 py-12 lg:py-20 relative grid grid-cols-[1fr_auto] gap-6">
+            <div className="min-w-0">
+              <div className="font-display text-5xl sm:text-6xl leading-none">
+                N5<span className="text-primary-foreground/60">·</span>N1
+              </div>
+              <div className="mt-2 text-[11px] uppercase tracking-[0.28em] font-semibold text-primary-foreground/80">
+                {id ? "Edisi Harian" : "Daily Edition"}
+              </div>
+
+              <div className="mt-12 flex items-baseline gap-2">
+                <span className="font-display italic text-3xl">日本語</span>
+                <span className="text-xs uppercase tracking-[0.2em] text-primary-foreground/70">vol. 01</span>
+              </div>
+              <p className="mt-6 max-w-xs text-sm text-primary-foreground/85 leading-relaxed">
+                {id
+                  ? "Belajar berbicara seperti orang Jepang, bukan sekadar lulus JLPT."
+                  : "Learn to speak like a native — not just to pass the JLPT."}
+              </p>
+            </div>
+
+            <div className="writing-vertical text-[11px] uppercase tracking-[0.4em] font-semibold text-primary-foreground/80 self-start">
+              {id ? "Edisi Khusus · Tokyo / Jakarta" : "Special Issue · Tokyo / Jakarta"}
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      {/* ====== CTA BAR ====== */}
+      <section className="border-b border-foreground/15">
+        <div className="mx-auto max-w-7xl px-6 sm:px-10 py-10 grid lg:grid-cols-12 gap-8 items-center">
+          <div className="lg:col-span-7">
+            <div className="text-[11px] uppercase tracking-[0.3em] text-foreground/60 font-semibold">
+              {id ? "Mulai hari ini" : "Begin today"}
+            </div>
+            <h2 className="mt-2 font-display text-3xl sm:text-5xl leading-[1.02]">
+              {id ? "Masuk. Cari. Bicara." : "Sign in. Search. Speak."}
+            </h2>
+          </div>
+          <div className="lg:col-span-5 flex flex-col items-start gap-3">
+            <button
+              onClick={handleGoogle}
+              disabled={signingIn}
+              className="group inline-flex items-center justify-between w-full gap-4 bg-primary text-primary-foreground px-6 py-5 text-base font-semibold uppercase tracking-[0.18em] hover:bg-foreground transition disabled:opacity-60"
+            >
+              <span className="inline-flex items-center gap-3">
+                {signingIn ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" aria-hidden="true">
+                    <path fill="currentColor" d="M21.6 12.23c0-.78-.07-1.53-.2-2.25H12v4.26h5.4a4.6 4.6 0 0 1-2 3.03v2.5h3.24c1.9-1.76 3-4.34 3-7.54z"/>
+                    <path fill="currentColor" opacity=".7" d="M12 22c2.7 0 4.96-.9 6.62-2.43l-3.24-2.5c-.9.6-2.05.96-3.38.96-2.6 0-4.8-1.76-5.6-4.12H3.06v2.6A10 10 0 0 0 12 22z"/>
+                  </svg>
+                )}
+                {id ? "Masuk dengan Google" : "Sign in with Google"}
+              </span>
+              <ArrowRight className="w-5 h-5 transition group-hover:translate-x-1" />
+            </button>
+            <p className="text-[11px] uppercase tracking-[0.22em] text-foreground/55 font-semibold">
+              {id ? "Gratis — tanpa kartu kredit" : "Free — no credit card"}
+            </p>
+            {err && <p className="text-sm text-primary">{err}</p>}
+          </div>
+        </div>
+      </section>
+
+      {/* ====== FEATURES — magazine grid ====== */}
+      <section id="features" className="border-b border-foreground/15">
+        <div className="mx-auto max-w-7xl px-6 sm:px-10 py-16 lg:py-24">
+          <div className="grid lg:grid-cols-12 gap-10 mb-14">
+            <div className="lg:col-span-4">
+              <div className="text-[11px] uppercase tracking-[0.3em] text-primary font-bold">
+                {id ? "Tiga Pilar" : "Three Pillars"}
+              </div>
+              <h2 className="mt-3 font-display text-4xl sm:text-5xl leading-[1.02]">
+                {id ? "Cara yang berbeda untuk belajar." : "A different way to study."}
+              </h2>
+            </div>
+            <p className="lg:col-span-7 lg:col-start-6 text-foreground/70 leading-relaxed text-lg self-end">
+              {id
+                ? "Ditulis untuk pelajar yang lelah menghafal — disusun seperti majalah kuratorial: lugas, berkarakter, dan terasa hidup."
+                : "Written for learners tired of memorising — laid out like a curated magazine: direct, opinionated, and alive."}
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-3 border-t border-foreground/15">
+            {features.map((f, i) => (
+              <div
+                key={f.title}
+                className={cn(
+                  "py-10 sm:px-8 first:pl-0 last:pr-0",
+                  i > 0 && "sm:border-l border-foreground/15",
+                )}
+              >
+                <div className="font-display text-5xl text-primary">{f.num}</div>
+                <h3 className="mt-6 font-display text-2xl">{f.title}</h3>
+                <p className="mt-3 text-sm text-foreground/70 leading-relaxed">{f.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ====== PRICING — color blocked ====== */}
+      <section id="pricing" className="border-b border-foreground/15">
+        <div className="mx-auto max-w-7xl grid lg:grid-cols-12">
+          {/* Free */}
+          <div className="lg:col-span-5 px-6 sm:px-10 py-14 lg:py-20 border-r border-foreground/15">
+            <div className="text-[11px] uppercase tracking-[0.3em] font-bold text-foreground/60">
+              {id ? "Edisi Gratis" : "Free Edition"}
+            </div>
+            <div className="mt-4 flex items-baseline gap-2">
+              <span className="font-display text-7xl">$0</span>
+              <span className="text-sm uppercase tracking-[0.2em] text-foreground/60">
+                {id ? "selamanya" : "forever"}
+              </span>
+            </div>
+            <ul className="mt-8 space-y-3 text-base">
+              <li className="flex items-start gap-3"><Check className="w-5 h-5 text-primary mt-0.5 shrink-0" />{id ? "3 pencarian per hari" : "3 searches per day"}</li>
+              <li className="flex items-start gap-3"><Check className="w-5 h-5 text-primary mt-0.5 shrink-0" />{id ? "Bahasa ID & EN" : "Indonesian & English"}</li>
+            </ul>
+          </div>
+
+          {/* Pro — pink block */}
+          <div className="lg:col-span-7 bg-secondary text-secondary-foreground px-6 sm:px-10 py-14 lg:py-20 relative">
+            <div className="absolute top-0 right-0 bg-primary text-primary-foreground px-4 py-2 text-[10px] uppercase tracking-[0.3em] font-bold">
+              {id ? "Terpopuler" : "Most popular"}
+            </div>
+            <div className="text-[11px] uppercase tracking-[0.3em] font-bold">Pro</div>
+            <div className="mt-4 flex items-baseline gap-2">
+              <span className="font-display text-7xl">$19</span>
+              <span className="text-sm uppercase tracking-[0.2em] opacity-70">
+                {id ? "sekali bayar · seumur hidup" : "one-time · lifetime"}
+              </span>
+            </div>
+            <ul className="mt-8 grid sm:grid-cols-2 gap-x-6 gap-y-3 text-base">
+              <li className="flex items-start gap-3"><Check className="w-5 h-5 text-primary mt-0.5 shrink-0" />{id ? "Pencarian tanpa batas" : "Unlimited searches"}</li>
+              <li className="flex items-start gap-3"><Check className="w-5 h-5 text-primary mt-0.5 shrink-0" />{id ? "Riwayat & favorit" : "History & favorites"}</li>
+              <li className="flex items-start gap-3"><Check className="w-5 h-5 text-primary mt-0.5 shrink-0" />{id ? "My Level" : "My Level"}</li>
+              <li className="flex items-start gap-3"><Check className="w-5 h-5 text-primary mt-0.5 shrink-0" />{id ? "Latihan Harian" : "Daily Practice"}</li>
+            </ul>
             <Link
               to="/pricing"
-              className="inline-flex items-center justify-center rounded-lg border border-border px-4 py-2 text-sm font-semibold hover:bg-muted transition"
+              className="mt-10 inline-flex items-center gap-3 bg-foreground text-background px-6 py-4 text-sm font-semibold uppercase tracking-[0.2em] hover:bg-primary transition"
             >
-              {lang === "id" ? "Lihat detail harga" : "See full pricing"}
+              {id ? "Lihat detail harga" : "See full pricing"}
+              <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
-        </section>
+        </div>
+      </section>
 
-        
-      </main>
+      {/* ====== CLOSING editorial block ====== */}
+      <section id="about" className="bg-secondary">
+        <div className="mx-auto max-w-7xl px-6 sm:px-10 py-20 lg:py-28 grid lg:grid-cols-12 gap-10 items-end">
+          <h2 className="lg:col-span-8 font-display text-4xl sm:text-6xl leading-[1.02]">
+            {id
+              ? <>Berhenti menerjemahkan. <em className="text-primary not-italic">Mulailah berbicara.</em></>
+              : <>Stop translating. <em className="text-primary not-italic">Start speaking.</em></>}
+          </h2>
+          <div className="lg:col-span-4 lg:text-right">
+            <button
+              onClick={handleGoogle}
+              disabled={signingIn}
+              className="inline-flex items-center gap-3 bg-primary text-primary-foreground px-6 py-4 text-sm font-semibold uppercase tracking-[0.2em] hover:bg-foreground transition disabled:opacity-60"
+            >
+              {id ? "Mulai sekarang" : "Start now"}
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      </section>
 
       <SiteFooter />
     </div>
