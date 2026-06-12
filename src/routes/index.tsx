@@ -392,10 +392,12 @@ function WhyItem({
   icon: Icon,
   title,
   desc,
+  tint,
 }: {
   icon: typeof Sparkles;
   title: string;
   desc: string;
+  tint?: string;
 }) {
   return (
     <div
@@ -404,7 +406,7 @@ function WhyItem({
     >
       <div
         className="w-11 h-11 rounded-xl flex items-center justify-center mb-5"
-        style={{ background: ACCENT }}
+        style={{ background: tint ?? ACCENT }}
       >
         <Icon className="w-5 h-5" style={{ color: INK }} strokeWidth={2} />
       </div>
