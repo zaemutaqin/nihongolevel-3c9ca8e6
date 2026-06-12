@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { LogOut, Crown, KeyRound, Loader2, Check } from "lucide-react";
 import { useAuth } from "@/lib/auth";
+import { useIsPro } from "@/hooks/useIsPro";
 import { useLang } from "@/lib/i18n";
 import { supabase } from "@/integrations/supabase/client";
 import { SignInButton } from "./SignInButton";
