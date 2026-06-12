@@ -28,10 +28,13 @@ import { Route as FavoritRouteImport } from './routes/favorit'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as KamusSlangIndexRouteImport } from './routes/kamus-slang.index'
+import { Route as InterviewIndexRouteImport } from './routes/interview.index'
 import { Route as KamusSlangSlugRouteImport } from './routes/kamus-slang.$slug'
+import { Route as InterviewScenarioIdRouteImport } from './routes/interview.$scenarioId'
 import { Route as HanashiteScenarioIdRouteImport } from './routes/hanashite.$scenarioId'
 import { Route as ApiTranslateRouteImport } from './routes/api/translate'
 import { Route as ApiNamaJepangRouteImport } from './routes/api/nama-jepang'
+import { Route as ApiInterviewRouteImport } from './routes/api/interview'
 import { Route as ApiHanashiteRouteImport } from './routes/api/hanashite'
 import { Route as ApiActivateProRouteImport } from './routes/api/activate-pro'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
@@ -132,9 +135,19 @@ const KamusSlangIndexRoute = KamusSlangIndexRouteImport.update({
   path: '/kamus-slang/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const InterviewIndexRoute = InterviewIndexRouteImport.update({
+  id: '/interview/',
+  path: '/interview/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const KamusSlangSlugRoute = KamusSlangSlugRouteImport.update({
   id: '/kamus-slang/$slug',
   path: '/kamus-slang/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InterviewScenarioIdRoute = InterviewScenarioIdRouteImport.update({
+  id: '/interview/$scenarioId',
+  path: '/interview/$scenarioId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HanashiteScenarioIdRoute = HanashiteScenarioIdRouteImport.update({
@@ -150,6 +163,11 @@ const ApiTranslateRoute = ApiTranslateRouteImport.update({
 const ApiNamaJepangRoute = ApiNamaJepangRouteImport.update({
   id: '/api/nama-jepang',
   path: '/api/nama-jepang',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiInterviewRoute = ApiInterviewRouteImport.update({
+  id: '/api/interview',
+  path: '/api/interview',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiHanashiteRoute = ApiHanashiteRouteImport.update({
@@ -196,10 +214,13 @@ export interface FileRoutesByFullPath {
   '/translate': typeof TranslateRoute
   '/api/activate-pro': typeof ApiActivateProRoute
   '/api/hanashite': typeof ApiHanashiteRoute
+  '/api/interview': typeof ApiInterviewRoute
   '/api/nama-jepang': typeof ApiNamaJepangRoute
   '/api/translate': typeof ApiTranslateRoute
   '/hanashite/$scenarioId': typeof HanashiteScenarioIdRoute
+  '/interview/$scenarioId': typeof InterviewScenarioIdRoute
   '/kamus-slang/$slug': typeof KamusSlangSlugRoute
+  '/interview/': typeof InterviewIndexRoute
   '/kamus-slang/': typeof KamusSlangIndexRoute
   '/api/public/payments/reconcile': typeof ApiPublicPaymentsReconcileRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -225,10 +246,13 @@ export interface FileRoutesByTo {
   '/translate': typeof TranslateRoute
   '/api/activate-pro': typeof ApiActivateProRoute
   '/api/hanashite': typeof ApiHanashiteRoute
+  '/api/interview': typeof ApiInterviewRoute
   '/api/nama-jepang': typeof ApiNamaJepangRoute
   '/api/translate': typeof ApiTranslateRoute
   '/hanashite/$scenarioId': typeof HanashiteScenarioIdRoute
+  '/interview/$scenarioId': typeof InterviewScenarioIdRoute
   '/kamus-slang/$slug': typeof KamusSlangSlugRoute
+  '/interview': typeof InterviewIndexRoute
   '/kamus-slang': typeof KamusSlangIndexRoute
   '/api/public/payments/reconcile': typeof ApiPublicPaymentsReconcileRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -255,10 +279,13 @@ export interface FileRoutesById {
   '/translate': typeof TranslateRoute
   '/api/activate-pro': typeof ApiActivateProRoute
   '/api/hanashite': typeof ApiHanashiteRoute
+  '/api/interview': typeof ApiInterviewRoute
   '/api/nama-jepang': typeof ApiNamaJepangRoute
   '/api/translate': typeof ApiTranslateRoute
   '/hanashite/$scenarioId': typeof HanashiteScenarioIdRoute
+  '/interview/$scenarioId': typeof InterviewScenarioIdRoute
   '/kamus-slang/$slug': typeof KamusSlangSlugRoute
+  '/interview/': typeof InterviewIndexRoute
   '/kamus-slang/': typeof KamusSlangIndexRoute
   '/api/public/payments/reconcile': typeof ApiPublicPaymentsReconcileRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -286,10 +313,13 @@ export interface FileRouteTypes {
     | '/translate'
     | '/api/activate-pro'
     | '/api/hanashite'
+    | '/api/interview'
     | '/api/nama-jepang'
     | '/api/translate'
     | '/hanashite/$scenarioId'
+    | '/interview/$scenarioId'
     | '/kamus-slang/$slug'
+    | '/interview/'
     | '/kamus-slang/'
     | '/api/public/payments/reconcile'
     | '/api/public/payments/webhook'
@@ -315,10 +345,13 @@ export interface FileRouteTypes {
     | '/translate'
     | '/api/activate-pro'
     | '/api/hanashite'
+    | '/api/interview'
     | '/api/nama-jepang'
     | '/api/translate'
     | '/hanashite/$scenarioId'
+    | '/interview/$scenarioId'
     | '/kamus-slang/$slug'
+    | '/interview'
     | '/kamus-slang'
     | '/api/public/payments/reconcile'
     | '/api/public/payments/webhook'
@@ -344,10 +377,13 @@ export interface FileRouteTypes {
     | '/translate'
     | '/api/activate-pro'
     | '/api/hanashite'
+    | '/api/interview'
     | '/api/nama-jepang'
     | '/api/translate'
     | '/hanashite/$scenarioId'
+    | '/interview/$scenarioId'
     | '/kamus-slang/$slug'
+    | '/interview/'
     | '/kamus-slang/'
     | '/api/public/payments/reconcile'
     | '/api/public/payments/webhook'
@@ -374,10 +410,13 @@ export interface RootRouteChildren {
   TranslateRoute: typeof TranslateRoute
   ApiActivateProRoute: typeof ApiActivateProRoute
   ApiHanashiteRoute: typeof ApiHanashiteRoute
+  ApiInterviewRoute: typeof ApiInterviewRoute
   ApiNamaJepangRoute: typeof ApiNamaJepangRoute
   ApiTranslateRoute: typeof ApiTranslateRoute
   HanashiteScenarioIdRoute: typeof HanashiteScenarioIdRoute
+  InterviewScenarioIdRoute: typeof InterviewScenarioIdRoute
   KamusSlangSlugRoute: typeof KamusSlangSlugRoute
+  InterviewIndexRoute: typeof InterviewIndexRoute
   KamusSlangIndexRoute: typeof KamusSlangIndexRoute
   ApiPublicPaymentsReconcileRoute: typeof ApiPublicPaymentsReconcileRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
@@ -518,11 +557,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof KamusSlangIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/interview/': {
+      id: '/interview/'
+      path: '/interview'
+      fullPath: '/interview/'
+      preLoaderRoute: typeof InterviewIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/kamus-slang/$slug': {
       id: '/kamus-slang/$slug'
       path: '/kamus-slang/$slug'
       fullPath: '/kamus-slang/$slug'
       preLoaderRoute: typeof KamusSlangSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/interview/$scenarioId': {
+      id: '/interview/$scenarioId'
+      path: '/interview/$scenarioId'
+      fullPath: '/interview/$scenarioId'
+      preLoaderRoute: typeof InterviewScenarioIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/hanashite/$scenarioId': {
@@ -544,6 +597,13 @@ declare module '@tanstack/react-router' {
       path: '/api/nama-jepang'
       fullPath: '/api/nama-jepang'
       preLoaderRoute: typeof ApiNamaJepangRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/interview': {
+      id: '/api/interview'
+      path: '/api/interview'
+      fullPath: '/api/interview'
+      preLoaderRoute: typeof ApiInterviewRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/hanashite': {
@@ -598,10 +658,13 @@ const rootRouteChildren: RootRouteChildren = {
   TranslateRoute: TranslateRoute,
   ApiActivateProRoute: ApiActivateProRoute,
   ApiHanashiteRoute: ApiHanashiteRoute,
+  ApiInterviewRoute: ApiInterviewRoute,
   ApiNamaJepangRoute: ApiNamaJepangRoute,
   ApiTranslateRoute: ApiTranslateRoute,
   HanashiteScenarioIdRoute: HanashiteScenarioIdRoute,
+  InterviewScenarioIdRoute: InterviewScenarioIdRoute,
   KamusSlangSlugRoute: KamusSlangSlugRoute,
+  InterviewIndexRoute: InterviewIndexRoute,
   KamusSlangIndexRoute: KamusSlangIndexRoute,
   ApiPublicPaymentsReconcileRoute: ApiPublicPaymentsReconcileRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
