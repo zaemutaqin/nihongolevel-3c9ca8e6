@@ -11,6 +11,7 @@ import { SiteFooter } from "./SiteFooter";
 import { FlagID, FlagGB } from "./FlagIcons";
 
 import { UserMenu } from "./UserMenu";
+import { StreakReminder } from "./StreakReminder";
 
 type NavItem = { to: string; key: string; Icon: typeof Search; exact?: boolean; proOnly?: boolean };
 const NAV: NavItem[] = [
@@ -135,6 +136,8 @@ export function AppShell() {
       <main className="pb-24 sm:pb-10">
         <Outlet />
       </main>
+
+      <StreakReminder />
 
       <div className="hidden sm:block">
         <SiteFooter />
