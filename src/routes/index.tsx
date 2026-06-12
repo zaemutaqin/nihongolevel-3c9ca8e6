@@ -85,15 +85,15 @@ function HomeIndex() {
             <div className="flex flex-col sm:flex-row gap-3">
               <Link
                 to="/interview"
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full text-base sm:text-lg font-bold text-white hover:opacity-90 transition"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-sm sm:text-base font-bold text-white hover:opacity-90 transition"
                 style={{ background: ACCENT }}
               >
                 {isId ? "Coba Interview Simulator" : "Try Interview Simulator"}
-                <ArrowRight className="w-5 h-5" />
+                <ArrowRight className="w-4 h-4" />
               </Link>
               <Link
                 to="/translate"
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full text-base sm:text-lg font-bold hover:bg-black/5 transition"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-sm sm:text-base font-bold hover:bg-black/5 transition"
                 style={{ color: INK }}
               >
                 {isId ? "Mulai Gratis" : "Start Free"}
