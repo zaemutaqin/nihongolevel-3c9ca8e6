@@ -189,6 +189,18 @@ const ID: Dict = {
   "dash.daysAgo.today": "hari ini",
   "dash.daysAgo.oneDay": "1 hari lalu",
   "dash.daysAgo.suffix": "hari lalu",
+  "dash.signin.title": "Masuk untuk lihat progress kamu",
+  "dash.signin.desc": "Pantau riwayat interview, skor grammar/naturalness/confidence, dan favorit kamu.",
+  "dash.iv.title": "Progress Interview",
+  "dash.iv.label": "Latihan Interview Kerja",
+  "dash.iv.loading": "Memuat…",
+  "dash.iv.empty": "Belum ada sesi interview. Mulai latihan pertamamu sekarang.",
+  "dash.iv.start": "Mulai Interview",
+  "dash.iv.lastSessions": "Sesi terakhir",
+  "dash.iv.newSession": "Mulai sesi baru",
+  "dash.iv.done": "Selesai",
+  "dash.iv.ongoing": "Berlangsung",
+  "dash.pro.title": "Fitur Pro",
 
   // Quick review modal
   "qrm.q": "Ingat ekspresi ini?",
