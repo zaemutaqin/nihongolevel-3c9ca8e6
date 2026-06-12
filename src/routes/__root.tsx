@@ -79,6 +79,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { name: "referrer", content: "strict-origin-when-cross-origin" },
+      { name: "google-site-verification", content: "XZY2JS-v9QhzW-dEEys51zE7vvF2WEZMr6rtR_kUnmU" },
 
       { title: "NihongoLevel" },
       { name: "description", content: "Belajar berbicara seperti orang Jepang — bukan sekadar lulus JLPT" },
