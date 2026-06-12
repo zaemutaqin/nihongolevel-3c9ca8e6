@@ -56,7 +56,7 @@ export const Route = createFileRoute("/hanashite/$scenarioId")({
   notFoundComponent: () => (
     <div className="p-8 text-center">
       <p>Scenario not found.</p>
-      <Link to="/hanashite" className="text-primary underline">
+      <Link to="/" className="text-primary underline">
         Back
       </Link>
     </div>
@@ -110,7 +110,7 @@ function HanashitePlay() {
         <p className="mb-4">
           {isId ? "Masuk dulu untuk berlatih." : "Sign in to practice."}
         </p>
-        <Link to="/hanashite" className="text-primary underline">
+        <Link to="/" className="text-primary underline">
           {isId ? "Kembali" : "Back"}
         </Link>
       </div>
@@ -296,7 +296,7 @@ function HanashitePlay() {
       {/* Header */}
       <header className="flex items-center gap-3 pb-3 border-b border-border">
         <button
-          onClick={() => navigate({ to: "/hanashite" })}
+          onClick={() => navigate({ to: "/" })}
           className="p-1.5 rounded-md hover:bg-muted"
           aria-label="Back"
         >
