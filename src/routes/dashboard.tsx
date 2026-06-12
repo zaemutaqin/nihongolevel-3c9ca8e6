@@ -1,6 +1,8 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Flame, Star, ArrowRight, RotateCw, X } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { Flame, Star, ArrowRight, RotateCw, X, Briefcase, MessageSquare } from "lucide-react";
 import {
   getHistory,
   getFavorites,
@@ -20,6 +22,8 @@ import { useT } from "@/lib/i18n";
 import type { IntentType } from "@/lib/translate.functions";
 import { useAuth } from "@/lib/auth";
 import { LockedFeature } from "@/components/LockedFeature";
+import { getMyInterviewSessions, type InterviewSessionSummary } from "@/lib/interview-history.functions";
+
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
@@ -42,14 +46,24 @@ export const Route = createFileRoute("/dashboard")({
 
 function DashboardPage() {
   const { t } = useT();
-  const { profile } = useAuth();
+  const { profile, user } = useAuth();
   const [history] = useLocalCollection<HistoryEntry>(getHistory);
   const [favs] = useLocalCollection<FavoriteEntry>(getFavorites);
   const [needsReview] = useLocalCollection<FavoriteEntry>(getFavoritesNeedsReview7d);
   const [oldest] = useLocalCollection(getOldestReviewedFavorites);
   const navigate = useNavigate();
 
-  if (!profile?.is_pro) return <LockedFeature />;
+  // Interview progress section — visible to any signed-in user
+  const fetchSessions = useServerFn(getMyInterviewSessions);
+  const interviewQuery = useQuery({
+    queryKey: ["interview-sessions"],
+    queryFn: () => fetchSessions(),
+    enabled: !!user,
+    staleTime: 30_000,
+  });
+
+  if (!user) return <LockedFeature />;
+
 
   const streak = useMemo(() => getStreakDays(), [history]);
   const week = useMemo(() => getSearchesThisWeek(), [history]);
@@ -94,10 +108,80 @@ function DashboardPage() {
   };
 
 
+  const isPro = !!profile?.is_pro;
+  const sessions = interviewQuery.data ?? [];
+  const completed = sessions.filter((s) => s.completed);
+  const avg = (key: "grammar_score" | "naturalness_score" | "confidence_score") => {
+    const vals = completed.map((s) => s[key]).filter((v): v is number => typeof v === "number");
+    if (!vals.length) return null;
+    return Math.round(vals.reduce((a, b) => a + b, 0) / vals.length);
+  };
+  const avgGrammar = avg("grammar_score");
+  const avgNatural = avg("naturalness_score");
+  const avgConfidence = avg("confidence_score");
+
   return (
     <div className="mx-auto max-w-3xl px-4 py-8">
       <h1 className="text-2xl font-bold mb-1">{t("dash.title")}</h1>
       <p className="text-sm text-muted-foreground mb-6">{t("dash.subtitle")}</p>
+
+      {/* SECTION INTERVIEW — Progress (semua user login) */}
+      <Section title="Progress Interview">
+        <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+          <div className="flex items-center gap-2 mb-4">
+            <Briefcase className="w-4 h-4 text-primary" />
+            <p className="text-sm font-semibold">Latihan Interview Kerja</p>
+          </div>
+
+          {interviewQuery.isLoading ? (
+            <p className="text-sm text-muted-foreground">Memuat…</p>
+          ) : sessions.length === 0 ? (
+            <div className="text-center py-6">
+              <p className="text-sm text-muted-foreground mb-3">
+                Belum ada sesi interview. Mulai latihan pertamamu sekarang.
+              </p>
+              <Link
+                to="/interview"
+                className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:opacity-90 transition"
+              >
+                Mulai Interview <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-3 gap-3 mb-4">
+                <ScoreBox label="Grammar" value={avgGrammar} />
+                <ScoreBox label="Naturalness" value={avgNatural} />
+                <ScoreBox label="Confidence" value={avgConfidence} />
+              </div>
+              <p className="text-[11px] uppercase font-semibold tracking-wide text-muted-foreground mb-2">
+                Sesi terakhir
+              </p>
+              <div className="space-y-2">
+                {sessions.slice(0, 5).map((s) => (
+                  <SessionRow key={s.id} s={s} />
+                ))}
+              </div>
+              <Link
+                to="/interview"
+                className="mt-4 inline-flex items-center gap-2 text-xs font-semibold text-primary hover:underline"
+              >
+                Mulai sesi baru <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </>
+          )}
+        </div>
+      </Section>
+
+      {!isPro && (
+        <Section title="Fitur Pro">
+          <LockedFeature />
+        </Section>
+      )}
+
+      {isPro && <>
+
+
 
       {/* SECTION A — Today */}
       <Section title={t("dash.today")}>
@@ -241,6 +325,7 @@ function DashboardPage() {
           </div>
         )}
       </Section>
+      </>}
 
       {modalFav && <QuickReviewModal fav={modalFav} onClose={() => setModalFav(null)} />}
     </div>
@@ -389,3 +474,44 @@ function QuickReviewModal({ fav, onClose }: { fav: FavoriteEntry; onClose: () =>
     </div>
   );
 }
+
+function ScoreBox({ label, value }: { label: string; value: number | null }) {
+  return (
+    <div className="rounded-xl border border-border bg-background p-3 text-center">
+      <p className="text-[10px] uppercase font-semibold tracking-wide text-muted-foreground">{label}</p>
+      <p className="text-2xl font-bold mt-1">
+        {value !== null ? value : "–"}
+        {value !== null && <span className="text-xs font-normal text-muted-foreground">/100</span>}
+      </p>
+    </div>
+  );
+}
+
+function SessionRow({ s }: { s: InterviewSessionSummary }) {
+  const date = new Date(s.created_at).toLocaleDateString("id-ID", { day: "numeric", month: "short" });
+  const avg =
+    s.completed && s.grammar_score !== null && s.naturalness_score !== null && s.confidence_score !== null
+      ? Math.round((s.grammar_score + s.naturalness_score + s.confidence_score) / 3)
+      : null;
+  return (
+    <Link
+      to="/interview"
+      className="flex items-center justify-between gap-3 rounded-lg border border-border bg-background hover:bg-muted/50 hover:border-primary/40 transition px-3 py-2.5"
+    >
+      <div className="min-w-0 flex-1">
+        <p className="text-sm font-medium truncate">{s.scenario_title}</p>
+        <p className="text-[11px] text-muted-foreground">{date}{s.vocabulary_level ? ` · ${s.vocabulary_level}` : ""}</p>
+      </div>
+      {avg !== null ? (
+        <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-primary/10 text-primary border border-primary/30">
+          {avg}/100
+        </span>
+      ) : (
+        <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full bg-muted text-muted-foreground">
+          {s.completed ? "Selesai" : "Berlangsung"}
+        </span>
+      )}
+    </Link>
+  );
+}
+
