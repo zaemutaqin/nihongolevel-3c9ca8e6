@@ -308,11 +308,11 @@ const EN: Dict = {
   "opt.mood.happy": "Happy / excited",
   "opt.mood.awkward": "Awkward / uncomfortable",
 
-  "style.N4": "Basic",
-  "style.N3": "Everyday",
-  "style.N2": "Expressive",
-  "style.N1": "Near-Native",
-  "style.equiv": "equiv.",
+  "style.N4": "Casual",
+  "style.N3": "Polite (Desu/Masu)",
+  "style.N2": "Workplace",
+  "style.N1": "Keigo (敬語)",
+  "style.equiv": "JLPT equiv.",
 
   "nat.native": "Very Common",
   "nat.stiff": "Fairly Common",
