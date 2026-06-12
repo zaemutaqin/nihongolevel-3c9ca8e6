@@ -3,12 +3,16 @@ import { z } from "zod";
 import {
   audit,
   clientIp,
+  countEventsForIp,
+  hoursAgoIso,
   jsonResponse,
   pickAllowedOrigin,
   preflightResponse,
   sanitizeInput,
   isInappropriate,
 } from "@/lib/security.server";
+
+const IP_DAY_MAX = 15;
 
 const InputSchema = z.object({
   name: z.string().trim().min(1).max(40),
