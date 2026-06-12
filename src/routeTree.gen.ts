@@ -113,9 +113,9 @@ const IndexRoute = IndexRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const HanashiteScenarioIdRoute = HanashiteScenarioIdRouteImport.update({
-  id: '/$scenarioId',
-  path: '/$scenarioId',
-  getParentRoute: () => HanashiteRoute,
+  id: '/hanashite/$scenarioId',
+  path: '/hanashite/$scenarioId',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ApiTranslateRoute = ApiTranslateRouteImport.update({
   id: '/api/translate',
@@ -313,6 +313,7 @@ export interface RootRouteChildren {
   ApiActivateProRoute: typeof ApiActivateProRoute
   ApiHanashiteRoute: typeof ApiHanashiteRoute
   ApiTranslateRoute: typeof ApiTranslateRoute
+  HanashiteScenarioIdRoute: typeof HanashiteScenarioIdRoute
   ApiPublicPaymentsReconcileRoute: typeof ApiPublicPaymentsReconcileRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
@@ -433,10 +434,10 @@ declare module '@tanstack/react-router' {
     }
     '/hanashite/$scenarioId': {
       id: '/hanashite/$scenarioId'
-      path: '/$scenarioId'
+      path: '/hanashite/$scenarioId'
       fullPath: '/hanashite/$scenarioId'
       preLoaderRoute: typeof HanashiteScenarioIdRouteImport
-      parentRoute: typeof HanashiteRoute
+      parentRoute: typeof rootRouteImport
     }
     '/api/translate': {
       id: '/api/translate'
@@ -496,19 +497,10 @@ const rootRouteChildren: RootRouteChildren = {
   ApiActivateProRoute: ApiActivateProRoute,
   ApiHanashiteRoute: ApiHanashiteRoute,
   ApiTranslateRoute: ApiTranslateRoute,
+  HanashiteScenarioIdRoute: HanashiteScenarioIdRoute,
   ApiPublicPaymentsReconcileRoute: ApiPublicPaymentsReconcileRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
