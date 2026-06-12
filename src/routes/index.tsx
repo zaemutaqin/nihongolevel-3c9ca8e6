@@ -398,12 +398,12 @@ function WhyItem({
 }) {
   return (
     <div
-      className="p-7 rounded-2xl"
-      style={{ background: "#FAEDE8" }}
+      className="p-7 rounded-2xl bg-white"
+      style={{ border: `1px solid rgba(15,23,42,0.08)` }}
     >
       <div
         className="w-11 h-11 rounded-xl flex items-center justify-center mb-5"
-        style={{ background: "rgba(220,38,38,0.12)" }}
+        style={{ background: "rgba(220,38,38,0.10)" }}
       >
         <Icon className="w-5 h-5" style={{ color: ACCENT }} strokeWidth={2} />
       </div>
