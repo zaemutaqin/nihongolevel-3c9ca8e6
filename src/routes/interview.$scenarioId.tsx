@@ -355,11 +355,20 @@ function InterviewPlay() {
           </div>
         )}
         {error && (
-          <div className="flex items-start gap-2 rounded-lg border border-destructive/40 bg-destructive/5 p-3 text-xs text-destructive">
-            <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
-            <p>{error}</p>
+          <div className="rounded-lg border border-destructive/40 bg-destructive/5 p-3 text-xs">
+            <div className="flex items-start gap-2 text-destructive">
+              <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+              <p>{error}</p>
+            </div>
+            <button
+              onClick={retryLastMessage}
+              className="mt-2 inline-flex items-center gap-1 rounded-md border border-border bg-background px-2.5 py-1 text-xs font-semibold hover:bg-muted"
+            >
+              {isId ? "Coba lagi" : "Retry"}
+            </button>
           </div>
         )}
+
 
         {evaluation && (
           <div className="mt-6 rounded-2xl border-2 border-primary/40 bg-primary/5 p-5 space-y-4">
