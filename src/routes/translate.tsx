@@ -595,30 +595,30 @@ function Index() {
       )}
 
       {/* SEO content links — help Google discover reference pages */}
-      <nav className="mt-12 rounded-xl border border-border bg-card p-5" aria-label="Referensi bahasa Jepang">
-        <h2 className="text-sm font-bold uppercase tracking-wide mb-3 text-foreground/80">
+      <nav className="mt-16 border-t-[3px] border-foreground pt-6" aria-label="Referensi bahasa Jepang">
+        <h2 className="text-[11px] font-bold uppercase tracking-[0.25em] mb-5 text-foreground">
           {lang === "id" ? "Jelajahi Lebih Lanjut" : "Explore More"}
         </h2>
-        <ul className="space-y-3">
+        <ul className="space-y-5">
           <li>
-            <Link to="/hanashite" className="text-sm text-primary hover:underline font-semibold">
+            <Link to="/hanashite" className="text-base text-foreground hover:text-primary font-bold transition">
               {lang === "id"
                 ? "🎙️ Hanashite Room — Latih Bicara dengan AI (Baru!)"
                 : "🎙️ Hanashite Room — Practice Speaking with AI (New!)"}
             </Link>
-            <p className="text-xs text-muted-foreground mt-0.5">
+            <p className="text-sm text-foreground/60 mt-1">
               {lang === "id"
                 ? "Simulasi percakapan Jepang dengan AI: pesan ramen, meeting kantor, tanya arah. Dapat feedback grammar & keigo instan."
                 : "Japanese conversation simulator with AI: order ramen, office meetings, ask for directions. Instant grammar & keigo feedback."}
             </p>
           </li>
           <li>
-            <Link to="/tabel-hiragana" className="text-sm text-primary hover:underline">
+            <Link to="/tabel-hiragana" className="text-base text-foreground hover:text-primary font-bold transition">
               {lang === "id"
                 ? "📖 Tabel Huruf Hiragana Lengkap dan Cara Membacanya"
                 : "📖 Complete Hiragana Chart with Pronunciation"}
             </Link>
-            <p className="text-xs text-muted-foreground mt-0.5">
+            <p className="text-sm text-foreground/60 mt-1">
               {lang === "id"
                 ? "Referensi interaktif 71+ huruf hiragana dengan romaji dan audio."
                 : "Interactive reference for 71+ hiragana characters with romaji and audio."}
