@@ -192,7 +192,7 @@ function DashboardPage() {
       </Section>
 
       {!isPro && (
-        <Section title="Fitur Pro">
+        <Section title={t("dash.pro.title")}>
           <LockedFeature />
         </Section>
       )}
