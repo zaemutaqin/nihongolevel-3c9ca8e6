@@ -54,7 +54,7 @@ export function TermsPage() {
         </Link>
       </header>
 
-      <main className="flex-1 mx-auto w-full max-w-2xl px-4 py-10 prose prose-sm dark:prose-invert">
+      <main className="flex-1 mx-auto w-full max-w-2xl px-4 sm:px-6 lg:px-8 py-10 prose prose-sm dark:prose-invert">
         <h1>Terms of Service</h1>
         <p className="text-sm text-muted-foreground">Last updated: {new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</p>
 

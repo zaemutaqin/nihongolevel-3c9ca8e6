@@ -82,7 +82,7 @@ function RiwayatPage() {
   }, [history, query]);
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8">
+    <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-8">
       <h1 className="text-2xl font-bold mb-4">{t("hist.title")}</h1>
       <div className="relative mb-5">
         <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />

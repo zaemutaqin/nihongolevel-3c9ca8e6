@@ -139,7 +139,7 @@ function DashboardPage() {
   const avgConfidence = avg("confidence_score");
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8">
+    <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-8">
       <h1 className="text-2xl font-bold mb-1">{t("dash.title")}</h1>
       <p className="text-sm text-muted-foreground mb-6">{t("dash.subtitle")}</p>
 

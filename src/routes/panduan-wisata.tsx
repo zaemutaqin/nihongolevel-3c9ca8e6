@@ -398,7 +398,7 @@ function PanduanWisataPage() {
         </Link>
       </header>
 
-      <main className="flex-1 mx-auto w-full max-w-3xl px-4 py-10">
+      <main className="flex-1 mx-auto w-full max-w-3xl px-4 sm:px-6 lg:px-8 py-10">
         {/* Hero */}
         <div className="text-center">
           <div className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 text-primary px-3 py-1 text-xs font-semibold mb-3">

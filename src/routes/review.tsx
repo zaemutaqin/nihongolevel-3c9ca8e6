@@ -45,7 +45,7 @@ function ReviewPage() {
   const [tab, setTab] = useState<Tab>("flashcard");
   if (!profile?.is_pro) return <LockedFeature />;
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8">
+    <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-8">
       <h1 className="text-2xl font-bold mb-4">{t("rev.title")}</h1>
 
       <div className="flex gap-1 mb-6 p-1 rounded-xl bg-muted/60 border border-border w-fit">

@@ -179,7 +179,7 @@ function KanaDropGame() {
   };
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8 sm:py-12">
+    <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
       <header className="mb-6">
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
           {isId ? "Kana Speed Drop" : "Kana Speed Drop"}

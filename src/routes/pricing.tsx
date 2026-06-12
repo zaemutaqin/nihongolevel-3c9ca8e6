@@ -84,7 +84,7 @@ function PricingPage() {
         </Link>
       </header>
 
-      <main className="flex-1 mx-auto w-full max-w-4xl px-4 py-10">
+      <main className="flex-1 mx-auto w-full max-w-4xl px-4 sm:px-6 lg:px-8 py-10">
         <div className="text-center">
           <div className="inline-flex items-center gap-1.5 rounded-full bg-yellow-400/15 text-yellow-700 dark:text-yellow-300 px-3 py-1 text-xs font-semibold mb-3">
             <Crown className="w-3.5 h-3.5" /> NihongoLevel Pro
