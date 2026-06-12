@@ -481,7 +481,7 @@ function QuickReviewModal({ fav, onClose }: { fav: FavoriteEntry; onClose: () =>
               </button>
               <button
                 onClick={() => handle(true)}
-                className="rounded-lg border border-green-500/40 bg-green-500/10 text-green-700 py-2.5 text-sm font-semibold hover:bg-green-500/15 transition"
+                className="rounded-lg border border-foreground/15 bg-[#D9F26B] text-foreground py-2.5 text-sm font-semibold hover:opacity-90 transition"
               >
                 {t("qrm.remember")}
               </button>
