@@ -144,25 +144,25 @@ function DashboardPage() {
       <p className="text-sm text-muted-foreground mb-6">{t("dash.subtitle")}</p>
 
       {/* SECTION INTERVIEW — Progress (semua user login) */}
-      <Section title="Progress Interview">
+      <Section title={t("dash.iv.title")}>
         <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
           <div className="flex items-center gap-2 mb-4">
             <Briefcase className="w-4 h-4 text-primary" />
-            <p className="text-sm font-semibold">Latihan Interview Kerja</p>
+            <p className="text-sm font-semibold">{t("dash.iv.label")}</p>
           </div>
 
           {interviewQuery.isLoading ? (
-            <p className="text-sm text-muted-foreground">Memuat…</p>
+            <p className="text-sm text-muted-foreground">{t("dash.iv.loading")}</p>
           ) : sessions.length === 0 ? (
             <div className="text-center py-6">
               <p className="text-sm text-muted-foreground mb-3">
-                Belum ada sesi interview. Mulai latihan pertamamu sekarang.
+                {t("dash.iv.empty")}
               </p>
               <Link
                 to="/interview"
                 className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:opacity-90 transition"
               >
-                Mulai Interview <ArrowRight className="w-4 h-4" />
+                {t("dash.iv.start")} <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
           ) : (
@@ -173,7 +173,7 @@ function DashboardPage() {
                 <ScoreBox label="Confidence" value={avgConfidence} />
               </div>
               <p className="text-[11px] uppercase font-semibold tracking-wide text-muted-foreground mb-2">
-                Sesi terakhir
+                {t("dash.iv.lastSessions")}
               </p>
               <div className="space-y-2">
                 {sessions.slice(0, 5).map((s) => (
