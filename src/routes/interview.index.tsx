@@ -195,7 +195,7 @@ function InterviewIndex() {
               {isId ? "Memuat..." : "Loading..."}
             </div>
           ) : history.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-border bg-muted/30 p-6 text-center">
+            <div className="rounded-xl border border-dashed border-border bg-white p-6 text-center">
               <div className="text-3xl mb-2">🎤</div>
               <p className="text-sm font-semibold">
                 {isId ? "Belum ada sesi yang selesai" : "No completed sessions yet"}
