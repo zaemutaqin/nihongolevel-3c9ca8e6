@@ -1,9 +1,18 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Lock, MessageCircle } from "lucide-react";
+import {
+  Lock,
+  MessageCircle,
+  ArrowRight,
+  UtensilsCrossed,
+  Briefcase,
+  Map as MapIcon,
+  Sparkles,
+} from "lucide-react";
 import { SCENARIOS } from "@/lib/hanashite-scenarios";
 import { useT } from "@/lib/i18n";
 import { useAuth } from "@/lib/auth";
 import { SignInButton } from "@/components/SignInButton";
+import heroIllustration from "@/assets/hero-hanashite.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -27,9 +36,18 @@ export const Route = createFileRoute("/")({
   component: HomeIndex,
 });
 
-// Flat design tokens (locked palette — putih dominan / ink hitam / hijau aksen / abu pastel)
-const INK = "#1A1A1A";
+// Flat design tokens — slate/navy ink for softer contrast than pure black
+const INK = "#0F172A"; // dark slate (instead of #000)
+const INK_SOFT = "#334155"; // body text
+const MUTED = "#64748B";
 const ACCENT = "#22C55E";
+
+// Map scenario id -> lucide icon (replaces generic emoji)
+const SCENARIO_ICONS: Record<string, typeof UtensilsCrossed> = {
+  sc_ramen: UtensilsCrossed,
+  sc_meeting: Briefcase,
+  sc_directions: MapIcon,
+};
 
 function HomeIndex() {
   const { lang } = useT();
@@ -38,14 +56,14 @@ function HomeIndex() {
   const isId = lang === "id";
 
   return (
-    <div className="w-full bg-white text-[#1A1A1A]">
+    <div className="w-full bg-white" style={{ color: INK }}>
       <div className="mx-auto w-full max-w-6xl px-6 py-12 sm:py-16">
-        {/* HERO — F-Pattern: heavy top-left, CTA primer hijau */}
-        <header className="mb-20 sm:mb-24">
-          <div className="max-w-3xl">
+        {/* HERO — F-pattern + illustration on right */}
+        <header className="mb-20 sm:mb-24 grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-10 lg:gap-12 items-center">
+          <div>
             <span
               className="inline-block px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] mb-5"
-              style={{ border: `2px solid ${INK}` }}
+              style={{ border: `2px solid ${INK}`, color: INK }}
             >
               {isId ? "Fitur Utama" : "Main Feature"}
             </span>
@@ -57,7 +75,7 @@ function HomeIndex() {
               <br />
               Hanashite Room
             </h1>
-            <p className="text-lg sm:text-xl leading-relaxed text-[#4A4A4A] mb-8 max-w-2xl">
+            <p className="text-lg sm:text-xl leading-relaxed mb-8 max-w-2xl" style={{ color: INK_SOFT }}>
               {isId
                 ? "Latih bicara bahasa Jepang dengan AI dalam situasi nyata. Tanpa rasa malu, dengan feedback grammar & keigo instan."
                 : "Practice speaking Japanese with AI in real-life scenarios. Zero anxiety, instant grammar & keigo feedback."}
@@ -66,19 +84,35 @@ function HomeIndex() {
             {user ? (
               <a
                 href="#skenario"
-                className="inline-block px-8 sm:px-10 py-4 sm:py-5 text-lg sm:text-xl font-black text-white hover:translate-x-[-2px] hover:translate-y-[-2px] transition-transform"
+                className="inline-flex items-center gap-2 px-8 sm:px-10 py-4 sm:py-5 text-lg sm:text-xl font-black text-white hover:translate-x-[-2px] hover:translate-y-[-2px] transition-transform"
                 style={{ background: ACCENT, border: `4px solid ${INK}` }}
               >
                 {isId ? "MULAI BERLATIH SEKARANG" : "START PRACTICING NOW"}
+                <ArrowRight className="w-5 h-5" />
               </a>
             ) : (
               <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                 <SignInButton />
-                <span className="text-sm text-[#4A4A4A]">
+                <span className="text-sm" style={{ color: INK_SOFT }}>
                   {isId ? "Masuk dulu untuk mulai berlatih." : "Sign in to start practicing."}
                 </span>
               </div>
             )}
+          </div>
+
+          {/* Right: hero illustration */}
+          <div className="hidden lg:flex items-center justify-center">
+            <img
+              src={heroIllustration}
+              alt={
+                isId
+                  ? "Ilustrasi orang berbincang dengan AI dalam bahasa Jepang"
+                  : "Illustration of a person chatting with an AI in Japanese"
+              }
+              width={520}
+              height={520}
+              className="w-full max-w-[520px] h-auto"
+            />
           </div>
         </header>
 
@@ -86,7 +120,7 @@ function HomeIndex() {
         <section id="skenario" className="mb-24">
           <h2
             className="text-2xl sm:text-3xl font-black mb-8 inline-block pb-2"
-            style={{ borderBottom: `4px solid ${INK}` }}
+            style={{ borderBottom: `4px solid ${INK}`, color: INK }}
           >
             {isId ? "Pilih Skenario" : "Choose a Scenario"}
           </h2>
@@ -97,18 +131,19 @@ function HomeIndex() {
               const situation = isId ? s.situation_id : s.situation_en;
               const role = isId ? s.role_id : s.role_en;
               const tone = isId ? s.tone_id : s.tone_en;
+              const Icon = SCENARIO_ICONS[s.id] ?? Sparkles;
               return (
                 <article
                   key={s.id}
                   className="p-6 flex flex-col bg-white"
-                  style={{ border: `4px solid ${INK}` }}
+                  style={{ border: `2px solid ${INK}` }}
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div
-                      className="w-12 h-12 flex items-center justify-center text-2xl bg-[#F3F4F6]"
-                      style={{ border: `2px solid ${INK}` }}
+                      className="w-12 h-12 flex items-center justify-center"
+                      style={{ border: `2px solid ${INK}`, background: "#F1F5F9" }}
                     >
-                      {s.emoji}
+                      <Icon className="w-6 h-6" style={{ color: INK }} />
                     </div>
                     <span
                       className="px-2 py-1 text-[10px] font-black uppercase tracking-wider"
@@ -121,17 +156,31 @@ function HomeIndex() {
                       {s.free ? "Free" : "Pro"}
                     </span>
                   </div>
-                  <h3 className="text-xl font-bold mb-2">{title}</h3>
-                  <p className="text-sm text-[#4A4A4A] mb-5 flex-1">{situation}</p>
+                  <h3 className="text-xl font-bold mb-2" style={{ color: INK }}>
+                    {title}
+                  </h3>
+                  <p className="text-sm mb-5 flex-1" style={{ color: INK_SOFT }}>
+                    {situation}
+                  </p>
                   <div className="flex flex-wrap gap-2 mb-6">
-                    <span className="bg-[#E5E7EB] px-2 py-1 text-[10px] font-bold">👤 {role}</span>
-                    <span className="bg-[#E5E7EB] px-2 py-1 text-[10px] font-bold">🎯 {tone}</span>
+                    <span
+                      className="px-2 py-1 text-[10px] font-bold"
+                      style={{ background: "#F1F5F9", color: INK }}
+                    >
+                      👤 {role}
+                    </span>
+                    <span
+                      className="px-2 py-1 text-[10px] font-bold"
+                      style={{ background: "#F1F5F9", color: INK }}
+                    >
+                      🎯 {tone}
+                    </span>
                   </div>
                   {locked ? (
                     <Link
                       to="/pricing"
-                      className="inline-flex w-full items-center justify-center gap-2 py-3 text-sm font-bold hover:bg-[#F3F4F6] transition-colors"
-                      style={{ border: `2px solid ${INK}` }}
+                      className="inline-flex w-full items-center justify-center gap-2 py-3 text-sm font-bold hover:bg-[#F8FAFC] transition-colors"
+                      style={{ border: `2px solid ${INK}`, color: INK }}
                     >
                       <Lock className="w-4 h-4" />
                       {isId ? "Upgrade ke Pro" : "Upgrade to Pro"}
@@ -140,7 +189,8 @@ function HomeIndex() {
                     <Link
                       to="/hanashite/$scenarioId"
                       params={{ scenarioId: s.id }}
-                      className="inline-flex w-full items-center justify-center gap-2 py-3 text-sm font-bold text-white bg-[#1A1A1A] hover:bg-black aria-disabled:opacity-50 aria-disabled:pointer-events-none"
+                      className="inline-flex w-full items-center justify-center gap-2 py-3 text-sm font-bold hover:bg-[#F8FAFC] transition-colors aria-disabled:opacity-50 aria-disabled:pointer-events-none"
+                      style={{ border: `2px solid ${INK}`, color: INK }}
                       aria-disabled={!user}
                     >
                       <MessageCircle className="w-4 h-4" />
@@ -154,7 +204,7 @@ function HomeIndex() {
         </section>
 
         {/* CARA PAKAI — Dark band */}
-        <section className="mb-24 p-8 sm:p-12 text-white bg-[#1A1A1A]">
+        <section className="mb-24 p-8 sm:p-12 text-white" style={{ background: INK }}>
           <h2 className="text-2xl sm:text-3xl font-black mb-10 uppercase tracking-wide">
             {isId ? "Cara Pakai" : "How It Works"}
           </h2>
@@ -174,10 +224,7 @@ function HomeIndex() {
                 ]
             ).map((step, i) => (
               <div key={i}>
-                <div
-                  className="text-5xl font-black mb-4"
-                  style={{ color: ACCENT }}
-                >
+                <div className="text-5xl font-black mb-4" style={{ color: ACCENT }}>
                   {String(i + 1).padStart(2, "0")}
                 </div>
                 <p className="font-bold leading-snug">{step}</p>
@@ -190,13 +237,14 @@ function HomeIndex() {
         <section>
           <h2
             className="text-2xl sm:text-3xl font-black mb-8 inline-block pb-2"
-            style={{ borderBottom: `4px solid ${INK}` }}
+            style={{ borderBottom: `4px solid ${INK}`, color: INK }}
           >
             {isId ? "Fitur Lainnya" : "More Tools"}
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <FeatureCard
               to="/nama-jepang"
+              tint="#ECFDF5"
               title={isId ? "Generator Nama Jepang" : "Japanese Name Generator"}
               desc={
                 isId
@@ -206,6 +254,7 @@ function HomeIndex() {
             />
             <FeatureCard
               to="/kamus-slang"
+              tint="#EFF6FF"
               title={isId ? "Kamus Slang Jepang" : "Japanese Slang Dictionary"}
               desc={
                 isId
@@ -215,6 +264,7 @@ function HomeIndex() {
             />
             <FeatureCard
               to="/game-kana"
+              tint="#FEF3C7"
               title="Kana Speed Drop"
               desc={
                 isId
@@ -224,6 +274,7 @@ function HomeIndex() {
             />
             <FeatureCard
               to="/translate"
+              tint="#FCE7F3"
               title={isId ? "Translator Ekspresi Natural" : "Natural Expression Translator"}
               desc={
                 isId
@@ -233,6 +284,7 @@ function HomeIndex() {
             />
             <FeatureCard
               to="/tabel-hiragana"
+              tint="#F1F5F9"
               title={isId ? "Tabel Hiragana Lengkap" : "Complete Hiragana Chart"}
               desc={
                 isId
@@ -251,19 +303,29 @@ function FeatureCard({
   to,
   title,
   desc,
+  tint,
 }: {
   to: "/nama-jepang" | "/kamus-slang" | "/game-kana" | "/translate" | "/tabel-hiragana";
   title: string;
   desc: string;
+  tint: string;
 }) {
   return (
     <Link
       to={to}
-      className="block p-6 bg-white hover:bg-[#F3F4F6] transition-colors"
-      style={{ border: `2px solid ${INK}` }}
+      className="group relative block p-6 transition-colors hover:brightness-[0.97]"
+      style={{ border: `2px solid ${INK}`, background: tint }}
     >
-      <h3 className="font-black text-lg mb-2">{title}</h3>
-      <p className="text-sm text-[#4A4A4A] leading-relaxed">{desc}</p>
+      <h3 className="font-black text-lg mb-2 pr-8" style={{ color: INK }}>
+        {title}
+      </h3>
+      <p className="text-sm leading-relaxed" style={{ color: INK_SOFT }}>
+        {desc}
+      </p>
+      <ArrowRight
+        className="w-5 h-5 absolute bottom-5 right-5 transition-transform group-hover:translate-x-1"
+        style={{ color: INK }}
+      />
     </Link>
   );
 }
