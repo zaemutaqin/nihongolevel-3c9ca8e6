@@ -17,7 +17,7 @@ interface Props {
 
 export function UsageMeter({ feature, className }: Props) {
   const { user, profile } = useAuth();
-  const { lang } = useT();
+  const { isPro } = useIsPro();
   const isId = lang === "id";
   const fetchUsage = useServerFn(getMyUsage);
 
