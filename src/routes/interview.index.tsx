@@ -161,7 +161,7 @@ function InterviewIndex() {
               key={s.id}
               to="/interview/$scenarioId"
               params={{ scenarioId: s.id }}
-              className="group relative flex flex-col pt-5 border-t-[3px] border-foreground hover:opacity-80 transition-opacity"
+              className="group relative flex flex-col pt-5 border-t-[3px] border-foreground bg-white hover:opacity-80 transition-opacity"
             >
               <span className="absolute top-0 right-0 -translate-y-1/2 text-[10px] font-bold uppercase tracking-[0.18em] bg-[#0F172A] text-[#F5F1E8] px-2 py-1">
                 {s.level}
@@ -195,7 +195,7 @@ function InterviewIndex() {
               {isId ? "Memuat..." : "Loading..."}
             </div>
           ) : history.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-border bg-muted/30 p-6 text-center">
+            <div className="rounded-xl border border-dashed border-border bg-white p-6 text-center">
               <div className="text-3xl mb-2">🎤</div>
               <p className="text-sm font-semibold">
                 {isId ? "Belum ada sesi yang selesai" : "No completed sessions yet"}
@@ -218,7 +218,7 @@ function InterviewIndex() {
                 return (
                   <li
                     key={h.id}
-                    className="flex items-center justify-between rounded-lg border border-border bg-card p-4"
+                    className="flex items-center justify-between rounded-lg border border-border bg-white p-4"
                   >
                     <div className="min-w-0">
                       <div className="font-semibold text-sm truncate">{h.scenario_title}</div>
