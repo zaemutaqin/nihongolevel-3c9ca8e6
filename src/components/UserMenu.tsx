@@ -31,7 +31,7 @@ export function UserMenu() {
   const name = profile?.full_name ?? user.user_metadata?.full_name ?? user.email ?? "User";
   const email = profile?.email ?? user.email ?? "";
   const avatar = profile?.avatar_url ?? user.user_metadata?.avatar_url ?? null;
-  const isPro = profile?.is_pro ?? false;
+  const { isPro } = useIsPro();
   const initial = (name || email || "?")[0].toUpperCase();
 
   const activate = async () => {
