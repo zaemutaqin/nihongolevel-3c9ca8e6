@@ -131,11 +131,18 @@ function InterviewIndex() {
               {isId ? "Memuat..." : "Loading..."}
             </div>
           ) : history.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
-              {isId
-                ? "Belum ada sesi yang selesai. Mulai latihan pertama kamu di atas."
-                : "No completed sessions yet. Start your first practice above."}
-            </p>
+            <div className="rounded-xl border border-dashed border-border bg-muted/30 p-6 text-center">
+              <div className="text-3xl mb-2">🎤</div>
+              <p className="text-sm font-semibold">
+                {isId ? "Belum ada sesi yang selesai" : "No completed sessions yet"}
+              </p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {isId
+                  ? "Pilih skenario di atas. Jawab minimal 2 pertanyaan, lalu tekan 'Selesai & Evaluasi' untuk dapat skor."
+                  : "Pick a scenario above. Answer at least 2 questions, then tap 'Finish & Evaluate' to get scored."}
+              </p>
+            </div>
+
           ) : (
             <ul className="space-y-3">
               {history.map((h) => {
