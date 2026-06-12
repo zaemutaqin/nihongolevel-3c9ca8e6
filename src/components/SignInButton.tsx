@@ -4,6 +4,7 @@ import { Link } from "@tanstack/react-router";
 import { lovable } from "@/integrations/lovable";
 import { useLang } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+import { gtagEvent } from "@/lib/gtag";
 
 export function SignInButton({
   className,
