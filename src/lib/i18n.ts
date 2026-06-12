@@ -83,11 +83,11 @@ const ID: Dict = {
   "opt.mood.awkward": "Canggung / tidak nyaman",
 
   // Style names (by JLPT-equivalent key)
-  "style.N4": "Dasar",
-  "style.N3": "Sehari-hari",
-  "style.N2": "Ekspresif",
-  "style.N1": "Mendekati Native",
-  "style.equiv": "setara",
+  "style.N4": "Casual",
+  "style.N3": "Polite (Desu/Masu)",
+  "style.N2": "Workplace",
+  "style.N1": "Keigo (敬語)",
+  "style.equiv": "setara JLPT",
 
   // Naturalness
   "nat.native": "Sangat Umum",
@@ -308,11 +308,11 @@ const EN: Dict = {
   "opt.mood.happy": "Happy / excited",
   "opt.mood.awkward": "Awkward / uncomfortable",
 
-  "style.N4": "Basic",
-  "style.N3": "Everyday",
-  "style.N2": "Expressive",
-  "style.N1": "Near-Native",
-  "style.equiv": "equiv.",
+  "style.N4": "Casual",
+  "style.N3": "Polite (Desu/Masu)",
+  "style.N2": "Workplace",
+  "style.N1": "Keigo (敬語)",
+  "style.equiv": "JLPT equiv.",
 
   "nat.native": "Very Common",
   "nat.stiff": "Fairly Common",
