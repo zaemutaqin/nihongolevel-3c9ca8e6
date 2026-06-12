@@ -47,17 +47,17 @@ function HomeIndex() {
 
   return (
     <div className="w-full" style={{ background: CREAM, color: INK }}>
-      <div className="mx-auto w-full max-w-6xl px-6 py-12 sm:py-20">
+      <div className="mx-auto w-full max-w-5xl px-6 py-10 sm:py-16">
         {/* HERO — editorial split with illustration */}
-        <header className="mb-28 sm:mb-36 grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-12 lg:gap-16 items-center">
+        <header className="mb-24 sm:mb-32 grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-10 lg:gap-12 items-center">
           <div>
             <span
-              className="inline-block text-[11px] font-bold uppercase tracking-[0.24em] mb-6 px-4 py-2 rounded-full"
+              className="inline-block text-[10px] font-bold uppercase tracking-[0.24em] mb-5 px-3.5 py-1.5 rounded-full"
               style={{ background: "#FDECEC", color: ACCENT, border: `1px solid ${ACCENT}33` }}
             >
               {isId ? "AI Coach untuk Pekerja Indonesia" : "AI Coach for Workers"}
             </span>
-            <h1 className="font-black leading-[1.02] mb-7 text-[44px] sm:text-[60px] lg:text-[76px] tracking-[-0.02em]">
+            <h1 className="font-black leading-[1.05] mb-6 text-[40px] sm:text-[52px] lg:text-[56px] tracking-[-0.02em]">
               {isId ? (
                 <>
                   Siap Kerja & Hidup
@@ -74,7 +74,7 @@ function HomeIndex() {
               )}
             </h1>
             <p
-              className="text-lg sm:text-xl leading-relaxed mb-9 max-w-xl"
+              className="text-base sm:text-lg leading-relaxed mb-8 max-w-lg"
               style={{ color: INK_SOFT }}
             >
               {isId
