@@ -104,35 +104,74 @@ function InterviewIndex() {
       {user && <UsageMeter feature="interview" className="mb-6" />}
 
       <section className="mb-12">
+        <div className="mb-5 flex items-end justify-between gap-3">
+          <h2 className="font-display text-2xl sm:text-3xl">
+            {isId ? "Pilih Skenario" : "Choose a Scenario"}
+          </h2>
+          <span className="text-[11px] uppercase tracking-[0.22em] font-semibold text-muted-foreground">
+            {visible.length} {isId ? "bidang" : "scenarios"}
+          </span>
+        </div>
 
-        <h2 className="text-lg font-bold mb-4">{isId ? "Pilih Skenario" : "Choose a Scenario"}</h2>
-        <div className="grid gap-4 sm:grid-cols-2">
-          {INTERVIEW_SCENARIOS.map((s) => (
+        {/* Category tabs */}
+        <div className="-mx-4 mb-6 overflow-x-auto px-4">
+          <div className="flex min-w-max items-center gap-2 border-b border-border pb-px">
+            {([
+              { id: "all" as const, label_id: "Semua", label_en: "All", emoji: "✦" },
+              ...SCENARIO_CATEGORIES,
+            ]).map((c) => {
+              const active = activeCat === c.id;
+              return (
+                <button
+                  key={c.id}
+                  onClick={() => setActiveCat(c.id as typeof activeCat)}
+                  className={cn(
+                    "relative -mb-px inline-flex items-center gap-1.5 whitespace-nowrap px-3 py-2.5 text-[11px] font-semibold uppercase tracking-[0.18em] transition",
+                    active ? "text-primary" : "text-muted-foreground hover:text-foreground",
+                  )}
+                >
+                  <span className="text-sm">{c.emoji}</span>
+                  {isId ? c.label_id : c.label_en}
+                  {active && (
+                    <span className="absolute inset-x-1 -bottom-px h-[3px] bg-primary" />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div
+          key={activeCat}
+          className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 animate-in fade-in slide-in-from-bottom-1 duration-300"
+        >
+          {visible.map((s) => (
             <Link
               key={s.id}
               to="/interview/$scenarioId"
               params={{ scenarioId: s.id }}
-              className="group rounded-xl border-2 border-border bg-card p-5 hover:border-primary transition-colors"
+              className="group relative flex flex-col bg-card border border-border p-4 hover:border-primary hover:-translate-y-0.5 transition-all"
             >
               <div className="flex items-start justify-between gap-3">
-                <div className="text-3xl">{s.emoji}</div>
-                <span className="text-[10px] font-bold uppercase tracking-wide rounded-full bg-muted px-2 py-0.5">
+                <div className="text-2xl">{s.emoji}</div>
+                <span className="text-[10px] font-bold uppercase tracking-[0.15em] bg-foreground text-background px-1.5 py-0.5">
                   {s.level}
                 </span>
               </div>
-              <h3 className="mt-3 font-bold text-base">
+              <h3 className="mt-3 font-display text-lg leading-snug">
                 {isId ? s.title_id : s.title_en}
               </h3>
-              <p className="mt-1.5 text-sm text-muted-foreground line-clamp-3">
+              <p className="mt-1.5 text-xs text-muted-foreground line-clamp-2 leading-relaxed flex-1">
                 {isId ? s.description_id : s.description_en}
               </p>
-              <div className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-primary">
-                {isId ? "Mulai Latihan" : "Start Practice"}
-                <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+              <div className="mt-3 inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">
+                {isId ? "Mulai" : "Start"}
+                <ChevronRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
               </div>
             </Link>
           ))}
         </div>
+
       </section>
 
       {user && (
