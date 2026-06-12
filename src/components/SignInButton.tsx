@@ -55,7 +55,7 @@ export function SignInButton({
         {lang === "id" ? "Masuk dengan Google" : "Sign in with Google"}
       </button>
 
-      {showEmailOption && (
+      {showEmail && (
         <Link
           to="/auth"
           search={{ redirect: redirectPath }}
