@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect, useRef, type KeyboardEvent } from "react";
 import { AlertCircle, Zap, Loader2, ChevronDown } from "lucide-react";
 import {
@@ -587,8 +587,29 @@ function Index() {
         </div>
       )}
 
-      
-      
+      {/* SEO content links — help Google discover reference pages */}
+      <nav className="mt-12 rounded-xl border border-border bg-card p-5" aria-label="Referensi bahasa Jepang">
+        <h2 className="text-sm font-bold uppercase tracking-wide mb-3 text-foreground/80">
+          {lang === "id" ? "Referensi Pemula" : "Beginner References"}
+        </h2>
+        <ul className="space-y-2">
+          <li>
+            <Link
+              to="/tabel-hiragana"
+              className="text-sm text-primary hover:underline"
+            >
+              {lang === "id"
+                ? "📖 Tabel Huruf Hiragana Lengkap dan Cara Membacanya"
+                : "📖 Complete Hiragana Chart with Pronunciation"}
+            </Link>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              {lang === "id"
+                ? "Referensi interaktif 71+ huruf hiragana dengan romaji dan audio."
+                : "Interactive reference for 71+ hiragana characters with romaji and audio."}
+            </p>
+          </li>
+        </ul>
+      </nav>
     </div>
   );
 }
