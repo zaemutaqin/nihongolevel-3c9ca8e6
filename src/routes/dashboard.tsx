@@ -506,7 +506,8 @@ function ScoreBox({ label, value }: { label: string; value: number | null }) {
 }
 
 function SessionRow({ s }: { s: InterviewSessionSummary }) {
-  const date = new Date(s.created_at).toLocaleDateString("id-ID", { day: "numeric", month: "short" });
+  const { t, lang } = useT();
+  const date = new Date(s.created_at).toLocaleDateString(lang === "en" ? "en-US" : "id-ID", { day: "numeric", month: "short" });
   const avg =
     s.completed && s.grammar_score !== null && s.naturalness_score !== null && s.confidence_score !== null
       ? Math.round((s.grammar_score + s.naturalness_score + s.confidence_score) / 3)
@@ -526,7 +527,7 @@ function SessionRow({ s }: { s: InterviewSessionSummary }) {
         </span>
       ) : (
         <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full bg-muted text-muted-foreground">
-          {s.completed ? "Selesai" : "Berlangsung"}
+          {s.completed ? t("dash.iv.done") : t("dash.iv.ongoing")}
         </span>
       )}
     </Link>
