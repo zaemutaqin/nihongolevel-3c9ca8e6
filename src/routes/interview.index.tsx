@@ -113,18 +113,18 @@ function InterviewIndex() {
       {user && <UsageMeter feature="interview" className="mb-6" />}
 
       <section className="mb-12">
-        <div className="mb-8 flex items-end justify-between gap-3 border-b-2 border-foreground pb-4">
-          <h2 className="font-display text-3xl sm:text-4xl">
+        <div className="mb-6 flex items-end justify-between gap-3">
+          <h2 className="text-3xl sm:text-4xl font-black tracking-tight">
             {isId ? "Pilih Skenario" : "Choose a Scenario"}
           </h2>
-          <span className="text-[11px] uppercase tracking-[0.22em] font-semibold text-muted-foreground">
-            {visible.length} {isId ? "bidang" : "scenarios"}
+          <span className="text-xs font-medium text-muted-foreground">
+            {visible.length} {isId ? "Bidang" : "scenarios"}
           </span>
         </div>
 
-        {/* Category tabs — editorial */}
-        <div className="-mx-4 mb-10 overflow-x-auto px-4">
-          <div className="flex min-w-max items-center gap-6">
+        {/* Category tabs — pills */}
+        <div className="-mx-4 mb-6 overflow-x-auto px-4 pb-3 border-b border-foreground/10">
+          <div className="flex min-w-max items-center gap-2">
             {([
               { id: "all" as const, label_id: "Semua", label_en: "All", emoji: "✦" },
               ...SCENARIO_CATEGORIES,
@@ -135,17 +135,14 @@ function InterviewIndex() {
                   key={c.id}
                   onClick={() => setActiveCat(c.id as typeof activeCat)}
                   className={cn(
-                    "relative inline-flex items-center gap-1.5 whitespace-nowrap py-2 text-[12px] uppercase tracking-[0.2em] transition",
+                    "inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-4 py-2 text-[11px] uppercase tracking-[0.18em] font-bold transition border",
                     active
-                      ? "text-primary font-extrabold"
-                      : "text-foreground/60 font-semibold hover:text-foreground",
+                      ? "bg-primary text-white border-primary"
+                      : "bg-white text-foreground/70 border-foreground/15 hover:border-foreground/40",
                   )}
                 >
                   <span className="text-sm">{c.emoji}</span>
                   {isId ? c.label_id : c.label_en}
-                  {active && (
-                    <span className="absolute inset-x-0 -bottom-1 h-[4px] bg-primary" />
-                  )}
                 </button>
               );
             })}
@@ -154,26 +151,26 @@ function InterviewIndex() {
 
         <div
           key={activeCat}
-          className="grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 animate-in fade-in slide-in-from-bottom-1 duration-300"
+          className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 animate-in fade-in slide-in-from-bottom-1 duration-300"
         >
           {visible.map((s) => (
             <Link
               key={s.id}
               to="/interview/$scenarioId"
               params={{ scenarioId: s.id }}
-              className="group relative flex flex-col pt-5 border-t-[3px] border-foreground bg-white hover:opacity-80 transition-opacity"
+              className="group relative flex flex-col rounded-2xl bg-white p-6 border border-foreground/10 hover:-translate-y-0.5 hover:border-foreground/25 transition"
             >
-              <span className="absolute top-0 right-0 -translate-y-1/2 text-[10px] font-bold uppercase tracking-[0.18em] bg-[#0F172A] text-[#F5F1E8] px-2 py-1">
+              <span className="absolute top-4 right-4 text-[10px] font-bold uppercase tracking-[0.18em] bg-[#0F172A] text-[#F5F1E8] px-2 py-1 rounded-md">
                 {s.level}
               </span>
-              <div className="text-3xl mb-3">{s.emoji}</div>
-              <h3 className="font-display text-2xl leading-tight text-foreground">
+              <div className="text-3xl mb-4">{s.emoji}</div>
+              <h3 className="font-black text-lg leading-tight tracking-tight text-foreground">
                 {isId ? s.title_id : s.title_en}
               </h3>
               <p className="mt-2 text-sm text-muted-foreground line-clamp-3 leading-relaxed flex-1">
                 {isId ? s.description_id : s.description_en}
               </p>
-              <div className="mt-4 inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-[0.22em] text-primary">
+              <div className="mt-5 inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-[0.22em] text-primary">
                 {isId ? "Mulai" : "Start"}
                 <ChevronRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
               </div>
@@ -182,6 +179,7 @@ function InterviewIndex() {
         </div>
 
       </section>
+
 
       {user && (
         <section>
