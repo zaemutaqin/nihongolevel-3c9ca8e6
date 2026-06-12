@@ -37,7 +37,8 @@ export const Route = createFileRoute("/")({
 
 const INK = "#2A1A1E";
 const INK_SOFT = "#5C4A4F";
-const ACCENT = "#DC2626";
+const ACCENT = "#D9F26B";
+const LAVENDER = "#E8D5F2";
 const CREAM = "#F2EDE4";
 
 function HomeIndex() {
