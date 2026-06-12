@@ -46,14 +46,24 @@ export const Route = createFileRoute("/dashboard")({
 
 function DashboardPage() {
   const { t } = useT();
-  const { profile } = useAuth();
+  const { profile, user } = useAuth();
   const [history] = useLocalCollection<HistoryEntry>(getHistory);
   const [favs] = useLocalCollection<FavoriteEntry>(getFavorites);
   const [needsReview] = useLocalCollection<FavoriteEntry>(getFavoritesNeedsReview7d);
   const [oldest] = useLocalCollection(getOldestReviewedFavorites);
   const navigate = useNavigate();
 
-  if (!profile?.is_pro) return <LockedFeature />;
+  // Interview progress section — visible to any signed-in user
+  const fetchSessions = useServerFn(getMyInterviewSessions);
+  const interviewQuery = useQuery({
+    queryKey: ["interview-sessions"],
+    queryFn: () => fetchSessions(),
+    enabled: !!user,
+    staleTime: 30_000,
+  });
+
+  if (!user) return <LockedFeature />;
+
 
   const streak = useMemo(() => getStreakDays(), [history]);
   const week = useMemo(() => getSearchesThisWeek(), [history]);
