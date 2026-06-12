@@ -37,7 +37,8 @@ export const Route = createFileRoute("/")({
 
 const INK = "#2A1A1E";
 const INK_SOFT = "#5C4A4F";
-const ACCENT = "#DC2626";
+const ACCENT = "#D9F26B";
+const LAVENDER = "#E8D5F2";
 const CREAM = "#F2EDE4";
 
 function HomeIndex() {
@@ -53,7 +54,7 @@ function HomeIndex() {
           <div>
             <span
               className="inline-block text-[10px] font-bold uppercase tracking-[0.24em] mb-5 px-3.5 py-1.5 rounded-full"
-              style={{ background: "#FDECEC", color: ACCENT, border: `1px solid ${ACCENT}33` }}
+              style={{ background: ACCENT, color: INK }}
             >
               {isId ? "AI Coach untuk Pekerja Indonesia" : "AI Coach for Workers"}
             </span>
@@ -63,13 +64,13 @@ function HomeIndex() {
                   Siap Kerja & Hidup
                   <br />
                   di Jepang dengan{" "}
-                  <span style={{ color: ACCENT }}>AI</span>
+                  <span className="px-2 rounded-md" style={{ background: ACCENT, color: INK }}>AI</span>
                 </>
               ) : (
                 <>
                   Prepare for Work & Life
                   <br />
-                  in Japan with <span style={{ color: ACCENT }}>AI</span>
+                  in Japan with <span className="px-2 rounded-md" style={{ background: ACCENT, color: INK }}>AI</span>
                 </>
               )}
             </h1>
@@ -85,8 +86,8 @@ function HomeIndex() {
             <div className="flex flex-col sm:flex-row gap-3">
               <Link
                 to="/interview"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-sm sm:text-base font-bold text-white hover:opacity-90 transition"
-                style={{ background: ACCENT }}
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-sm sm:text-base font-bold hover:opacity-90 transition"
+                style={{ background: INK, color: "#fff" }}
               >
                 {isId ? "Coba Interview Simulator" : "Try Interview Simulator"}
                 <ArrowRight className="w-4 h-4" />
@@ -118,7 +119,7 @@ function HomeIndex() {
         {/* WHY NIHONGOLEVEL — borderless editorial */}
         <section className="mb-28 sm:mb-36">
           <div className="mb-12 max-w-2xl">
-            <div className="text-[11px] font-bold uppercase tracking-[0.3em] mb-3" style={{ color: ACCENT }}>
+            <div className="text-[11px] font-bold uppercase tracking-[0.3em] mb-3" style={{ color: INK }}>
               {isId ? "Empat Pilar" : "Four Pillars"}
             </div>
             <h2 className="text-3xl sm:text-5xl font-black leading-[1.05] tracking-tight">
@@ -152,7 +153,7 @@ function HomeIndex() {
         {/* POPULAR SCENARIOS — borderless */}
         <section className="mb-28 sm:mb-36">
           <div className="mb-12 max-w-2xl">
-            <div className="text-[11px] font-bold uppercase tracking-[0.3em] mb-3" style={{ color: ACCENT }}>
+            <div className="text-[11px] font-bold uppercase tracking-[0.3em] mb-3" style={{ color: INK }}>
               {isId ? "Mulai Latihan" : "Start Practicing"}
             </div>
             <h2 className="text-3xl sm:text-5xl font-black leading-[1.05] tracking-tight">
@@ -322,7 +323,7 @@ function HomeIndex() {
         {/* FAQ — minimal bottom-border list */}
         <section className="mb-16 max-w-3xl">
           <div className="mb-10">
-            <div className="text-[11px] font-bold uppercase tracking-[0.3em] mb-3" style={{ color: ACCENT }}>
+            <div className="text-[11px] font-bold uppercase tracking-[0.3em] mb-3" style={{ color: INK }}>
               {isId ? "Pertanyaan" : "Questions"}
             </div>
             <h2 className="text-3xl sm:text-5xl font-black tracking-tight">FAQ</h2>
@@ -399,9 +400,9 @@ function WhyItem({
     >
       <div
         className="w-11 h-11 rounded-xl flex items-center justify-center mb-5"
-        style={{ background: "rgba(220,38,38,0.10)" }}
+        style={{ background: ACCENT }}
       >
-        <Icon className="w-5 h-5" style={{ color: ACCENT }} strokeWidth={2} />
+        <Icon className="w-5 h-5" style={{ color: INK }} strokeWidth={2} />
       </div>
       <h3 className="font-black text-xl mb-2 tracking-tight" style={{ color: INK }}>
         {title}
