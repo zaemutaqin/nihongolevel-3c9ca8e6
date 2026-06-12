@@ -293,7 +293,7 @@ export function LevelCard({
   onFavorite?: () => void;
   isFav?: boolean;
 }) {
-  void styleMeta(level);
+  
   const { t } = useT();
   const [grammarOpen, setGrammarOpen] = useState(false);
   const japanese = cleanJapanese(data.japanese);
