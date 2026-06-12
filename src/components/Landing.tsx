@@ -202,9 +202,9 @@ export function Landing() {
 
       {/* ====== PRICING — color blocked ====== */}
       <section id="pricing" className="border-b border-foreground/15">
-        <div className="mx-auto max-w-7xl grid lg:grid-cols-12">
+        <div className="mx-auto max-w-7xl grid lg:grid-cols-2">
           {/* Free */}
-          <div className="lg:col-span-4 px-6 sm:px-10 py-14 lg:py-20 border-r border-foreground/15">
+          <div className="px-6 sm:px-10 py-14 lg:py-20 border-r border-foreground/15">
             <div className="text-[11px] uppercase tracking-[0.3em] font-bold text-foreground/60">
               {id ? "Edisi Gratis" : "Free Edition"}
             </div>
@@ -220,37 +220,22 @@ export function Landing() {
             </ul>
           </div>
 
-          {/* Pro Monthly */}
-          <div className="lg:col-span-4 bg-secondary/50 text-secondary-foreground px-6 sm:px-10 py-14 lg:py-20 border-r border-foreground/15">
-            <div className="text-[11px] uppercase tracking-[0.3em] font-bold">{id ? "Pro · Bulanan" : "Pro · Monthly"}</div>
-            <div className="mt-4 flex items-baseline gap-2">
-              <span className="font-display text-6xl">$4.99</span>
-              <span className="text-sm uppercase tracking-[0.2em] opacity-70">
-                {id ? "/bulan" : "/month"}
-              </span>
-            </div>
-            <p className="mt-2 text-xs text-foreground/60">{id ? "Batal kapan saja" : "Cancel anytime"}</p>
-            <ul className="mt-8 space-y-3 text-base">
-              <li className="flex items-start gap-3"><Check className="w-5 h-5 text-primary mt-0.5 shrink-0" />{id ? "Semua fitur Pro" : "All Pro features"}</li>
-              <li className="flex items-start gap-3"><Check className="w-5 h-5 text-primary mt-0.5 shrink-0" />{id ? "Cocok untuk coba dulu" : "Great for trying first"}</li>
-            </ul>
-          </div>
-
           {/* Pro Lifetime — pink block */}
-          <div className="lg:col-span-4 bg-secondary text-secondary-foreground px-6 sm:px-10 py-14 lg:py-20 relative">
+          <div className="bg-secondary text-secondary-foreground px-6 sm:px-10 py-14 lg:py-20 relative">
             <div className="absolute top-0 right-0 bg-primary text-primary-foreground px-4 py-2 text-[10px] uppercase tracking-[0.3em] font-bold">
-              {id ? "Terbaik" : "Best value"}
+              {id ? "Sekali Bayar" : "One-time"}
             </div>
             <div className="text-[11px] uppercase tracking-[0.3em] font-bold">{id ? "Pro · Seumur Hidup" : "Pro · Lifetime"}</div>
             <div className="mt-4 flex items-baseline gap-2">
-              <span className="font-display text-6xl">$50</span>
+              <span className="font-display text-6xl">$20</span>
               <span className="text-sm uppercase tracking-[0.2em] opacity-70">
                 {id ? "sekali bayar" : "one-time"}
               </span>
             </div>
-            <p className="mt-2 text-xs opacity-70">{id ? "≈ 10 bulan langganan · milik selamanya" : "≈ 10 months · yours forever"}</p>
+            <p className="mt-2 text-xs opacity-70">{id ? "Bayar sekali, milik selamanya" : "Pay once, yours forever"}</p>
             <ul className="mt-8 space-y-3 text-base">
               <li className="flex items-start gap-3"><Check className="w-5 h-5 text-primary mt-0.5 shrink-0" />{id ? "Pencarian tanpa batas" : "Unlimited searches"}</li>
+              <li className="flex items-start gap-3"><Check className="w-5 h-5 text-primary mt-0.5 shrink-0" />{id ? "Riwayat & favorit selamanya" : "History & favorites forever"}</li>
               <li className="flex items-start gap-3"><Check className="w-5 h-5 text-primary mt-0.5 shrink-0" />{id ? "Semua fitur masa depan" : "All future features"}</li>
             </ul>
             <Link
