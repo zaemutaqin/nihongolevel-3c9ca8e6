@@ -502,8 +502,8 @@ function Index() {
       )}
 
       {loading && !result && (
-        <div className="mt-8 space-y-6">
-          <h2 className="text-base font-bold text-foreground">
+        <div className="mt-10 space-y-8">
+          <h2 className="text-[11px] font-bold uppercase tracking-[0.25em] text-foreground">
             {t("home.resultHeader")}
           </h2>
           {partialIntent ? <IntentBadge intent={partialIntent} /> : <IntentBadgeSkeleton />}
@@ -518,10 +518,10 @@ function Index() {
             <MostNaturalSkeleton />
           )}
           <section>
-            <h3 className="text-sm font-bold uppercase tracking-wide mb-3 text-foreground/80">
+            <h3 className="text-[11px] font-bold uppercase tracking-[0.25em] mb-6 text-foreground">
               {t("home.styleSubheader")}
             </h3>
-            <div className="space-y-4">
+            <div className="space-y-8">
               {LEVELS.map(({ key, label }) =>
                 partialLevels[key] ? (
                   <LevelCard
@@ -543,13 +543,13 @@ function Index() {
       )}
 
       {result && historyEntry && (
-        <div className="mt-8 space-y-6" key={favTick}>
+        <div className="mt-10 space-y-8" key={favTick}>
           <div className="flex items-center justify-between gap-3">
-            <h2 className="text-base font-bold text-foreground">
+            <h2 className="text-[11px] font-bold uppercase tracking-[0.25em] text-foreground">
               {t("home.resultHeader")}
             </h2>
             {fromCache && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-[11px] font-medium text-muted-foreground">
+              <span className="inline-flex items-center gap-1 bg-foreground/10 px-2.5 py-1 text-[10px] uppercase tracking-[0.15em] font-bold text-foreground">
                 <Zap className="w-3 h-3" />
                 {t("home.fromCache")}
               </span>
@@ -567,10 +567,10 @@ function Index() {
             }}
           />
           <section>
-            <h3 className="text-sm font-bold uppercase tracking-wide mb-3 text-foreground/80">
+            <h3 className="text-[11px] font-bold uppercase tracking-[0.25em] mb-6 text-foreground">
               {t("home.styleSubheader")}
             </h3>
-            <div className="space-y-4">
+            <div className="space-y-8">
               {LEVELS.map(({ key, label }) => (
                 <LevelCard
                   key={key}
