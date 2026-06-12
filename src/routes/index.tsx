@@ -156,7 +156,37 @@ function HomeIndex() {
         </h2>
         <ul className="space-y-3">
           <li>
-            <Link to="/translate" className="text-sm text-primary hover:underline font-semibold inline-flex items-center gap-1.5">
+            <Link to="/nama-jepang" className="text-sm text-primary hover:underline font-semibold">
+              ✨ {isId ? "Generator Nama Jepang (Katakana + Kanji)" : "Japanese Name Generator (Katakana + Kanji)"}
+            </Link>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              {isId
+                ? "Ubah namamu ke Katakana, dapat saran Kanji bermakna, download sebagai kartu Meishi."
+                : "Convert your name to Katakana, get meaningful Kanji, download as a Meishi card."}
+            </p>
+          </li>
+          <li>
+            <Link to="/kamus-slang" className="text-sm text-primary hover:underline font-semibold">
+              💬 {isId ? "Kamus Slang Jepang (Anime & Dorama)" : "Japanese Slang Dictionary (Anime & Dorama)"}
+            </Link>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              {isId
+                ? "Arti yabai, sugoi, kawaii, tsundere, dan puluhan kata gaul lainnya."
+                : "Meanings of yabai, sugoi, kawaii, tsundere, and dozens more slang words."}
+            </p>
+          </li>
+          <li>
+            <Link to="/game-kana" className="text-sm text-primary hover:underline font-semibold">
+              🎮 {isId ? "Kana Speed Drop — Game Hiragana" : "Kana Speed Drop — Hiragana Game"}
+            </Link>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              {isId
+                ? "Hafalkan Hiragana lewat mini-game ketik-cepat dengan high score."
+                : "Memorize Hiragana via a speed-typing mini-game with high scores."}
+            </p>
+          </li>
+          <li>
+            <Link to="/translate" className="text-sm text-primary hover:underline inline-flex items-center gap-1.5">
               <Search className="w-4 h-4" />
               {isId
                 ? "Cari Ekspresi Jepang Natural (N1–N4)"
