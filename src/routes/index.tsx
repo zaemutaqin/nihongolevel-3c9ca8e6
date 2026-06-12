@@ -48,7 +48,7 @@ function HomeIndex() {
 
   return (
     <div className="w-full" style={{ background: CREAM, color: INK }}>
-      <div className="mx-auto w-full max-w-5xl px-6 py-10 sm:py-16">
+      <div className="mx-auto w-full max-w-5xl px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
         {/* HERO — editorial split with illustration */}
         <header className="mb-24 sm:mb-32 grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-10 lg:gap-12 items-center">
           <div>
@@ -194,8 +194,9 @@ function HomeIndex() {
 
         {/* HOW IT WORKS — dark navy with massive red numerals */}
         <section
-          className="mb-28 sm:mb-36 px-8 sm:px-14 py-14 sm:py-20 text-white"
+          className="mb-28 sm:mb-36 rounded-3xl px-6 sm:px-10 lg:px-14 py-14 sm:py-20 text-white"
           style={{ background: INK }}
+
         >
           <div className="text-[11px] font-bold uppercase tracking-[0.3em] mb-3" style={{ color: ACCENT }}>
             {isId ? "Proses" : "Process"}

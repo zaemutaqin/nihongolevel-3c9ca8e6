@@ -135,7 +135,7 @@ function NameGenerator() {
   const svg = result ? buildMeishiSVG(name.trim(), result, atejiIdx) : null;
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8 sm:py-12">
+    <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
       <header className="text-center mb-8">
         <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary mb-3">
           <Sparkles className="w-3.5 h-3.5" />

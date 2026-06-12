@@ -80,7 +80,7 @@ function InterviewIndex() {
   }, [user]);
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8 sm:py-12">
+    <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
       <header className="mb-8">
         <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
           {isId ? "AI Interview Simulator" : "AI Interview Simulator"}

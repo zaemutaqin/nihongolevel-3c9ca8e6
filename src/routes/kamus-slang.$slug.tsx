@@ -27,13 +27,13 @@ export const Route = createFileRoute("/kamus-slang/$slug")({
     };
   },
   errorComponent: () => (
-    <div className="mx-auto max-w-2xl px-4 py-12 text-center">
+    <div className="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8 py-12 text-center">
       <p className="text-sm text-muted-foreground">Terjadi kesalahan.</p>
       <Link to="/kamus-slang" className="text-primary underline text-sm">Kembali ke kamus</Link>
     </div>
   ),
   notFoundComponent: () => (
-    <div className="mx-auto max-w-2xl px-4 py-12 text-center">
+    <div className="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8 py-12 text-center">
       <h1 className="text-xl font-bold mb-2">Kata tidak ditemukan</h1>
       <Link to="/kamus-slang" className="text-primary underline text-sm">Kembali ke kamus</Link>
     </div>
@@ -60,7 +60,7 @@ function SlangDetail() {
   ).slice(0, 4);
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-8 sm:py-12">
+    <div className="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
       <Link
         to="/kamus-slang"
         className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-6"
