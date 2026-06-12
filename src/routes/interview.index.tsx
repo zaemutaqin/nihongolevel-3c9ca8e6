@@ -52,10 +52,20 @@ function InterviewIndex() {
   const isId = lang === "id";
   const [history, setHistory] = useState<SessionRow[]>([]);
   const [loading, setLoading] = useState(false);
+  const [activeCat, setActiveCat] = useState<ScenarioCategory | "all">("all");
+
+  const visible = useMemo(
+    () =>
+      activeCat === "all"
+        ? INTERVIEW_SCENARIOS
+        : INTERVIEW_SCENARIOS.filter((s) => s.category === activeCat),
+    [activeCat],
+  );
 
   useEffect(() => {
     if (!user) return;
     setLoading(true);
+
     supabase
       .from("interview_sessions")
       .select("id,scenario_id,scenario_title,grammar_score,naturalness_score,confidence_score,vocabulary_level,created_at")
