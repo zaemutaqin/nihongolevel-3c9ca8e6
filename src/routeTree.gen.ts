@@ -21,10 +21,10 @@ import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PanduanWisataRouteImport } from './routes/panduan-wisata'
-import { Route as HanashiteRouteImport } from './routes/hanashite'
 import { Route as FavoritRouteImport } from './routes/favorit'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as HanashiteIndexRouteImport } from './routes/hanashite.index'
 import { Route as HanashiteScenarioIdRouteImport } from './routes/hanashite.$scenarioId'
 import { Route as ApiTranslateRouteImport } from './routes/api/translate'
 import { Route as ApiHanashiteRouteImport } from './routes/api/hanashite'
@@ -92,11 +92,6 @@ const PanduanWisataRoute = PanduanWisataRouteImport.update({
   path: '/panduan-wisata',
   getParentRoute: () => rootRouteImport,
 } as any)
-const HanashiteRoute = HanashiteRouteImport.update({
-  id: '/hanashite',
-  path: '/hanashite',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const FavoritRoute = FavoritRouteImport.update({
   id: '/favorit',
   path: '/favorit',
@@ -110,6 +105,11 @@ const DashboardRoute = DashboardRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HanashiteIndexRoute = HanashiteIndexRouteImport.update({
+  id: '/hanashite/',
+  path: '/hanashite/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HanashiteScenarioIdRoute = HanashiteScenarioIdRouteImport.update({
@@ -149,7 +149,6 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/favorit': typeof FavoritRoute
-  '/hanashite': typeof HanashiteRouteWithChildren
   '/panduan-wisata': typeof PanduanWisataRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
@@ -166,6 +165,7 @@ export interface FileRoutesByFullPath {
   '/api/hanashite': typeof ApiHanashiteRoute
   '/api/translate': typeof ApiTranslateRoute
   '/hanashite/$scenarioId': typeof HanashiteScenarioIdRoute
+  '/hanashite/': typeof HanashiteIndexRoute
   '/api/public/payments/reconcile': typeof ApiPublicPaymentsReconcileRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -173,7 +173,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/favorit': typeof FavoritRoute
-  '/hanashite': typeof HanashiteRouteWithChildren
   '/panduan-wisata': typeof PanduanWisataRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
@@ -190,6 +189,7 @@ export interface FileRoutesByTo {
   '/api/hanashite': typeof ApiHanashiteRoute
   '/api/translate': typeof ApiTranslateRoute
   '/hanashite/$scenarioId': typeof HanashiteScenarioIdRoute
+  '/hanashite': typeof HanashiteIndexRoute
   '/api/public/payments/reconcile': typeof ApiPublicPaymentsReconcileRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -198,7 +198,6 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/favorit': typeof FavoritRoute
-  '/hanashite': typeof HanashiteRouteWithChildren
   '/panduan-wisata': typeof PanduanWisataRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
@@ -215,6 +214,7 @@ export interface FileRoutesById {
   '/api/hanashite': typeof ApiHanashiteRoute
   '/api/translate': typeof ApiTranslateRoute
   '/hanashite/$scenarioId': typeof HanashiteScenarioIdRoute
+  '/hanashite/': typeof HanashiteIndexRoute
   '/api/public/payments/reconcile': typeof ApiPublicPaymentsReconcileRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -224,7 +224,6 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/favorit'
-    | '/hanashite'
     | '/panduan-wisata'
     | '/pricing'
     | '/privacy'
@@ -241,6 +240,7 @@ export interface FileRouteTypes {
     | '/api/hanashite'
     | '/api/translate'
     | '/hanashite/$scenarioId'
+    | '/hanashite/'
     | '/api/public/payments/reconcile'
     | '/api/public/payments/webhook'
   fileRoutesByTo: FileRoutesByTo
@@ -248,7 +248,6 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/favorit'
-    | '/hanashite'
     | '/panduan-wisata'
     | '/pricing'
     | '/privacy'
@@ -265,6 +264,7 @@ export interface FileRouteTypes {
     | '/api/hanashite'
     | '/api/translate'
     | '/hanashite/$scenarioId'
+    | '/hanashite'
     | '/api/public/payments/reconcile'
     | '/api/public/payments/webhook'
   id:
@@ -272,7 +272,6 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/favorit'
-    | '/hanashite'
     | '/panduan-wisata'
     | '/pricing'
     | '/privacy'
@@ -289,6 +288,7 @@ export interface FileRouteTypes {
     | '/api/hanashite'
     | '/api/translate'
     | '/hanashite/$scenarioId'
+    | '/hanashite/'
     | '/api/public/payments/reconcile'
     | '/api/public/payments/webhook'
   fileRoutesById: FileRoutesById
@@ -297,7 +297,6 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRoute
   FavoritRoute: typeof FavoritRoute
-  HanashiteRoute: typeof HanashiteRouteWithChildren
   PanduanWisataRoute: typeof PanduanWisataRoute
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
@@ -313,6 +312,7 @@ export interface RootRouteChildren {
   ApiActivateProRoute: typeof ApiActivateProRoute
   ApiHanashiteRoute: typeof ApiHanashiteRoute
   ApiTranslateRoute: typeof ApiTranslateRoute
+  HanashiteIndexRoute: typeof HanashiteIndexRoute
   ApiPublicPaymentsReconcileRoute: typeof ApiPublicPaymentsReconcileRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
@@ -403,13 +403,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PanduanWisataRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/hanashite': {
-      id: '/hanashite'
-      path: '/hanashite'
-      fullPath: '/hanashite'
-      preLoaderRoute: typeof HanashiteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/favorit': {
       id: '/favorit'
       path: '/favorit'
@@ -429,6 +422,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hanashite/': {
+      id: '/hanashite/'
+      path: '/hanashite'
+      fullPath: '/hanashite/'
+      preLoaderRoute: typeof HanashiteIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/hanashite/$scenarioId': {
@@ -476,23 +476,10 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface HanashiteRouteChildren {
-  HanashiteScenarioIdRoute: typeof HanashiteScenarioIdRoute
-}
-
-const HanashiteRouteChildren: HanashiteRouteChildren = {
-  HanashiteScenarioIdRoute: HanashiteScenarioIdRoute,
-}
-
-const HanashiteRouteWithChildren = HanashiteRoute._addFileChildren(
-  HanashiteRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
   FavoritRoute: FavoritRoute,
-  HanashiteRoute: HanashiteRouteWithChildren,
   PanduanWisataRoute: PanduanWisataRoute,
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
@@ -508,9 +495,20 @@ const rootRouteChildren: RootRouteChildren = {
   ApiActivateProRoute: ApiActivateProRoute,
   ApiHanashiteRoute: ApiHanashiteRoute,
   ApiTranslateRoute: ApiTranslateRoute,
+  HanashiteIndexRoute: HanashiteIndexRoute,
   ApiPublicPaymentsReconcileRoute: ApiPublicPaymentsReconcileRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

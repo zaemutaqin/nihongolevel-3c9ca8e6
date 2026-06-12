@@ -5,7 +5,7 @@ import { useT } from "@/lib/i18n";
 import { useAuth } from "@/lib/auth";
 import { SignInButton } from "@/components/SignInButton";
 
-export const Route = createFileRoute("/hanashite")({
+export const Route = createFileRoute("/hanashite/")({
   head: () => ({
     meta: [
       { title: "Hanashite Room — Simulasi Bicara AI | NihongoLevel" },
