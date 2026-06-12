@@ -60,7 +60,7 @@ import {
   type LevelKey,
 } from "@/lib/storage";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/translate")({
   head: () => ({
     meta: [
       { title: "NihongoLevel — Belajar Bicara Bahasa Jepang Natural" },
