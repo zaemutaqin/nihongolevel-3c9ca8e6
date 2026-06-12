@@ -105,14 +105,6 @@ function HomeIndex() {
               </Link>
             </div>
 
-            {!user && (
-              <div className="mt-7 flex items-center gap-3">
-                <SignInButton />
-                <span className="text-sm" style={{ color: INK_SOFT }}>
-                  {isId ? "Gratis. Tanpa kartu kredit." : "Free. No credit card."}
-                </span>
-              </div>
-            )}
           </div>
 
           {/* Right: single flat illustration */}
