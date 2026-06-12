@@ -1,12 +1,18 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Loader2, ChevronRight, Clock, Trophy } from "lucide-react";
-import { INTERVIEW_SCENARIOS } from "@/lib/interview-scenarios";
+import {
+  INTERVIEW_SCENARIOS,
+  SCENARIO_CATEGORIES,
+  type ScenarioCategory,
+} from "@/lib/interview-scenarios";
 import { useT } from "@/lib/i18n";
 import { useAuth } from "@/lib/auth";
 import { SignInButton } from "@/components/SignInButton";
 import { UsageMeter } from "@/components/UsageMeter";
 import { supabase } from "@/integrations/supabase/client";
+import { cn } from "@/lib/utils";
+
 
 type SessionRow = {
   id: string;
