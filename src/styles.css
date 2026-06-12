@@ -162,6 +162,16 @@
   font-feature-settings: "palt";
 }
 
+@utility font-display {
+  font-family: "DM Serif Display", "Playfair Display", Georgia, serif;
+  letter-spacing: -0.01em;
+}
+
+@utility writing-vertical {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+
 @keyframes natural-pulse {
   0%, 100% {
     box-shadow: 0 0 0 0 color-mix(in oklab, var(--level-n3) 35%, transparent);
