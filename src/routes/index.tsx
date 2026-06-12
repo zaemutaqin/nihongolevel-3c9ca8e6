@@ -11,7 +11,7 @@ import {
 import { useT } from "@/lib/i18n";
 import { useAuth } from "@/lib/auth";
 
-import heroIllustration from "@/assets/hero-illustration.png";
+import heroIllustration from "@/assets/hero-illustration.webp";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -30,7 +30,10 @@ export const Route = createFileRoute("/")({
       },
       { property: "og:url", content: "/" },
     ],
-    links: [{ rel: "canonical", href: "/" }],
+    links: [
+      { rel: "canonical", href: "/" },
+      { rel: "preload", as: "image", href: heroIllustration, fetchpriority: "high" } as any,
+    ],
   }),
   component: HomeIndex,
 });
@@ -111,6 +114,9 @@ function HomeIndex() {
               alt={isId ? "Ilustrasi pekerja Indonesia belajar bahasa Jepang" : "Indonesian worker learning Japanese"}
               width={1024}
               height={1024}
+              loading="eager"
+              fetchPriority="high"
+              decoding="async"
               className="w-full h-auto"
             />
           </div>
