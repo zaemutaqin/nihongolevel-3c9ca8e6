@@ -238,6 +238,17 @@ function InterviewPlay() {
       const j = await res.json();
       setEvaluation(j.evaluation as Evaluation);
       gtagEvent("interview_feedback", { scenario: scenario.id });
+      gtagEvent("interview_completed", {
+        scenario: scenario.id,
+        avg_score: String(
+          Math.round(
+            ((j.evaluation?.grammar_score ?? 0) +
+              (j.evaluation?.naturalness_score ?? 0) +
+              (j.evaluation?.confidence_score ?? 0)) /
+              3,
+          ),
+        ),
+      });
     } catch (e) {
       const code = (e as Error)?.message || "AI_UNAVAILABLE";
       setError(friendlyError(code, isId));
@@ -245,6 +256,18 @@ function InterviewPlay() {
       setEvaluating(false);
     }
   };
+
+  const retryLastMessage = async () => {
+    setError(null);
+    // Remove last assistant placeholder if any, then resend last user msg
+    const lastUser = [...messages].reverse().find((m) => m.role === "user");
+    if (!lastUser) return;
+    // Trim trailing user message and re-trigger send by setting input
+    setMessages((m) => m.filter((x) => x.id !== lastUser.id));
+    setInput(lastUser.content);
+    setTimeout(() => send(), 50);
+  };
+
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-4 sm:py-6 flex flex-col h-[calc(100vh-6rem)]">
