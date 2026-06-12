@@ -7,7 +7,7 @@ export const refundHead = () => ({
       {
         name: "description",
         content:
-          "30-day money-back guarantee for NihongoLevel Pro. Refunds are processed by Paddle, our Merchant of Record. Request a refund at paddle.net.",
+          "30-day money-back guarantee for NihongoLevel Pro. Refunds are processed by Paddle, our Merchant of Record.",
       },
       { property: "og:title", content: "Refund Policy — NihongoLevel" },
       {
@@ -15,11 +15,30 @@ export const refundHead = () => ({
         content:
           "30-day money-back guarantee. Refunds handled by Paddle as our Merchant of Record.",
       },
+      { property: "og:url", content: "/refund-policy" },
     ],
+    links: [{ rel: "canonical", href: "/refund-policy" }],
   });
 
 export const Route = createFileRoute("/refund")({
-  head: refundHead,
+  head: () => ({
+    meta: [
+      { title: "Refund — NihongoLevel" },
+      {
+        name: "description",
+        content:
+          "NihongoLevel refund summary. See the full Refund Policy for the 30-day guarantee and Paddle processing details.",
+      },
+      { property: "og:title", content: "Refund — NihongoLevel (short alias)" },
+      {
+        property: "og:description",
+        content:
+          "Short alias for NihongoLevel's Refund Policy. View the full policy at /refund-policy.",
+      },
+      { property: "og:url", content: "/refund-policy" },
+    ],
+    links: [{ rel: "canonical", href: "/refund-policy" }],
+  }),
   component: RefundPage,
 });
 
