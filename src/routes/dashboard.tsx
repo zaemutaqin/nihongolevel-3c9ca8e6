@@ -325,6 +325,7 @@ function DashboardPage() {
           </div>
         )}
       </Section>
+      </>}
 
       {modalFav && <QuickReviewModal fav={modalFav} onClose={() => setModalFav(null)} />}
     </div>
