@@ -7,7 +7,7 @@ export const termsHead = () => ({
       {
         name: "description",
         content:
-          "Terms of Service for NihongoLevel, operated by zaenal mutaqin. Read the rules for using the service, including payment terms and Paddle as Merchant of Record.",
+          "Terms of Service for NihongoLevel: rules for using the service, payment terms, and Paddle as Merchant of Record.",
       },
       { property: "og:title", content: "Terms of Service — NihongoLevel" },
       {
@@ -15,11 +15,30 @@ export const termsHead = () => ({
         content:
           "The rules and conditions for using NihongoLevel, operated by zaenal mutaqin.",
       },
+      { property: "og:url", content: "/terms-of-service" },
     ],
+    links: [{ rel: "canonical", href: "/terms-of-service" }],
   });
 
 export const Route = createFileRoute("/terms")({
-  head: termsHead,
+  head: () => ({
+    meta: [
+      { title: "Terms — NihongoLevel" },
+      {
+        name: "description",
+        content:
+          "NihongoLevel terms summary. See the full Terms of Service for usage rules and Paddle payment details.",
+      },
+      { property: "og:title", content: "Terms — NihongoLevel (short alias)" },
+      {
+        property: "og:description",
+        content:
+          "Short alias for NihongoLevel's Terms of Service. View the full document at /terms-of-service.",
+      },
+      { property: "og:url", content: "/terms-of-service" },
+    ],
+    links: [{ rel: "canonical", href: "/terms-of-service" }],
+  }),
   component: TermsPage,
 });
 
