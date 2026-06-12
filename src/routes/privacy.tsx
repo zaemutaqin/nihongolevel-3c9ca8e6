@@ -7,7 +7,7 @@ export const privacyHead = () => ({
     {
       name: "description",
       content:
-        "Privacy Policy for NihongoLevel, operated by zaenal mutaqin. What personal data we collect, why, who we share it with (including Paddle as Merchant of Record), and your rights.",
+        "How NihongoLevel collects, uses, and shares your data, including Paddle as Merchant of Record, and your rights.",
     },
     { property: "og:title", content: "Privacy Policy — NihongoLevel" },
     {
@@ -15,11 +15,30 @@ export const privacyHead = () => ({
       content:
         "How NihongoLevel handles your personal data, including data sharing with Paddle as our Merchant of Record.",
     },
+    { property: "og:url", content: "/privacy-policy" },
   ],
+  links: [{ rel: "canonical", href: "/privacy-policy" }],
 });
 
 export const Route = createFileRoute("/privacy")({
-  head: privacyHead,
+  head: () => ({
+    meta: [
+      { title: "Privacy — NihongoLevel" },
+      {
+        name: "description",
+        content:
+          "NihongoLevel privacy summary. See the full Privacy Policy for data collection, Paddle billing, and your rights.",
+      },
+      { property: "og:title", content: "Privacy — NihongoLevel (short alias)" },
+      {
+        property: "og:description",
+        content:
+          "Short alias for NihongoLevel's Privacy Policy. View the full policy at /privacy-policy.",
+      },
+      { property: "og:url", content: "/privacy-policy" },
+    ],
+    links: [{ rel: "canonical", href: "/privacy-policy" }],
+  }),
   component: PrivacyPage,
 });
 
