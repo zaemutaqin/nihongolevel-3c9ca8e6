@@ -277,8 +277,8 @@ const EN: Dict = {
   "nav.interview_short": "Interview",
   "nav.translate_short": "Translator",
 
-  "home.title": "Learn to Speak Natural Japanese",
-  "home.subtitle": "Learn to speak like a native Japanese",
+  "home.title": "Japanese Translator for Work & Life",
+  "home.subtitle": "Get 4 levels: Casual, Polite, Workplace, and Keigo — ready to use at your Japanese workplace.",
   "home.inputLabel": "Sentence in English",
   "home.placeholder": "Type a situation or sentence in English...",
   "home.addContext": "Add context (optional)",
