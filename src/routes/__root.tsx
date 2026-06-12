@@ -12,6 +12,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AppShell } from "../components/AppShell";
 import { AuthProvider } from "../lib/auth";
+import { registerPwa } from "../lib/pwa-register";
 
 function NotFoundComponent() {
   return (
