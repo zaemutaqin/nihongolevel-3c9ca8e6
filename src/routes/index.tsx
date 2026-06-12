@@ -35,10 +35,10 @@ export const Route = createFileRoute("/")({
   component: HomeIndex,
 });
 
-const INK = "#0F172A";
-const INK_SOFT = "#475569";
+const INK = "#2A1A1E";
+const INK_SOFT = "#5C4A4F";
 const ACCENT = "#DC2626";
-const CREAM = "#F5F1E8";
+const CREAM = "#F2EDE4";
 
 function HomeIndex() {
   const { lang } = useT();
