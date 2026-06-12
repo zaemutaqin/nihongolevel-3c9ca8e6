@@ -54,7 +54,7 @@ function HomeIndex() {
           <div>
             <span
               className="inline-block text-[10px] font-bold uppercase tracking-[0.24em] mb-5 px-3.5 py-1.5 rounded-full"
-              style={{ background: "#FDECEC", color: ACCENT, border: `1px solid ${ACCENT}33` }}
+              style={{ background: ACCENT, color: INK }}
             >
               {isId ? "AI Coach untuk Pekerja Indonesia" : "AI Coach for Workers"}
             </span>
