@@ -46,6 +46,8 @@ const ID: Dict = {
   "nav.favorites_short": "Favorit",
   "nav.dashboard_short": "Levelku",
   "nav.review_short": "Latihan",
+  "nav.interview_short": "Interview",
+  "nav.translate_short": "Translator",
 
   // Home
   "home.title": "Belajar Bicara Bahasa Jepang Natural",
@@ -272,6 +274,8 @@ const EN: Dict = {
   "nav.favorites_short": "Favorites",
   "nav.dashboard_short": "My Level",
   "nav.review_short": "Practice",
+  "nav.interview_short": "Interview",
+  "nav.translate_short": "Translator",
 
   "home.title": "Learn to Speak Natural Japanese",
   "home.subtitle": "Learn to speak like a native Japanese",
