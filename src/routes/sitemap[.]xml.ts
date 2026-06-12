@@ -16,6 +16,11 @@ export const Route = createFileRoute("/sitemap.xml")({
         const entries: SitemapEntry[] = [
           { path: "/", changefreq: "weekly", priority: "1.0" },
           { path: "/pricing", changefreq: "monthly", priority: "0.9" },
+          { path: "/translate", changefreq: "weekly", priority: "0.9" },
+          { path: "/nama-jepang", changefreq: "monthly", priority: "0.9" },
+          { path: "/game-kana", changefreq: "monthly", priority: "0.8" },
+          { path: "/kamus-slang", changefreq: "weekly", priority: "0.9" },
+          ...["yabai","sugoi","kawaii","baka","daijoubu","ganbatte","uso","maji","tsundere","senpai","itadakimasu","otsukare","mendokusai","moshi-moshi","sumimasen","kakkoii","natsukashii","ittekimasu","tadaima","ureshii","hontou","chotto","kimochi","shouganai","kanpai"].map((slug) => ({ path: `/kamus-slang/${slug}`, changefreq: "monthly" as const, priority: "0.7" })),
           { path: "/panduan-wisata", changefreq: "monthly", priority: "0.8" },
           { path: "/tabel-hiragana", changefreq: "monthly", priority: "0.8" },
           { path: "/riwayat", changefreq: "weekly", priority: "0.5" },
