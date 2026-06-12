@@ -6,6 +6,7 @@ import { useAuth } from "@/lib/auth";
 import { usePaddleCheckout } from "@/hooks/usePaddleCheckout";
 import { lovable } from "@/integrations/lovable";
 import { supabase } from "@/integrations/supabase/client";
+import { gtagEvent } from "@/lib/gtag";
 
 interface UpgradeModalProps {
   open: boolean;
@@ -69,6 +70,7 @@ export function UpgradeModal({ open, onClose }: UpgradeModalProps) {
   };
 
   const handleUpgrade = async () => {
+    gtagEvent("upgrade_clicked", { signed_in: user ? "yes" : "no" });
     if (!user) {
       await triggerSignIn();
       return;
@@ -79,6 +81,7 @@ export function UpgradeModal({ open, onClose }: UpgradeModalProps) {
       userId: user.id,
     });
   };
+
 
   return createPortal(
     <div

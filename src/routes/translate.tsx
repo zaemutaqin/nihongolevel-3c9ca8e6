@@ -192,7 +192,9 @@ function Index() {
     if (!cached) {
       setCachedResult(buildCacheKey(sentence, listener, mood), full);
     }
+    gtagEvent("translate_done", { cached: cached ? "yes" : "no" });
   };
+
 
   const handleTranslate = async (text?: string) => {
     const sentence = (text ?? input).trim();

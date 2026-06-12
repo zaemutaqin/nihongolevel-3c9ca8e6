@@ -238,6 +238,17 @@ function InterviewPlay() {
       const j = await res.json();
       setEvaluation(j.evaluation as Evaluation);
       gtagEvent("interview_feedback", { scenario: scenario.id });
+      gtagEvent("interview_completed", {
+        scenario: scenario.id,
+        avg_score: String(
+          Math.round(
+            ((j.evaluation?.grammar_score ?? 0) +
+              (j.evaluation?.naturalness_score ?? 0) +
+              (j.evaluation?.confidence_score ?? 0)) /
+              3,
+          ),
+        ),
+      });
     } catch (e) {
       const code = (e as Error)?.message || "AI_UNAVAILABLE";
       setError(friendlyError(code, isId));
@@ -245,6 +256,18 @@ function InterviewPlay() {
       setEvaluating(false);
     }
   };
+
+  const retryLastMessage = async () => {
+    setError(null);
+    // Remove last assistant placeholder if any, then resend last user msg
+    const lastUser = [...messages].reverse().find((m) => m.role === "user");
+    if (!lastUser) return;
+    // Trim trailing user message and re-trigger send by setting input
+    setMessages((m) => m.filter((x) => x.id !== lastUser.id));
+    setInput(lastUser.content);
+    setTimeout(() => send(), 50);
+  };
+
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-4 sm:py-6 flex flex-col h-[calc(100vh-6rem)]">
@@ -332,11 +355,20 @@ function InterviewPlay() {
           </div>
         )}
         {error && (
-          <div className="flex items-start gap-2 rounded-lg border border-destructive/40 bg-destructive/5 p-3 text-xs text-destructive">
-            <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
-            <p>{error}</p>
+          <div className="rounded-lg border border-destructive/40 bg-destructive/5 p-3 text-xs">
+            <div className="flex items-start gap-2 text-destructive">
+              <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+              <p>{error}</p>
+            </div>
+            <button
+              onClick={retryLastMessage}
+              className="mt-2 inline-flex items-center gap-1 rounded-md border border-border bg-background px-2.5 py-1 text-xs font-semibold hover:bg-muted"
+            >
+              {isId ? "Coba lagi" : "Retry"}
+            </button>
           </div>
         )}
+
 
         {evaluation && (
           <div className="mt-6 rounded-2xl border-2 border-primary/40 bg-primary/5 p-5 space-y-4">
