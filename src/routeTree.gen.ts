@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsOfServiceRouteImport } from './routes/terms-of-service'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as TabelHiraganaRouteImport } from './routes/tabel-hiragana'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as RiwayatRouteImport } from './routes/riwayat'
 import { Route as ReviewRouteImport } from './routes/review'
@@ -36,6 +37,11 @@ const TermsOfServiceRoute = TermsOfServiceRouteImport.update({
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TabelHiraganaRoute = TabelHiraganaRouteImport.update({
+  id: '/tabel-hiragana',
+  path: '/tabel-hiragana',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -134,6 +140,7 @@ export interface FileRoutesByFullPath {
   '/review': typeof ReviewRoute
   '/riwayat': typeof RiwayatRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/tabel-hiragana': typeof TabelHiraganaRoute
   '/terms': typeof TermsRoute
   '/terms-of-service': typeof TermsOfServiceRoute
   '/api/activate-pro': typeof ApiActivateProRoute
@@ -154,6 +161,7 @@ export interface FileRoutesByTo {
   '/review': typeof ReviewRoute
   '/riwayat': typeof RiwayatRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/tabel-hiragana': typeof TabelHiraganaRoute
   '/terms': typeof TermsRoute
   '/terms-of-service': typeof TermsOfServiceRoute
   '/api/activate-pro': typeof ApiActivateProRoute
@@ -175,6 +183,7 @@ export interface FileRoutesById {
   '/review': typeof ReviewRoute
   '/riwayat': typeof RiwayatRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/tabel-hiragana': typeof TabelHiraganaRoute
   '/terms': typeof TermsRoute
   '/terms-of-service': typeof TermsOfServiceRoute
   '/api/activate-pro': typeof ApiActivateProRoute
@@ -197,6 +206,7 @@ export interface FileRouteTypes {
     | '/review'
     | '/riwayat'
     | '/sitemap.xml'
+    | '/tabel-hiragana'
     | '/terms'
     | '/terms-of-service'
     | '/api/activate-pro'
@@ -217,6 +227,7 @@ export interface FileRouteTypes {
     | '/review'
     | '/riwayat'
     | '/sitemap.xml'
+    | '/tabel-hiragana'
     | '/terms'
     | '/terms-of-service'
     | '/api/activate-pro'
@@ -237,6 +248,7 @@ export interface FileRouteTypes {
     | '/review'
     | '/riwayat'
     | '/sitemap.xml'
+    | '/tabel-hiragana'
     | '/terms'
     | '/terms-of-service'
     | '/api/activate-pro'
@@ -258,6 +270,7 @@ export interface RootRouteChildren {
   ReviewRoute: typeof ReviewRoute
   RiwayatRoute: typeof RiwayatRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  TabelHiraganaRoute: typeof TabelHiraganaRoute
   TermsRoute: typeof TermsRoute
   TermsOfServiceRoute: typeof TermsOfServiceRoute
   ApiActivateProRoute: typeof ApiActivateProRoute
@@ -280,6 +293,13 @@ declare module '@tanstack/react-router' {
       path: '/terms'
       fullPath: '/terms'
       preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tabel-hiragana': {
+      id: '/tabel-hiragana'
+      path: '/tabel-hiragana'
+      fullPath: '/tabel-hiragana'
+      preLoaderRoute: typeof TabelHiraganaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap.xml': {
@@ -410,6 +430,7 @@ const rootRouteChildren: RootRouteChildren = {
   ReviewRoute: ReviewRoute,
   RiwayatRoute: RiwayatRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  TabelHiraganaRoute: TabelHiraganaRoute,
   TermsRoute: TermsRoute,
   TermsOfServiceRoute: TermsOfServiceRoute,
   ApiActivateProRoute: ApiActivateProRoute,
