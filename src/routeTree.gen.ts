@@ -22,11 +22,16 @@ import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PanduanWisataRouteImport } from './routes/panduan-wisata'
+import { Route as NamaJepangRouteImport } from './routes/nama-jepang'
+import { Route as GameKanaRouteImport } from './routes/game-kana'
 import { Route as FavoritRouteImport } from './routes/favorit'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as KamusSlangIndexRouteImport } from './routes/kamus-slang.index'
+import { Route as KamusSlangSlugRouteImport } from './routes/kamus-slang.$slug'
 import { Route as HanashiteScenarioIdRouteImport } from './routes/hanashite.$scenarioId'
 import { Route as ApiTranslateRouteImport } from './routes/api/translate'
+import { Route as ApiNamaJepangRouteImport } from './routes/api/nama-jepang'
 import { Route as ApiHanashiteRouteImport } from './routes/api/hanashite'
 import { Route as ApiActivateProRouteImport } from './routes/api/activate-pro'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
@@ -97,6 +102,16 @@ const PanduanWisataRoute = PanduanWisataRouteImport.update({
   path: '/panduan-wisata',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NamaJepangRoute = NamaJepangRouteImport.update({
+  id: '/nama-jepang',
+  path: '/nama-jepang',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GameKanaRoute = GameKanaRouteImport.update({
+  id: '/game-kana',
+  path: '/game-kana',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FavoritRoute = FavoritRouteImport.update({
   id: '/favorit',
   path: '/favorit',
@@ -112,6 +127,16 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const KamusSlangIndexRoute = KamusSlangIndexRouteImport.update({
+  id: '/kamus-slang/',
+  path: '/kamus-slang/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KamusSlangSlugRoute = KamusSlangSlugRouteImport.update({
+  id: '/kamus-slang/$slug',
+  path: '/kamus-slang/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const HanashiteScenarioIdRoute = HanashiteScenarioIdRouteImport.update({
   id: '/hanashite/$scenarioId',
   path: '/hanashite/$scenarioId',
@@ -120,6 +145,11 @@ const HanashiteScenarioIdRoute = HanashiteScenarioIdRouteImport.update({
 const ApiTranslateRoute = ApiTranslateRouteImport.update({
   id: '/api/translate',
   path: '/api/translate',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiNamaJepangRoute = ApiNamaJepangRouteImport.update({
+  id: '/api/nama-jepang',
+  path: '/api/nama-jepang',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiHanashiteRoute = ApiHanashiteRouteImport.update({
@@ -149,6 +179,8 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/favorit': typeof FavoritRoute
+  '/game-kana': typeof GameKanaRoute
+  '/nama-jepang': typeof NamaJepangRoute
   '/panduan-wisata': typeof PanduanWisataRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
@@ -164,8 +196,11 @@ export interface FileRoutesByFullPath {
   '/translate': typeof TranslateRoute
   '/api/activate-pro': typeof ApiActivateProRoute
   '/api/hanashite': typeof ApiHanashiteRoute
+  '/api/nama-jepang': typeof ApiNamaJepangRoute
   '/api/translate': typeof ApiTranslateRoute
   '/hanashite/$scenarioId': typeof HanashiteScenarioIdRoute
+  '/kamus-slang/$slug': typeof KamusSlangSlugRoute
+  '/kamus-slang/': typeof KamusSlangIndexRoute
   '/api/public/payments/reconcile': typeof ApiPublicPaymentsReconcileRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -173,6 +208,8 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/favorit': typeof FavoritRoute
+  '/game-kana': typeof GameKanaRoute
+  '/nama-jepang': typeof NamaJepangRoute
   '/panduan-wisata': typeof PanduanWisataRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
@@ -188,8 +225,11 @@ export interface FileRoutesByTo {
   '/translate': typeof TranslateRoute
   '/api/activate-pro': typeof ApiActivateProRoute
   '/api/hanashite': typeof ApiHanashiteRoute
+  '/api/nama-jepang': typeof ApiNamaJepangRoute
   '/api/translate': typeof ApiTranslateRoute
   '/hanashite/$scenarioId': typeof HanashiteScenarioIdRoute
+  '/kamus-slang/$slug': typeof KamusSlangSlugRoute
+  '/kamus-slang': typeof KamusSlangIndexRoute
   '/api/public/payments/reconcile': typeof ApiPublicPaymentsReconcileRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -198,6 +238,8 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/favorit': typeof FavoritRoute
+  '/game-kana': typeof GameKanaRoute
+  '/nama-jepang': typeof NamaJepangRoute
   '/panduan-wisata': typeof PanduanWisataRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
@@ -213,8 +255,11 @@ export interface FileRoutesById {
   '/translate': typeof TranslateRoute
   '/api/activate-pro': typeof ApiActivateProRoute
   '/api/hanashite': typeof ApiHanashiteRoute
+  '/api/nama-jepang': typeof ApiNamaJepangRoute
   '/api/translate': typeof ApiTranslateRoute
   '/hanashite/$scenarioId': typeof HanashiteScenarioIdRoute
+  '/kamus-slang/$slug': typeof KamusSlangSlugRoute
+  '/kamus-slang/': typeof KamusSlangIndexRoute
   '/api/public/payments/reconcile': typeof ApiPublicPaymentsReconcileRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -224,6 +269,8 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/favorit'
+    | '/game-kana'
+    | '/nama-jepang'
     | '/panduan-wisata'
     | '/pricing'
     | '/privacy'
@@ -239,8 +286,11 @@ export interface FileRouteTypes {
     | '/translate'
     | '/api/activate-pro'
     | '/api/hanashite'
+    | '/api/nama-jepang'
     | '/api/translate'
     | '/hanashite/$scenarioId'
+    | '/kamus-slang/$slug'
+    | '/kamus-slang/'
     | '/api/public/payments/reconcile'
     | '/api/public/payments/webhook'
   fileRoutesByTo: FileRoutesByTo
@@ -248,6 +298,8 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/favorit'
+    | '/game-kana'
+    | '/nama-jepang'
     | '/panduan-wisata'
     | '/pricing'
     | '/privacy'
@@ -263,8 +315,11 @@ export interface FileRouteTypes {
     | '/translate'
     | '/api/activate-pro'
     | '/api/hanashite'
+    | '/api/nama-jepang'
     | '/api/translate'
     | '/hanashite/$scenarioId'
+    | '/kamus-slang/$slug'
+    | '/kamus-slang'
     | '/api/public/payments/reconcile'
     | '/api/public/payments/webhook'
   id:
@@ -272,6 +327,8 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/favorit'
+    | '/game-kana'
+    | '/nama-jepang'
     | '/panduan-wisata'
     | '/pricing'
     | '/privacy'
@@ -287,8 +344,11 @@ export interface FileRouteTypes {
     | '/translate'
     | '/api/activate-pro'
     | '/api/hanashite'
+    | '/api/nama-jepang'
     | '/api/translate'
     | '/hanashite/$scenarioId'
+    | '/kamus-slang/$slug'
+    | '/kamus-slang/'
     | '/api/public/payments/reconcile'
     | '/api/public/payments/webhook'
   fileRoutesById: FileRoutesById
@@ -297,6 +357,8 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRoute
   FavoritRoute: typeof FavoritRoute
+  GameKanaRoute: typeof GameKanaRoute
+  NamaJepangRoute: typeof NamaJepangRoute
   PanduanWisataRoute: typeof PanduanWisataRoute
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
@@ -312,8 +374,11 @@ export interface RootRouteChildren {
   TranslateRoute: typeof TranslateRoute
   ApiActivateProRoute: typeof ApiActivateProRoute
   ApiHanashiteRoute: typeof ApiHanashiteRoute
+  ApiNamaJepangRoute: typeof ApiNamaJepangRoute
   ApiTranslateRoute: typeof ApiTranslateRoute
   HanashiteScenarioIdRoute: typeof HanashiteScenarioIdRoute
+  KamusSlangSlugRoute: typeof KamusSlangSlugRoute
+  KamusSlangIndexRoute: typeof KamusSlangIndexRoute
   ApiPublicPaymentsReconcileRoute: typeof ApiPublicPaymentsReconcileRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
@@ -411,6 +476,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PanduanWisataRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/nama-jepang': {
+      id: '/nama-jepang'
+      path: '/nama-jepang'
+      fullPath: '/nama-jepang'
+      preLoaderRoute: typeof NamaJepangRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/game-kana': {
+      id: '/game-kana'
+      path: '/game-kana'
+      fullPath: '/game-kana'
+      preLoaderRoute: typeof GameKanaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/favorit': {
       id: '/favorit'
       path: '/favorit'
@@ -432,6 +511,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/kamus-slang/': {
+      id: '/kamus-slang/'
+      path: '/kamus-slang'
+      fullPath: '/kamus-slang/'
+      preLoaderRoute: typeof KamusSlangIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/kamus-slang/$slug': {
+      id: '/kamus-slang/$slug'
+      path: '/kamus-slang/$slug'
+      fullPath: '/kamus-slang/$slug'
+      preLoaderRoute: typeof KamusSlangSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/hanashite/$scenarioId': {
       id: '/hanashite/$scenarioId'
       path: '/hanashite/$scenarioId'
@@ -444,6 +537,13 @@ declare module '@tanstack/react-router' {
       path: '/api/translate'
       fullPath: '/api/translate'
       preLoaderRoute: typeof ApiTranslateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/nama-jepang': {
+      id: '/api/nama-jepang'
+      path: '/api/nama-jepang'
+      fullPath: '/api/nama-jepang'
+      preLoaderRoute: typeof ApiNamaJepangRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/hanashite': {
@@ -481,6 +581,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
   FavoritRoute: FavoritRoute,
+  GameKanaRoute: GameKanaRoute,
+  NamaJepangRoute: NamaJepangRoute,
   PanduanWisataRoute: PanduanWisataRoute,
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
@@ -496,21 +598,14 @@ const rootRouteChildren: RootRouteChildren = {
   TranslateRoute: TranslateRoute,
   ApiActivateProRoute: ApiActivateProRoute,
   ApiHanashiteRoute: ApiHanashiteRoute,
+  ApiNamaJepangRoute: ApiNamaJepangRoute,
   ApiTranslateRoute: ApiTranslateRoute,
   HanashiteScenarioIdRoute: HanashiteScenarioIdRoute,
+  KamusSlangSlugRoute: KamusSlangSlugRoute,
+  KamusSlangIndexRoute: KamusSlangIndexRoute,
   ApiPublicPaymentsReconcileRoute: ApiPublicPaymentsReconcileRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
