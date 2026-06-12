@@ -19,6 +19,7 @@ export default defineConfig({
         filename: "sw.js",
         devOptions: { enabled: false },
         workbox: {
+          importScripts: ["/push-handler.js"],
           globPatterns: ["**/*.{js,css,html,svg,png,ico,webp,woff2}"],
           navigateFallback: "/",
           navigateFallbackDenylist: [/^\/api\//, /^\/~oauth/, /^\/sitemap\.xml$/, /^\/robots\.txt$/],

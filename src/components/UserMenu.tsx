@@ -6,6 +6,7 @@ import { useLang } from "@/lib/i18n";
 import { supabase } from "@/integrations/supabase/client";
 import { SignInButton } from "./SignInButton";
 import { UpgradeModal } from "./UpgradeModal";
+import { PushNotificationToggle } from "./PushNotificationToggle";
 
 export function UserMenu() {
   const { user, profile, signOut, refreshProfile } = useAuth();
@@ -155,6 +156,10 @@ export function UserMenu() {
               {msg && <p className="text-xs text-muted-foreground">{msg}</p>}
             </div>
           )}
+
+          <div className="p-3 border-b border-border">
+            <PushNotificationToggle />
+          </div>
 
           <button
             onClick={() => { setOpen(false); signOut(); }}
