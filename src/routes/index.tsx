@@ -252,7 +252,7 @@ function FeatureCard({
   title,
   desc,
 }: {
-  to: string;
+  to: "/nama-jepang" | "/kamus-slang" | "/game-kana" | "/translate" | "/tabel-hiragana";
   title: string;
   desc: string;
 }) {
