@@ -86,8 +86,8 @@ function HomeIndex() {
             <div className="flex flex-col sm:flex-row gap-3">
               <Link
                 to="/interview"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-sm sm:text-base font-bold text-white hover:opacity-90 transition"
-                style={{ background: ACCENT }}
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-sm sm:text-base font-bold hover:opacity-90 transition"
+                style={{ background: INK, color: "#fff" }}
               >
                 {isId ? "Coba Interview Simulator" : "Try Interview Simulator"}
                 <ArrowRight className="w-4 h-4" />
