@@ -22,6 +22,27 @@ export const Route = createFileRoute("/kamus-slang/")({
       },
     ],
     links: [{ rel: "canonical", href: "/kamus-slang" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          name: "Kamus Slang Jepang — Arti Kata Gaul Anime & Dorama | NihongoLevel",
+          description: "Kumpulan arti kata gaul Jepang yang sering muncul di anime, dorama, dan manga.",
+          url: "https://nihongolevel.lovable.app/kamus-slang",
+          mainEntity: {
+            "@type": "ItemList",
+            itemListElement: SLANG.map((s, i) => ({
+              "@type": "ListItem",
+              position: i + 1,
+              name: s.jp,
+              url: `https://nihongolevel.lovable.app/kamus-slang/${s.slug}`,
+            })),
+          },
+        }),
+      },
+    ],
   }),
   component: SlangIndex,
 });

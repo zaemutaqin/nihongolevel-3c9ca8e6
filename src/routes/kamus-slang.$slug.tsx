@@ -24,6 +24,23 @@ export const Route = createFileRoute("/kamus-slang/$slug")({
         { property: "og:description", content: `${e.meaning_id} — ${e.context_id}` },
       ],
       links: [{ rel: "canonical", href: `/kamus-slang/${e.slug}` }],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "DefinedTerm",
+            name: e.jp,
+            alternateName: e.romaji,
+            description: e.meaning_id,
+            inDefinedTermSet: {
+              "@type": "DefinedTermSet",
+              name: "Kamus Slang Jepang — NihongoLevel",
+              url: "https://nihongolevel.lovable.app/kamus-slang",
+            },
+          }),
+        },
+      ],
     };
   },
   errorComponent: () => (
