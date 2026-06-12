@@ -246,17 +246,17 @@ function HomeIndex() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
             {/* FREE — minimal */}
             <div
-              className="p-8 sm:p-10 flex flex-col"
-              style={{ border: `1px solid ${INK}`, background: "transparent" }}
+              className="p-8 sm:p-10 flex flex-col rounded-3xl bg-white"
+              style={{ border: `1px solid rgba(15,23,42,0.08)` }}
             >
               <div className="text-xs font-bold uppercase tracking-[0.24em] mb-6" style={{ color: INK_SOFT }}>
                 Free
               </div>
               <div className="flex items-baseline gap-2 mb-2">
                 <span className="text-6xl font-black tracking-tight">$0</span>
-                <span className="text-sm" style={{ color: INK_SOFT }}>
-                  {isId ? "selamanya" : "forever"}
-                </span>
+              </div>
+              <div className="text-sm mb-4" style={{ color: INK_SOFT }}>
+                {isId ? "selamanya" : "forever"}
               </div>
               <p className="text-sm mb-8" style={{ color: INK_SOFT }}>
                 {isId ? "Cocok untuk mencoba sebelum upgrade." : "Perfect for trying before you upgrade."}
@@ -267,15 +267,15 @@ function HomeIndex() {
                   : ["10 translator requests / day", "2 interview sessions / day", "2 life-sim sessions / day", "Basic history"]
                 ).map((f) => (
                   <li key={f} className="flex items-start gap-3 text-sm">
-                    <span className="mt-2 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: INK }} />
+                    <span className="mt-0.5 flex-shrink-0" style={{ color: ACCENT }}>✓</span>
                     <span>{f}</span>
                   </li>
                 ))}
               </ul>
               <Link
                 to="/translate"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-bold hover:bg-black/5 transition"
-                style={{ border: `1px solid ${INK}`, color: INK }}
+                className="inline-flex items-center justify-center gap-2 px-6 py-4 rounded-full text-sm font-bold hover:bg-black/5 transition"
+                style={{ background: "#EEF7FB", color: INK }}
               >
                 {isId ? "Mulai Gratis" : "Start Free"}
               </Link>
@@ -283,12 +283,12 @@ function HomeIndex() {
 
             {/* PRO — dominant red color block */}
             <div
-              className="p-8 sm:p-10 flex flex-col relative"
+              className="p-8 sm:p-10 flex flex-col relative rounded-3xl"
               style={{ background: ACCENT, color: CREAM }}
             >
               <div
-                className="absolute top-0 right-0 text-[10px] font-black uppercase tracking-[0.24em] px-3 py-1.5"
-                style={{ background: INK, color: CREAM }}
+                className="absolute top-6 right-6 text-[10px] font-bold uppercase tracking-[0.2em] px-3 py-1.5 rounded-full"
+                style={{ background: "rgba(0,0,0,0.25)", color: CREAM }}
               >
                 Lifetime Access
               </div>
@@ -297,9 +297,9 @@ function HomeIndex() {
               </div>
               <div className="flex items-baseline gap-2 mb-2">
                 <span className="text-6xl font-black tracking-tight">$19</span>
-                <span className="text-sm opacity-90">
-                  {isId ? "sekali bayar" : "one-time"}
-                </span>
+              </div>
+              <div className="text-sm mb-4 opacity-90">
+                {isId ? "sekali bayar" : "one-time"}
               </div>
               <p className="text-sm mb-8 opacity-90">
                 {isId ? "Bayar sekali, akses semua fitur selamanya." : "Pay once, unlock everything forever."}
@@ -310,14 +310,14 @@ function HomeIndex() {
                   : ["Unlimited translator", "Unlimited interviews", "All scenarios unlocked", "Full history & analytics"]
                 ).map((f) => (
                   <li key={f} className="flex items-start gap-3 text-sm">
-                    <span className="mt-2 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: CREAM }} />
+                    <span className="mt-0.5 flex-shrink-0">✓</span>
                     <span>{f}</span>
                   </li>
                 ))}
               </ul>
               <Link
                 to="/pricing"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-black hover:opacity-90 transition"
+                className="inline-flex items-center justify-center gap-2 px-6 py-4 rounded-full text-sm font-bold hover:opacity-90 transition"
                 style={{ background: CREAM, color: ACCENT }}
               >
                 {isId ? "Upgrade ke Pro" : "Upgrade to Pro"}
