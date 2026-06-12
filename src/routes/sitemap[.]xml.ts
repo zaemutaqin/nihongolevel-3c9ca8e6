@@ -17,9 +17,15 @@ export const Route = createFileRoute("/sitemap.xml")({
           { path: "/", changefreq: "weekly", priority: "1.0" },
           { path: "/pricing", changefreq: "monthly", priority: "0.9" },
           { path: "/panduan-wisata", changefreq: "monthly", priority: "0.8" },
+          { path: "/dashboard", changefreq: "weekly", priority: "0.6" },
+          { path: "/favorit", changefreq: "weekly", priority: "0.5" },
+          { path: "/review", changefreq: "weekly", priority: "0.5" },
           { path: "/terms-of-service", changefreq: "yearly", priority: "0.3" },
+          { path: "/terms", changefreq: "yearly", priority: "0.3" },
           { path: "/privacy-policy", changefreq: "yearly", priority: "0.3" },
+          { path: "/privacy", changefreq: "yearly", priority: "0.3" },
           { path: "/refund-policy", changefreq: "yearly", priority: "0.3" },
+          { path: "/refund", changefreq: "yearly", priority: "0.3" },
         ];
 
         const urls = entries.map((e) =>

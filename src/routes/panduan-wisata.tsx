@@ -22,7 +22,7 @@ export const Route = createFileRoute("/panduan-wisata")({
       {
         name: "description",
         content:
-          "Kosakata dan ekspresi bahasa Jepang natural untuk traveling: bandara, hotel, restoran, belanja, bertanya arah, dan darurat. Bedakan tingkat sopan N4–N1 seperti native speaker.",
+          "Kosakata & ekspresi bahasa Jepang untuk traveling: bandara, hotel, restoran, belanja, arah, darurat. Tingkat sopan N4–N1.",
       },
       {
         property: "og:title",

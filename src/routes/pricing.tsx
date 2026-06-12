@@ -10,7 +10,7 @@ export const Route = createFileRoute("/pricing")({
       {
         name: "description",
         content:
-          "Simple pricing for NihongoLevel. Free plan with 3 searches per day, or Pro lifetime access for $19 one-time — unlimited searches, full history, favorites, and daily practice.",
+          "Free plan with 3 daily searches, or Pro lifetime access for $19 — unlimited searches, history, and favorites.",
       },
       { property: "og:title", content: "Pricing — NihongoLevel Pro" },
       {
