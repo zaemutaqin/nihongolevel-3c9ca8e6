@@ -509,35 +509,29 @@ export function AlternativesSection({ items }: { items: AlternativeExpression[] 
   const { t } = useT();
   const sorted = [...items].sort((a, b) => (a.rank ?? 99) - (b.rank ?? 99));
   return (
-    <section>
-      <h2 className="text-sm font-bold uppercase tracking-wide mb-3 text-foreground/80">
+    <section className="border-t-[3px] border-foreground pt-6">
+      <h2 className="text-[11px] font-bold uppercase tracking-[0.25em] mb-8 text-foreground">
         {t("alt.title")}
       </h2>
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
         {sorted.map((alt, i) => {
-          const meta = styleMeta(alt.level);
           const rank = alt.rank ?? i + 1;
           const japanese = cleanJapanese(alt.japanese);
           return (
-            <div
-              key={i}
-              className="rounded-2xl border bg-card p-4 shadow-sm flex flex-col"
-              style={{ borderColor: `var(--${meta.tone})` + "40" }}
-            >
-              <div className="flex items-start gap-2 mb-2">
+            <div key={i} className="flex flex-col">
+              <div className="flex items-baseline gap-3 mb-3">
                 <span
-                  className="text-lg leading-none font-bold"
-                  style={{ color: `var(--${meta.tone})` }}
+                  className="text-2xl leading-none font-bold text-primary"
                   aria-label={`Peringkat ${rank}`}
                 >
                   {RANK_CIRCLE[rank - 1] ?? `(${rank})`}
                 </span>
                 <div className="min-w-0 flex-1">
-                  <p className="text-xs font-bold text-foreground leading-tight">
+                  <p className="text-[11px] uppercase tracking-[0.15em] font-bold text-foreground leading-tight">
                     {alt.role_label ?? t("alt.fallback")}
                   </p>
                   {alt.context_label && (
-                    <p className="text-[11px] text-muted-foreground mt-0.5">
+                    <p className="text-[11px] text-foreground/55 mt-0.5">
                       {alt.context_label}
                     </p>
                   )}
@@ -545,22 +539,23 @@ export function AlternativesSection({ items }: { items: AlternativeExpression[] 
               </div>
 
               <div className="flex items-start gap-2">
-                <p className="font-jp text-xl leading-snug text-foreground flex-1 break-words">
+                <p className="font-jp text-2xl sm:text-3xl font-bold leading-[1.2] text-foreground flex-1 break-words">
                   {japanese}
                 </p>
                 <SpeakerButton text={japanese} size="sm" />
               </div>
-              <p className="mt-1 italic text-xs text-muted-foreground">{alt.romaji}</p>
+              <p className="mt-2 italic text-xs text-foreground/55">{alt.romaji}</p>
 
-              <div className="mt-3">
+              <div className="mt-4 max-w-[180px]">
                 <NaturalnessBar value={naturalnessFromRank(rank)} compact />
               </div>
 
               <div className="mt-3 flex items-center gap-2 flex-wrap">
-                <StylePill level={alt.level} size="sm" />
-                <JlptRef level={alt.level} />
+                <span className="inline-flex items-center px-2 py-0.5 bg-foreground text-background text-[10px] font-bold uppercase tracking-[0.15em]">
+                  {(t(`style.${(alt.level || '').toUpperCase()}`) || alt.level)}
+                </span>
               </div>
-              <p className="mt-2 text-xs text-foreground/80">{alt.explanation}</p>
+              <p className="mt-3 text-sm text-foreground/75 leading-relaxed">{alt.explanation}</p>
             </div>
           );
         })}
