@@ -101,8 +101,8 @@ function RiwayatPage() {
         </div>
       ) : (
         <div className="space-y-4">
-          {filtered.map((h) => (
-            <HistoryCard key={h.id} entry={h} />
+          {filtered.map((h, i) => (
+            <HistoryCard key={h.id} entry={h} index={i} />
           ))}
         </div>
       )}
