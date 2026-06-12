@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Lock, Mic, MessageCircle, Search } from "lucide-react";
+import { Lock, MessageCircle } from "lucide-react";
 import { SCENARIOS } from "@/lib/hanashite-scenarios";
 import { useT } from "@/lib/i18n";
 import { useAuth } from "@/lib/auth";
@@ -27,6 +27,10 @@ export const Route = createFileRoute("/")({
   component: HomeIndex,
 });
 
+// Flat design tokens (locked palette — putih dominan / ink hitam / hijau aksen / abu pastel)
+const INK = "#1A1A1A";
+const ACCENT = "#22C55E";
+
 function HomeIndex() {
   const { lang } = useT();
   const { user, profile } = useAuth();
@@ -34,184 +38,232 @@ function HomeIndex() {
   const isId = lang === "id";
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8 sm:py-12">
-      <header className="text-center mb-8">
-        <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary mb-3">
-          <Mic className="w-3.5 h-3.5" />
-          {isId ? "Fitur Utama" : "Main Feature"}
-        </div>
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
-          話してルーム <span className="text-primary">Hanashite Room</span>
-        </h1>
-        <p className="mt-2 text-sm text-muted-foreground max-w-xl mx-auto">
-          {isId
-            ? "Latih bicara bahasa Jepang dengan AI dalam situasi nyata. Tanpa rasa malu, dengan feedback grammar & keigo instan."
-            : "Practice speaking Japanese with AI in real-life scenarios. Zero anxiety, instant grammar & keigo feedback."}
-        </p>
-      </header>
-
-      {!user && (
-        <div className="mb-6 rounded-xl border border-border bg-card p-5 text-center">
-          <p className="text-sm text-muted-foreground mb-3">
-            {isId
-              ? "Masuk dulu untuk mulai berlatih bicara."
-              : "Sign in to start practicing your speaking."}
-          </p>
-          <SignInButton />
-        </div>
-      )}
-
-      <section className="grid gap-4 sm:grid-cols-2">
-        {SCENARIOS.map((s) => {
-          const locked = !s.free && !isPro;
-          const title = isId ? s.title_id : s.title_en;
-          const situation = isId ? s.situation_id : s.situation_en;
-          const role = isId ? s.role_id : s.role_en;
-          const tone = isId ? s.tone_id : s.tone_en;
-          return (
-            <div
-              key={s.id}
-              className="relative rounded-2xl border border-border bg-card p-5 shadow-sm flex flex-col"
+    <div className="w-full bg-white text-[#1A1A1A]">
+      <div className="mx-auto w-full max-w-6xl px-6 py-12 sm:py-16">
+        {/* HERO — F-Pattern: heavy top-left, CTA primer hijau */}
+        <header className="mb-20 sm:mb-24">
+          <div className="max-w-3xl">
+            <span
+              className="inline-block px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] mb-5"
+              style={{ border: `2px solid ${INK}` }}
             >
-              <div className="flex items-start justify-between gap-2 mb-2">
-                <div className="text-3xl">{s.emoji}</div>
-                {s.free ? (
-                  <span className="rounded-full bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 px-2 py-0.5 text-[10px] font-bold uppercase">
-                    Free
-                  </span>
-                ) : (
-                  <span className="rounded-full bg-yellow-400/20 text-yellow-700 dark:text-yellow-300 px-2 py-0.5 text-[10px] font-bold uppercase">
-                    Pro
-                  </span>
-                )}
-              </div>
-              <h3 className="font-bold text-base">{title}</h3>
-              <p className="mt-1 text-xs text-muted-foreground flex-1">{situation}</p>
-              <div className="mt-3 flex flex-wrap gap-1.5 text-[11px]">
-                <span className="rounded-full bg-muted px-2 py-0.5">👤 {role}</span>
-                <span className="rounded-full bg-muted px-2 py-0.5">🎯 {tone}</span>
-              </div>
+              {isId ? "Fitur Utama" : "Main Feature"}
+            </span>
+            <h1
+              className="font-black leading-[1.05] mb-6 text-[40px] sm:text-[56px] lg:text-[72px]"
+              style={{ fontFamily: "'Noto Sans JP', system-ui, sans-serif" }}
+            >
+              話してルーム
+              <br />
+              Hanashite Room
+            </h1>
+            <p className="text-lg sm:text-xl leading-relaxed text-[#4A4A4A] mb-8 max-w-2xl">
+              {isId
+                ? "Latih bicara bahasa Jepang dengan AI dalam situasi nyata. Tanpa rasa malu, dengan feedback grammar & keigo instan."
+                : "Practice speaking Japanese with AI in real-life scenarios. Zero anxiety, instant grammar & keigo feedback."}
+            </p>
 
-              <div className="mt-4">
-                {locked ? (
-                  <Link
-                    to="/pricing"
-                    className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-border bg-muted/50 px-3 py-2 text-sm font-medium text-foreground hover:bg-muted transition"
-                  >
-                    <Lock className="w-4 h-4" />
-                    {isId ? "Upgrade ke Pro" : "Upgrade to Pro"}
-                  </Link>
-                ) : (
-                  <Link
-                    to="/hanashite/$scenarioId"
-                    params={{ scenarioId: s.id }}
-                    className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:opacity-90 transition aria-disabled:opacity-50 aria-disabled:pointer-events-none"
-                    aria-disabled={!user}
-                  >
-                    <MessageCircle className="w-4 h-4" />
-                    {isId ? "Mulai Berlatih" : "Start Practice"}
-                  </Link>
-                )}
+            {user ? (
+              <a
+                href="#skenario"
+                className="inline-block px-8 sm:px-10 py-4 sm:py-5 text-lg sm:text-xl font-black text-white hover:translate-x-[-2px] hover:translate-y-[-2px] transition-transform"
+                style={{ background: ACCENT, border: `4px solid ${INK}` }}
+              >
+                {isId ? "MULAI BERLATIH SEKARANG" : "START PRACTICING NOW"}
+              </a>
+            ) : (
+              <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                <SignInButton />
+                <span className="text-sm text-[#4A4A4A]">
+                  {isId ? "Masuk dulu untuk mulai berlatih." : "Sign in to start practicing."}
+                </span>
               </div>
-            </div>
-          );
-        })}
-      </section>
+            )}
+          </div>
+        </header>
 
-      <section className="mt-10 rounded-xl border border-border bg-card p-5">
-        <h2 className="text-sm font-bold uppercase tracking-wide mb-3 text-foreground/80">
-          {isId ? "Cara Pakai" : "How it works"}
-        </h2>
-        <ol className="space-y-2 text-sm text-muted-foreground">
-          <li>
-            <span className="font-semibold text-foreground">1.</span>{" "}
-            {isId
-              ? "Pilih skenario yang ingin kamu latih."
-              : "Pick a scenario you want to practice."}
-          </li>
-          <li>
-            <span className="font-semibold text-foreground">2.</span>{" "}
-            {isId
-              ? "Bicara langsung pakai mic (atau ketik) — AI akan membalas dalam bahasa Jepang."
-              : "Speak with your mic (or type) — the AI replies in Japanese."}
-          </li>
-          <li>
-            <span className="font-semibold text-foreground">3.</span>{" "}
-            {isId
-              ? "Klik tombol suara untuk dengar pengucapan AI."
-              : "Tap the speaker to hear the AI's pronunciation."}
-          </li>
-          <li>
-            <span className="font-semibold text-foreground">4.</span>{" "}
-            {isId
-              ? "Selesai sesi → dapat skor kesopanan + koreksi grammar."
-              : "End session → get politeness score + grammar corrections."}
-          </li>
-        </ol>
-      </section>
+        {/* SKENARIO GRID */}
+        <section id="skenario" className="mb-24">
+          <h2
+            className="text-2xl sm:text-3xl font-black mb-8 inline-block pb-2"
+            style={{ borderBottom: `4px solid ${INK}` }}
+          >
+            {isId ? "Pilih Skenario" : "Choose a Scenario"}
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {SCENARIOS.map((s) => {
+              const locked = !s.free && !isPro;
+              const title = isId ? s.title_id : s.title_en;
+              const situation = isId ? s.situation_id : s.situation_en;
+              const role = isId ? s.role_id : s.role_en;
+              const tone = isId ? s.tone_id : s.tone_en;
+              return (
+                <article
+                  key={s.id}
+                  className="p-6 flex flex-col bg-white"
+                  style={{ border: `4px solid ${INK}` }}
+                >
+                  <div className="flex items-start justify-between mb-4">
+                    <div
+                      className="w-12 h-12 flex items-center justify-center text-2xl bg-[#F3F4F6]"
+                      style={{ border: `2px solid ${INK}` }}
+                    >
+                      {s.emoji}
+                    </div>
+                    <span
+                      className="px-2 py-1 text-[10px] font-black uppercase tracking-wider"
+                      style={
+                        s.free
+                          ? { background: ACCENT, color: "white" }
+                          : { background: INK, color: "white" }
+                      }
+                    >
+                      {s.free ? "Free" : "Pro"}
+                    </span>
+                  </div>
+                  <h3 className="text-xl font-bold mb-2">{title}</h3>
+                  <p className="text-sm text-[#4A4A4A] mb-5 flex-1">{situation}</p>
+                  <div className="flex flex-wrap gap-2 mb-6">
+                    <span className="bg-[#E5E7EB] px-2 py-1 text-[10px] font-bold">👤 {role}</span>
+                    <span className="bg-[#E5E7EB] px-2 py-1 text-[10px] font-bold">🎯 {tone}</span>
+                  </div>
+                  {locked ? (
+                    <Link
+                      to="/pricing"
+                      className="inline-flex w-full items-center justify-center gap-2 py-3 text-sm font-bold hover:bg-[#F3F4F6] transition-colors"
+                      style={{ border: `2px solid ${INK}` }}
+                    >
+                      <Lock className="w-4 h-4" />
+                      {isId ? "Upgrade ke Pro" : "Upgrade to Pro"}
+                    </Link>
+                  ) : (
+                    <Link
+                      to="/hanashite/$scenarioId"
+                      params={{ scenarioId: s.id }}
+                      className="inline-flex w-full items-center justify-center gap-2 py-3 text-sm font-bold text-white bg-[#1A1A1A] hover:bg-black aria-disabled:opacity-50 aria-disabled:pointer-events-none"
+                      aria-disabled={!user}
+                    >
+                      <MessageCircle className="w-4 h-4" />
+                      {isId ? "Mulai Berlatih" : "Start Practice"}
+                    </Link>
+                  )}
+                </article>
+              );
+            })}
+          </div>
+        </section>
 
-      <nav className="mt-10 rounded-xl border border-border bg-card p-5" aria-label={isId ? "Fitur lain" : "Other features"}>
-        <h2 className="text-sm font-bold uppercase tracking-wide mb-3 text-foreground/80">
-          {isId ? "Fitur Lainnya" : "More Tools"}
-        </h2>
-        <ul className="space-y-3">
-          <li>
-            <Link to="/nama-jepang" className="text-sm text-primary hover:underline font-semibold">
-              ✨ {isId ? "Generator Nama Jepang (Katakana + Kanji)" : "Japanese Name Generator (Katakana + Kanji)"}
-            </Link>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              {isId
-                ? "Ubah namamu ke Katakana, dapat saran Kanji bermakna, download sebagai kartu Meishi."
-                : "Convert your name to Katakana, get meaningful Kanji, download as a Meishi card."}
-            </p>
-          </li>
-          <li>
-            <Link to="/kamus-slang" className="text-sm text-primary hover:underline font-semibold">
-              💬 {isId ? "Kamus Slang Jepang (Anime & Dorama)" : "Japanese Slang Dictionary (Anime & Dorama)"}
-            </Link>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              {isId
-                ? "Arti yabai, sugoi, kawaii, tsundere, dan puluhan kata gaul lainnya."
-                : "Meanings of yabai, sugoi, kawaii, tsundere, and dozens more slang words."}
-            </p>
-          </li>
-          <li>
-            <Link to="/game-kana" className="text-sm text-primary hover:underline font-semibold">
-              🎮 {isId ? "Kana Speed Drop — Game Hiragana" : "Kana Speed Drop — Hiragana Game"}
-            </Link>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              {isId
-                ? "Hafalkan Hiragana lewat mini-game ketik-cepat dengan high score."
-                : "Memorize Hiragana via a speed-typing mini-game with high scores."}
-            </p>
-          </li>
-          <li>
-            <Link to="/translate" className="text-sm text-primary hover:underline inline-flex items-center gap-1.5">
-              <Search className="w-4 h-4" />
-              {isId
-                ? "Cari Ekspresi Jepang Natural (N1–N4)"
-                : "Find Natural Japanese Expressions (N1–N4)"}
-            </Link>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              {isId
-                ? "Terjemahkan kalimat sehari-hari ke bahasa Jepang dengan level kesopanan dan analisis konteks sosial."
-                : "Translate everyday phrases into Japanese with politeness levels and social context analysis."}
-            </p>
-          </li>
-          <li>
-            <Link to="/tabel-hiragana" className="text-sm text-primary hover:underline">
-              {isId
-                ? "📖 Tabel Huruf Hiragana Lengkap dan Cara Membacanya"
-                : "📖 Complete Hiragana Chart with Pronunciation"}
-            </Link>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              {isId
-                ? "Referensi interaktif 71+ huruf hiragana dengan romaji dan audio."
-                : "Interactive reference for 71+ hiragana characters with romaji and audio."}
-            </p>
-          </li>
-        </ul>
-      </nav>
+        {/* CARA PAKAI — Dark band */}
+        <section className="mb-24 p-8 sm:p-12 text-white bg-[#1A1A1A]">
+          <h2 className="text-2xl sm:text-3xl font-black mb-10 uppercase tracking-wide">
+            {isId ? "Cara Pakai" : "How It Works"}
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {(isId
+              ? [
+                  "Pilih skenario yang ingin kamu latih.",
+                  "Bicara langsung pakai mic (atau ketik).",
+                  "AI membalas dalam bahasa Jepang.",
+                  "Dapatkan skor kesopanan & koreksi.",
+                ]
+              : [
+                  "Pick a scenario you want to practice.",
+                  "Speak with your mic (or type).",
+                  "The AI replies in Japanese.",
+                  "Get politeness score & corrections.",
+                ]
+            ).map((step, i) => (
+              <div key={i}>
+                <div
+                  className="text-5xl font-black mb-4"
+                  style={{ color: ACCENT }}
+                >
+                  {String(i + 1).padStart(2, "0")}
+                </div>
+                <p className="font-bold leading-snug">{step}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* FITUR LAINNYA */}
+        <section>
+          <h2
+            className="text-2xl sm:text-3xl font-black mb-8 inline-block pb-2"
+            style={{ borderBottom: `4px solid ${INK}` }}
+          >
+            {isId ? "Fitur Lainnya" : "More Tools"}
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <FeatureCard
+              to="/nama-jepang"
+              title={isId ? "Generator Nama Jepang" : "Japanese Name Generator"}
+              desc={
+                isId
+                  ? "Ubah namamu ke Katakana, dapat saran Kanji bermakna, download kartu Meishi."
+                  : "Convert your name to Katakana, get meaningful Kanji, download a Meishi card."
+              }
+            />
+            <FeatureCard
+              to="/kamus-slang"
+              title={isId ? "Kamus Slang Jepang" : "Japanese Slang Dictionary"}
+              desc={
+                isId
+                  ? "Arti yabai, sugoi, kawaii, tsundere, dan puluhan kata gaul lainnya."
+                  : "Meanings of yabai, sugoi, kawaii, tsundere, and dozens more."
+              }
+            />
+            <FeatureCard
+              to="/game-kana"
+              title="Kana Speed Drop"
+              desc={
+                isId
+                  ? "Hafalkan Hiragana lewat mini-game ketik-cepat dengan high score."
+                  : "Memorize Hiragana via a speed-typing mini-game with high scores."
+              }
+            />
+            <FeatureCard
+              to="/translate"
+              title={isId ? "Translator Ekspresi Natural" : "Natural Expression Translator"}
+              desc={
+                isId
+                  ? "Terjemahkan kalimat sehari-hari dengan level kesopanan & konteks sosial."
+                  : "Translate everyday phrases with politeness levels and social context."
+              }
+            />
+            <FeatureCard
+              to="/tabel-hiragana"
+              title={isId ? "Tabel Hiragana Lengkap" : "Complete Hiragana Chart"}
+              desc={
+                isId
+                  ? "Referensi interaktif 71+ huruf hiragana dengan romaji dan audio."
+                  : "Interactive reference for 71+ hiragana characters with romaji and audio."
+              }
+            />
+          </div>
+        </section>
+      </div>
     </div>
+  );
+}
+
+function FeatureCard({
+  to,
+  title,
+  desc,
+}: {
+  to: "/nama-jepang" | "/kamus-slang" | "/game-kana" | "/translate" | "/tabel-hiragana";
+  title: string;
+  desc: string;
+}) {
+  return (
+    <Link
+      to={to}
+      className="block p-6 bg-white hover:bg-[#F3F4F6] transition-colors"
+      style={{ border: `2px solid ${INK}` }}
+    >
+      <h3 className="font-black text-lg mb-2">{title}</h3>
+      <p className="text-sm text-[#4A4A4A] leading-relaxed">{desc}</p>
+    </Link>
   );
 }
