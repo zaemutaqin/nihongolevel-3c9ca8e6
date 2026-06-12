@@ -163,27 +163,26 @@ function HomeIndex() {
               {isId ? "Skenario Populer" : "Popular Scenarios"}
             </h2>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-x-8 gap-y-10">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
             {[
-              { to: "/interview" as const, icon: Briefcase, label: isId ? "Wawancara Kerja" : "Job Interview" },
-              { to: "/hanashite/sc_konbini" as const, icon: Store, label: "Konbini" },
-              { to: "/hanashite/sc_ramen" as const, icon: UtensilsCrossed, label: isId ? "Restoran" : "Restaurant" },
-              { to: "/hanashite/sc_apato" as const, icon: Building2, label: isId ? "Apartemen" : "Apartment" },
-              { to: "/hanashite/sc_clinic" as const, icon: Stethoscope, label: isId ? "Rumah Sakit" : "Hospital" },
-            ].map(({ to, icon: Icon, label }) => (
+              { to: "/interview" as const, emoji: "💼", label: isId ? "Wawancara Kerja" : "Job Interview" },
+              { to: "/hanashite/sc_konbini" as const, emoji: "🏪", label: "Konbini" },
+              { to: "/hanashite/sc_ramen" as const, emoji: "🍜", label: isId ? "Restoran" : "Restaurant" },
+              { to: "/hanashite/sc_apato" as const, emoji: "🏠", label: isId ? "Apartemen" : "Apartment" },
+              { to: "/hanashite/sc_clinic" as const, emoji: "🏥", label: isId ? "Rumah Sakit" : "Hospital" },
+            ].map(({ to, emoji, label }) => (
               <Link
                 key={to}
                 to={to}
-                className="group flex flex-col items-center text-center"
+                className="group flex flex-col items-center justify-center text-center bg-white rounded-2xl py-8 px-4 hover:-translate-y-1 transition-transform"
+                style={{ border: `1px solid rgba(15,23,42,0.08)` }}
               >
-                <Icon
-                  className="w-14 h-14 mb-4 transition-transform group-hover:scale-110"
-                  style={{ color: INK }}
-                  strokeWidth={1.5}
-                />
+                <span className="text-4xl mb-4" aria-hidden>
+                  {emoji}
+                </span>
                 <span
-                  className="text-base font-black leading-tight group-hover:underline underline-offset-4 decoration-2"
-                  style={{ textDecorationColor: ACCENT }}
+                  className="text-sm font-bold leading-tight"
+                  style={{ color: INK }}
                 >
                   {label}
                 </span>
