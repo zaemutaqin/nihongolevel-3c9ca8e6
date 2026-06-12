@@ -70,6 +70,7 @@ export function UpgradeModal({ open, onClose }: UpgradeModalProps) {
   };
 
   const handleUpgrade = async () => {
+    gtagEvent("upgrade_clicked", { signed_in: user ? "yes" : "no" });
     if (!user) {
       await triggerSignIn();
       return;
@@ -80,6 +81,7 @@ export function UpgradeModal({ open, onClose }: UpgradeModalProps) {
       userId: user.id,
     });
   };
+
 
   return createPortal(
     <div
