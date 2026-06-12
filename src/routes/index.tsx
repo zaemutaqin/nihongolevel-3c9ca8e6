@@ -167,12 +167,12 @@ function HomeIndex() {
               { to: "/hanashite/sc_ramen" as const, emoji: "🍜", label: isId ? "Restoran" : "Restaurant" },
               { to: "/hanashite/sc_apato" as const, emoji: "🏠", label: isId ? "Apartemen" : "Apartment" },
               { to: "/hanashite/sc_clinic" as const, emoji: "🏥", label: isId ? "Rumah Sakit" : "Hospital" },
-            ].map(({ to, emoji, label }) => (
+            ].map(({ to, emoji, label }, i) => (
               <Link
                 key={to}
                 to={to}
-                className="group flex flex-col items-center justify-center text-center bg-white rounded-2xl py-8 px-4 hover:-translate-y-1 transition-transform"
-                style={{ border: `1px solid rgba(15,23,42,0.08)` }}
+                className="group flex flex-col items-center justify-center text-center rounded-2xl py-8 px-4 hover:-translate-y-1 transition-transform"
+                style={{ background: i % 2 === 0 ? LAVENDER : ACCENT }}
               >
                 <span className="text-4xl mb-4" aria-hidden>
                   {emoji}
