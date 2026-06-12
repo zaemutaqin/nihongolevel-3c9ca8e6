@@ -4,19 +4,18 @@ import {
   Briefcase,
   Languages,
   Trophy,
-  ChevronRight,
+  ChevronDown,
   MessageSquare,
   Sparkles,
   Building2,
   UtensilsCrossed,
-  Hotel,
   Stethoscope,
   Store,
-  CheckCircle2,
 } from "lucide-react";
 import { useT } from "@/lib/i18n";
 import { useAuth } from "@/lib/auth";
 import { SignInButton } from "@/components/SignInButton";
+import heroIllustration from "@/assets/hero-illustration.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -41,8 +40,9 @@ export const Route = createFileRoute("/")({
 });
 
 const INK = "#0F172A";
-const INK_SOFT = "#334155";
-const ACCENT = "#DC2626"; // Japan red accent per PRD
+const INK_SOFT = "#475569";
+const ACCENT = "#DC2626";
+const CREAM = "#F5F1E8";
 
 function HomeIndex() {
   const { lang } = useT();
@@ -50,18 +50,18 @@ function HomeIndex() {
   const isId = lang === "id";
 
   return (
-    <div className="w-full bg-white" style={{ color: INK }}>
-      <div className="mx-auto w-full max-w-6xl px-6 py-12 sm:py-16">
-        {/* HERO */}
-        <header className="mb-20 sm:mb-24 grid grid-cols-1 lg:grid-cols-[1.15fr_1fr] gap-10 lg:gap-14 items-center">
+    <div className="w-full" style={{ background: CREAM, color: INK }}>
+      <div className="mx-auto w-full max-w-6xl px-6 py-12 sm:py-20">
+        {/* HERO — editorial split with illustration */}
+        <header className="mb-28 sm:mb-36 grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-12 lg:gap-16 items-center">
           <div>
             <span
-              className="inline-block px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] mb-5"
-              style={{ border: `2px solid ${INK}`, color: INK }}
+              className="inline-block text-[11px] font-bold uppercase tracking-[0.24em] mb-6 pb-1"
+              style={{ borderBottom: `2px solid ${ACCENT}`, color: ACCENT }}
             >
               {isId ? "AI Coach untuk Pekerja Indonesia" : "AI Coach for Workers"}
             </span>
-            <h1 className="font-black leading-[1.05] mb-6 text-[40px] sm:text-[52px] lg:text-[64px] tracking-tight">
+            <h1 className="font-black leading-[1.02] mb-7 text-[44px] sm:text-[60px] lg:text-[76px] tracking-[-0.02em]">
               {isId ? (
                 <>
                   Siap Kerja & Hidup
@@ -78,7 +78,7 @@ function HomeIndex() {
               )}
             </h1>
             <p
-              className="text-lg sm:text-xl leading-relaxed mb-8 max-w-2xl"
+              className="text-lg sm:text-xl leading-relaxed mb-9 max-w-xl"
               style={{ color: INK_SOFT }}
             >
               {isId
@@ -86,26 +86,27 @@ function HomeIndex() {
                 : "Practice interviews, workplace conversations, and real-life Japanese before moving to Japan. Realistic scenarios + instant grammar & keigo feedback."}
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-3 mb-4">
+            <div className="flex flex-col sm:flex-row gap-3">
               <Link
                 to="/interview"
-                className="inline-flex items-center justify-center gap-2 px-7 sm:px-8 py-4 text-base sm:text-lg font-black text-white hover:translate-y-[-2px] transition-transform"
-                style={{ background: ACCENT, border: `3px solid ${INK}` }}
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 text-base sm:text-lg font-black text-white hover:opacity-90 transition"
+                style={{ background: ACCENT }}
               >
                 {isId ? "Coba Interview Simulator" : "Try Interview Simulator"}
                 <ArrowRight className="w-5 h-5" />
               </Link>
               <Link
                 to="/translate"
-                className="inline-flex items-center justify-center gap-2 px-7 sm:px-8 py-4 text-base sm:text-lg font-bold"
-                style={{ border: `3px solid ${INK}`, color: INK }}
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 text-base sm:text-lg font-bold hover:bg-black/5 transition"
+                style={{ color: INK }}
               >
                 {isId ? "Mulai Gratis" : "Start Free"}
+                <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
 
             {!user && (
-              <div className="mt-6 flex items-center gap-3">
+              <div className="mt-7 flex items-center gap-3">
                 <SignInButton />
                 <span className="text-sm" style={{ color: INK_SOFT }}>
                   {isId ? "Gratis. Tanpa kartu kredit." : "Free. No credit card."}
@@ -114,152 +115,103 @@ function HomeIndex() {
             )}
           </div>
 
-          {/* Right column: visual stack of 'goals' */}
+          {/* Right: single flat illustration */}
           <div className="hidden lg:block">
-            <div className="space-y-3">
-              {(isId
-                ? [
-                    { icon: Briefcase, label: "Lolos interview Tokutei Ginou" },
-                    { icon: Building2, label: "Berkomunikasi dengan atasan Jepang" },
-                    { icon: Stethoscope, label: "Siap kerja di rumah sakit / care home" },
-                    { icon: Hotel, label: "Siap kerja di hotel & restoran" },
-                  ]
-                : [
-                    { icon: Briefcase, label: "Pass Tokutei Ginou interview" },
-                    { icon: Building2, label: "Talk to Japanese bosses confidently" },
-                    { icon: Stethoscope, label: "Ready for hospital / care work" },
-                    { icon: Hotel, label: "Ready for hotel & restaurant work" },
-                  ]
-              ).map(({ icon: Icon, label }, i) => (
-                <div
-                  key={i}
-                  className="flex items-center gap-4 p-4"
-                  style={{ border: `2px solid ${INK}`, background: i % 2 ? "#FEF2F2" : "white" }}
-                >
-                  <div
-                    className="w-10 h-10 flex items-center justify-center"
-                    style={{ background: ACCENT }}
-                  >
-                    <Icon className="w-5 h-5 text-white" />
-                  </div>
-                  <span className="font-bold" style={{ color: INK }}>
-                    {label}
-                  </span>
-                  <CheckCircle2 className="ml-auto w-5 h-5" style={{ color: ACCENT }} />
-                </div>
-              ))}
-            </div>
+            <img
+              src={heroIllustration}
+              alt={isId ? "Ilustrasi pekerja Indonesia belajar bahasa Jepang" : "Indonesian worker learning Japanese"}
+              width={1024}
+              height={1024}
+              className="w-full h-auto"
+            />
           </div>
         </header>
 
-        {/* WHY NIHONGOLEVEL */}
-        <section className="mb-24">
-          <h2
-            className="text-2xl sm:text-3xl font-black mb-8 inline-block pb-2"
-            style={{ borderBottom: `4px solid ${INK}` }}
-          >
-            {isId ? "Kenapa NihongoLevel" : "Why NihongoLevel"}
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            <WhyCard
+        {/* WHY NIHONGOLEVEL — borderless editorial */}
+        <section className="mb-28 sm:mb-36">
+          <div className="mb-12 max-w-2xl">
+            <div className="text-[11px] font-bold uppercase tracking-[0.3em] mb-3" style={{ color: ACCENT }}>
+              {isId ? "Empat Pilar" : "Four Pillars"}
+            </div>
+            <h2 className="text-3xl sm:text-5xl font-black leading-[1.05] tracking-tight">
+              {isId ? "Kenapa NihongoLevel" : "Why NihongoLevel"}
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-10 gap-y-12">
+            <WhyItem
               icon={Languages}
               title={isId ? "Translator Natural" : "Natural Translator"}
-              desc={
-                isId
-                  ? "4 level: Casual, Polite, Workplace, Keigo. Bukan terjemahan kaku."
-                  : "4 levels: Casual, Polite, Workplace, Keigo. Not stiff translation."
-              }
+              desc={isId ? "4 level: Casual, Polite, Workplace, Keigo. Bukan terjemahan kaku." : "4 levels: Casual, Polite, Workplace, Keigo. Not stiff translation."}
             />
-            <WhyCard
+            <WhyItem
               icon={Briefcase}
               title={isId ? "Latihan Interview" : "Interview Practice"}
-              desc={
-                isId
-                  ? "AI berperan jadi pewawancara Jepang. Tanpa rasa malu."
-                  : "AI plays the Japanese interviewer. Zero anxiety."
-              }
+              desc={isId ? "AI berperan jadi pewawancara Jepang. Tanpa rasa malu." : "AI plays the Japanese interviewer. Zero anxiety."}
             />
-            <WhyCard
+            <WhyItem
               icon={MessageSquare}
               title={isId ? "Simulasi Nyata" : "Real-Life Sim"}
-              desc={
-                isId
-                  ? "Konbini, restoran, klinik, hotel — siap menghadapi situasi nyata."
-                  : "Konbini, restaurant, clinic, hotel — ready for real situations."
-              }
+              desc={isId ? "Konbini, restoran, klinik, hotel — siap menghadapi situasi nyata." : "Konbini, restaurant, clinic, hotel — ready for real situations."}
             />
-            <WhyCard
+            <WhyItem
               icon={Trophy}
               title={isId ? "Pantau Kemajuan" : "Track Progress"}
-              desc={
-                isId
-                  ? "Skor grammar, naturalness, confidence. Riwayat semua sesi tersimpan."
-                  : "Grammar, naturalness, confidence scores. Full session history."
-              }
+              desc={isId ? "Skor grammar, naturalness, confidence. Riwayat semua sesi tersimpan." : "Grammar, naturalness, confidence scores. Full session history."}
             />
           </div>
         </section>
 
-        {/* POPULAR SCENARIOS */}
-        <section className="mb-24">
-          <h2
-            className="text-2xl sm:text-3xl font-black mb-8 inline-block pb-2"
-            style={{ borderBottom: `4px solid ${INK}` }}
-          >
-            {isId ? "Skenario Populer" : "Popular Scenarios"}
-          </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+        {/* POPULAR SCENARIOS — borderless */}
+        <section className="mb-28 sm:mb-36">
+          <div className="mb-12 max-w-2xl">
+            <div className="text-[11px] font-bold uppercase tracking-[0.3em] mb-3" style={{ color: ACCENT }}>
+              {isId ? "Mulai Latihan" : "Start Practicing"}
+            </div>
+            <h2 className="text-3xl sm:text-5xl font-black leading-[1.05] tracking-tight">
+              {isId ? "Skenario Populer" : "Popular Scenarios"}
+            </h2>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-x-8 gap-y-10">
             {[
-              {
-                to: "/interview" as const,
-                icon: Briefcase,
-                label: isId ? "Wawancara Kerja" : "Job Interview",
-              },
-              {
-                to: "/hanashite/sc_konbini" as const,
-                icon: Store,
-                label: "Konbini",
-              },
-              {
-                to: "/hanashite/sc_ramen" as const,
-                icon: UtensilsCrossed,
-                label: isId ? "Restoran" : "Restaurant",
-              },
-              {
-                to: "/hanashite/sc_apato" as const,
-                icon: Building2,
-                label: isId ? "Apartemen" : "Apartment",
-              },
-              {
-                to: "/hanashite/sc_clinic" as const,
-                icon: Stethoscope,
-                label: isId ? "Rumah Sakit" : "Hospital",
-              },
+              { to: "/interview" as const, icon: Briefcase, label: isId ? "Wawancara Kerja" : "Job Interview" },
+              { to: "/hanashite/sc_konbini" as const, icon: Store, label: "Konbini" },
+              { to: "/hanashite/sc_ramen" as const, icon: UtensilsCrossed, label: isId ? "Restoran" : "Restaurant" },
+              { to: "/hanashite/sc_apato" as const, icon: Building2, label: isId ? "Apartemen" : "Apartment" },
+              { to: "/hanashite/sc_clinic" as const, icon: Stethoscope, label: isId ? "Rumah Sakit" : "Hospital" },
             ].map(({ to, icon: Icon, label }) => (
               <Link
                 key={to}
                 to={to}
-                className="p-4 flex flex-col items-center text-center hover:bg-[#F8FAFC] transition-colors"
-                style={{ border: `2px solid ${INK}` }}
+                className="group flex flex-col items-center text-center"
               >
-                <div
-                  className="w-10 h-10 flex items-center justify-center mb-3"
-                  style={{ border: `2px solid ${INK}`, background: "#F1F5F9" }}
+                <Icon
+                  className="w-14 h-14 mb-4 transition-transform group-hover:scale-110"
+                  style={{ color: INK }}
+                  strokeWidth={1.5}
+                />
+                <span
+                  className="text-base font-black leading-tight group-hover:underline underline-offset-4 decoration-2"
+                  style={{ textDecorationColor: ACCENT }}
                 >
-                  <Icon className="w-5 h-5" style={{ color: INK }} />
-                </div>
-                <span className="text-sm font-bold leading-snug">{label}</span>
+                  {label}
+                </span>
               </Link>
             ))}
           </div>
         </section>
 
-        {/* HOW IT WORKS */}
-        <section className="mb-24 p-8 sm:p-12 text-white" style={{ background: INK }}>
-          <h2 className="text-2xl sm:text-3xl font-black mb-10 uppercase tracking-wide">
+        {/* HOW IT WORKS — dark navy with massive red numerals */}
+        <section
+          className="mb-28 sm:mb-36 px-8 sm:px-14 py-14 sm:py-20 text-white"
+          style={{ background: INK }}
+        >
+          <div className="text-[11px] font-bold uppercase tracking-[0.3em] mb-3" style={{ color: ACCENT }}>
+            {isId ? "Proses" : "Process"}
+          </div>
+          <h2 className="text-3xl sm:text-5xl font-black mb-14 tracking-tight">
             {isId ? "Cara Kerja" : "How It Works"}
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-10 gap-y-14">
             {(isId
               ? [
                   "Pilih skenario interview atau situasi.",
@@ -276,93 +228,123 @@ function HomeIndex() {
             ).map((step, i) => (
               <div key={i}>
                 <div
-                  className="text-5xl font-black mb-4"
-                  style={{ color: ACCENT }}
+                  className="font-black leading-none mb-5 tracking-[-0.04em]"
+                  style={{ color: ACCENT, fontSize: "clamp(64px, 8vw, 96px)" }}
                 >
                   {String(i + 1).padStart(2, "0")}
                 </div>
-                <p className="font-bold leading-snug">{step}</p>
+                <p className="font-bold leading-snug text-lg">{step}</p>
               </div>
             ))}
           </div>
         </section>
 
-        {/* PRICING */}
-        <section className="mb-24">
-          <h2
-            className="text-2xl sm:text-3xl font-black mb-3 text-center"
-          >
-            {isId ? "Harga" : "Pricing"}
-          </h2>
-          <p className="text-center mb-10 text-sm" style={{ color: INK_SOFT }}>
-            {isId
-              ? "Mulai gratis. Upgrade kapan saja."
-              : "Start free. Upgrade any time."}
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-3xl mx-auto">
-            <PriceCard
-              title="Free"
-              price="$0"
-              tagline={isId ? "selamanya" : "forever"}
-              features={
-                isId
-                  ? [
-                      "10 translator request / hari",
-                      "2 sesi interview / hari",
-                      "2 sesi simulasi / hari",
-                      "Riwayat dasar",
-                    ]
-                  : [
-                      "10 translator requests / day",
-                      "2 interview sessions / day",
-                      "2 life-sim sessions / day",
-                      "Basic history",
-                    ]
-              }
-            />
-            <PriceCard
-              title="Pro"
-              price="$19"
-              tagline={isId ? "sekali bayar — seumur hidup" : "one-time — lifetime"}
-              features={
-                isId
-                  ? [
-                      "Translator unlimited",
-                      "Interview unlimited",
-                      "Semua skenario terbuka",
-                      "Riwayat & analitik lengkap",
-                    ]
-                  : [
-                      "Unlimited translator",
-                      "Unlimited interviews",
-                      "All scenarios unlocked",
-                      "Full history & analytics",
-                    ]
-              }
-              accent
-            />
+        {/* PRICING — high-contrast color blocking */}
+        <section className="mb-28 sm:mb-36">
+          <div className="text-center mb-12">
+            <div className="text-[11px] font-bold uppercase tracking-[0.3em] mb-3" style={{ color: ACCENT }}>
+              {isId ? "Investasi" : "Investment"}
+            </div>
+            <h2 className="text-3xl sm:text-5xl font-black tracking-tight mb-3">
+              {isId ? "Harga" : "Pricing"}
+            </h2>
+            <p className="text-base" style={{ color: INK_SOFT }}>
+              {isId ? "Mulai gratis. Upgrade kapan saja." : "Start free. Upgrade any time."}
+            </p>
           </div>
-          <div className="mt-6 text-center">
-            <Link
-              to="/pricing"
-              className="inline-flex items-center gap-1 text-sm font-bold underline underline-offset-4"
-              style={{ color: INK }}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            {/* FREE — minimal */}
+            <div
+              className="p-8 sm:p-10 flex flex-col"
+              style={{ border: `1px solid ${INK}`, background: "transparent" }}
             >
-              {isId ? "Lihat detail harga" : "See full pricing"}
-              <ChevronRight className="w-4 h-4" />
-            </Link>
+              <div className="text-xs font-bold uppercase tracking-[0.24em] mb-6" style={{ color: INK_SOFT }}>
+                Free
+              </div>
+              <div className="flex items-baseline gap-2 mb-2">
+                <span className="text-6xl font-black tracking-tight">$0</span>
+                <span className="text-sm" style={{ color: INK_SOFT }}>
+                  {isId ? "selamanya" : "forever"}
+                </span>
+              </div>
+              <p className="text-sm mb-8" style={{ color: INK_SOFT }}>
+                {isId ? "Cocok untuk mencoba sebelum upgrade." : "Perfect for trying before you upgrade."}
+              </p>
+              <ul className="space-y-3 mb-8 flex-1">
+                {(isId
+                  ? ["10 translator request / hari", "2 sesi interview / hari", "2 sesi simulasi / hari", "Riwayat dasar"]
+                  : ["10 translator requests / day", "2 interview sessions / day", "2 life-sim sessions / day", "Basic history"]
+                ).map((f) => (
+                  <li key={f} className="flex items-start gap-3 text-sm">
+                    <span className="mt-2 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: INK }} />
+                    <span>{f}</span>
+                  </li>
+                ))}
+              </ul>
+              <Link
+                to="/translate"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-bold hover:bg-black/5 transition"
+                style={{ border: `1px solid ${INK}`, color: INK }}
+              >
+                {isId ? "Mulai Gratis" : "Start Free"}
+              </Link>
+            </div>
+
+            {/* PRO — dominant red color block */}
+            <div
+              className="p-8 sm:p-10 flex flex-col relative"
+              style={{ background: ACCENT, color: CREAM }}
+            >
+              <div
+                className="absolute top-0 right-0 text-[10px] font-black uppercase tracking-[0.24em] px-3 py-1.5"
+                style={{ background: INK, color: CREAM }}
+              >
+                Lifetime Access
+              </div>
+              <div className="text-xs font-bold uppercase tracking-[0.24em] mb-6 opacity-90">
+                Pro
+              </div>
+              <div className="flex items-baseline gap-2 mb-2">
+                <span className="text-6xl font-black tracking-tight">$19</span>
+                <span className="text-sm opacity-90">
+                  {isId ? "sekali bayar" : "one-time"}
+                </span>
+              </div>
+              <p className="text-sm mb-8 opacity-90">
+                {isId ? "Bayar sekali, akses semua fitur selamanya." : "Pay once, unlock everything forever."}
+              </p>
+              <ul className="space-y-3 mb-8 flex-1">
+                {(isId
+                  ? ["Translator unlimited", "Interview unlimited", "Semua skenario terbuka", "Riwayat & analitik lengkap"]
+                  : ["Unlimited translator", "Unlimited interviews", "All scenarios unlocked", "Full history & analytics"]
+                ).map((f) => (
+                  <li key={f} className="flex items-start gap-3 text-sm">
+                    <span className="mt-2 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: CREAM }} />
+                    <span>{f}</span>
+                  </li>
+                ))}
+              </ul>
+              <Link
+                to="/pricing"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-black hover:opacity-90 transition"
+                style={{ background: CREAM, color: ACCENT }}
+              >
+                {isId ? "Upgrade ke Pro" : "Upgrade to Pro"}
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
           </div>
         </section>
 
-        {/* FAQ */}
-        <section className="mb-12">
-          <h2
-            className="text-2xl sm:text-3xl font-black mb-8 inline-block pb-2"
-            style={{ borderBottom: `4px solid ${INK}` }}
-          >
-            FAQ
-          </h2>
-          <div className="space-y-4 max-w-3xl">
+        {/* FAQ — minimal bottom-border list */}
+        <section className="mb-16 max-w-3xl">
+          <div className="mb-10">
+            <div className="text-[11px] font-bold uppercase tracking-[0.3em] mb-3" style={{ color: ACCENT }}>
+              {isId ? "Pertanyaan" : "Questions"}
+            </div>
+            <h2 className="text-3xl sm:text-5xl font-black tracking-tight">FAQ</h2>
+          </div>
+          <div style={{ borderTop: `1px solid ${INK}` }}>
             {(isId
               ? [
                   {
@@ -401,16 +383,12 @@ function HomeIndex() {
                   },
                 ]
             ).map((f, i) => (
-              <details
-                key={i}
-                className="group p-5"
-                style={{ border: `2px solid ${INK}`, background: "white" }}
-              >
-                <summary className="cursor-pointer font-bold list-none flex items-center justify-between">
-                  <span>{f.q}</span>
-                  <ChevronRight className="w-5 h-5 transition-transform group-open:rotate-90" />
+              <details key={i} className="group py-6" style={{ borderBottom: `1px solid ${INK}` }}>
+                <summary className="cursor-pointer list-none flex items-center justify-between gap-6">
+                  <span className="font-bold text-lg leading-snug">{f.q}</span>
+                  <ChevronDown className="w-5 h-5 flex-shrink-0 transition-transform group-open:rotate-180" />
                 </summary>
-                <p className="mt-3 text-sm leading-relaxed" style={{ color: INK_SOFT }}>
+                <p className="mt-4 text-base leading-relaxed" style={{ color: INK_SOFT }}>
                   {f.a}
                 </p>
               </details>
@@ -422,7 +400,7 @@ function HomeIndex() {
   );
 }
 
-function WhyCard({
+function WhyItem({
   icon: Icon,
   title,
   desc,
@@ -432,72 +410,14 @@ function WhyCard({
   desc: string;
 }) {
   return (
-    <div
-      className="p-5"
-      style={{ border: `2px solid ${INK}`, background: "white" }}
-    >
-      <div
-        className="w-10 h-10 flex items-center justify-center mb-3"
-        style={{ background: ACCENT }}
-      >
-        <Icon className="w-5 h-5 text-white" />
-      </div>
-      <h3 className="font-black text-base mb-1.5" style={{ color: INK }}>
+    <div>
+      <Icon className="w-12 h-12 mb-5" style={{ color: ACCENT }} strokeWidth={1.5} />
+      <h3 className="font-black text-xl mb-2 tracking-tight" style={{ color: INK }}>
         {title}
       </h3>
       <p className="text-sm leading-relaxed" style={{ color: INK_SOFT }}>
         {desc}
       </p>
-    </div>
-  );
-}
-
-function PriceCard({
-  title,
-  price,
-  tagline,
-  features,
-  accent,
-}: {
-  title: string;
-  price: string;
-  tagline: string;
-  features: string[];
-  accent?: boolean;
-}) {
-  return (
-    <div
-      className="p-6"
-      style={{
-        border: `${accent ? 4 : 2}px solid ${accent ? ACCENT : INK}`,
-        background: "white",
-      }}
-    >
-      <div className="flex items-baseline justify-between">
-        <div className="text-xs font-bold uppercase tracking-wider">{title}</div>
-        {accent && (
-          <span
-            className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 text-white"
-            style={{ background: ACCENT }}
-          >
-            Best
-          </span>
-        )}
-      </div>
-      <div className="mt-2 flex items-baseline gap-2">
-        <span className="text-4xl font-black">{price}</span>
-        <span className="text-sm" style={{ color: INK_SOFT }}>
-          {tagline}
-        </span>
-      </div>
-      <ul className="mt-4 space-y-2">
-        {features.map((f) => (
-          <li key={f} className="flex items-start gap-2 text-sm">
-            <CheckCircle2 className="w-4 h-4 mt-0.5 flex-shrink-0" style={{ color: ACCENT }} />
-            <span>{f}</span>
-          </li>
-        ))}
-      </ul>
     </div>
   );
 }
