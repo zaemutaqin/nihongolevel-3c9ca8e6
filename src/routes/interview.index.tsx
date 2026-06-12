@@ -5,6 +5,7 @@ import { INTERVIEW_SCENARIOS } from "@/lib/interview-scenarios";
 import { useT } from "@/lib/i18n";
 import { useAuth } from "@/lib/auth";
 import { SignInButton } from "@/components/SignInButton";
+import { UsageMeter } from "@/components/UsageMeter";
 import { supabase } from "@/integrations/supabase/client";
 
 type SessionRow = {
