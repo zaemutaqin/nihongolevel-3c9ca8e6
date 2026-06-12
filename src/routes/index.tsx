@@ -111,6 +111,9 @@ function HomeIndex() {
               alt={isId ? "Ilustrasi pekerja Indonesia belajar bahasa Jepang" : "Indonesian worker learning Japanese"}
               width={1024}
               height={1024}
+              loading="eager"
+              fetchPriority="high"
+              decoding="async"
               className="w-full h-auto"
             />
           </div>
