@@ -70,10 +70,10 @@ function DashboardPage() {
           📊
         </div>
         <h2 className="text-xl font-bold">
-          Masuk untuk lihat progress kamu
+          {t("dash.signin.title")}
         </h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          Pantau riwayat interview, skor grammar/naturalness/confidence, dan favorit kamu.
+          {t("dash.signin.desc")}
         </p>
         <div className="mt-6 flex justify-center">
           <SignInButton />
@@ -144,25 +144,25 @@ function DashboardPage() {
       <p className="text-sm text-muted-foreground mb-6">{t("dash.subtitle")}</p>
 
       {/* SECTION INTERVIEW — Progress (semua user login) */}
-      <Section title="Progress Interview">
+      <Section title={t("dash.iv.title")}>
         <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
           <div className="flex items-center gap-2 mb-4">
             <Briefcase className="w-4 h-4 text-primary" />
-            <p className="text-sm font-semibold">Latihan Interview Kerja</p>
+            <p className="text-sm font-semibold">{t("dash.iv.label")}</p>
           </div>
 
           {interviewQuery.isLoading ? (
-            <p className="text-sm text-muted-foreground">Memuat…</p>
+            <p className="text-sm text-muted-foreground">{t("dash.iv.loading")}</p>
           ) : sessions.length === 0 ? (
             <div className="text-center py-6">
               <p className="text-sm text-muted-foreground mb-3">
-                Belum ada sesi interview. Mulai latihan pertamamu sekarang.
+                {t("dash.iv.empty")}
               </p>
               <Link
                 to="/interview"
                 className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:opacity-90 transition"
               >
-                Mulai Interview <ArrowRight className="w-4 h-4" />
+                {t("dash.iv.start")} <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
           ) : (
@@ -173,7 +173,7 @@ function DashboardPage() {
                 <ScoreBox label="Confidence" value={avgConfidence} />
               </div>
               <p className="text-[11px] uppercase font-semibold tracking-wide text-muted-foreground mb-2">
-                Sesi terakhir
+                {t("dash.iv.lastSessions")}
               </p>
               <div className="space-y-2">
                 {sessions.slice(0, 5).map((s) => (
@@ -184,7 +184,7 @@ function DashboardPage() {
                 to="/interview"
                 className="mt-4 inline-flex items-center gap-2 text-xs font-semibold text-primary hover:underline"
               >
-                Mulai sesi baru <ArrowRight className="w-3.5 h-3.5" />
+                {t("dash.iv.newSession")} <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </>
           )}
@@ -192,7 +192,7 @@ function DashboardPage() {
       </Section>
 
       {!isPro && (
-        <Section title="Fitur Pro">
+        <Section title={t("dash.pro.title")}>
           <LockedFeature />
         </Section>
       )}
@@ -506,7 +506,8 @@ function ScoreBox({ label, value }: { label: string; value: number | null }) {
 }
 
 function SessionRow({ s }: { s: InterviewSessionSummary }) {
-  const date = new Date(s.created_at).toLocaleDateString("id-ID", { day: "numeric", month: "short" });
+  const { t, lang } = useT();
+  const date = new Date(s.created_at).toLocaleDateString(lang === "en" ? "en-US" : "id-ID", { day: "numeric", month: "short" });
   const avg =
     s.completed && s.grammar_score !== null && s.naturalness_score !== null && s.confidence_score !== null
       ? Math.round((s.grammar_score + s.naturalness_score + s.confidence_score) / 3)
@@ -526,7 +527,7 @@ function SessionRow({ s }: { s: InterviewSessionSummary }) {
         </span>
       ) : (
         <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full bg-muted text-muted-foreground">
-          {s.completed ? "Selesai" : "Berlangsung"}
+          {s.completed ? t("dash.iv.done") : t("dash.iv.ongoing")}
         </span>
       )}
     </Link>
