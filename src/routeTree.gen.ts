@@ -21,10 +21,13 @@ import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PanduanWisataRouteImport } from './routes/panduan-wisata'
+import { Route as HanashiteRouteImport } from './routes/hanashite'
 import { Route as FavoritRouteImport } from './routes/favorit'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as HanashiteScenarioIdRouteImport } from './routes/hanashite.$scenarioId'
 import { Route as ApiTranslateRouteImport } from './routes/api/translate'
+import { Route as ApiHanashiteRouteImport } from './routes/api/hanashite'
 import { Route as ApiActivateProRouteImport } from './routes/api/activate-pro'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicPaymentsReconcileRouteImport } from './routes/api/public/payments/reconcile'
@@ -89,6 +92,11 @@ const PanduanWisataRoute = PanduanWisataRouteImport.update({
   path: '/panduan-wisata',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HanashiteRoute = HanashiteRouteImport.update({
+  id: '/hanashite',
+  path: '/hanashite',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FavoritRoute = FavoritRouteImport.update({
   id: '/favorit',
   path: '/favorit',
@@ -104,9 +112,19 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HanashiteScenarioIdRoute = HanashiteScenarioIdRouteImport.update({
+  id: '/$scenarioId',
+  path: '/$scenarioId',
+  getParentRoute: () => HanashiteRoute,
+} as any)
 const ApiTranslateRoute = ApiTranslateRouteImport.update({
   id: '/api/translate',
   path: '/api/translate',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiHanashiteRoute = ApiHanashiteRouteImport.update({
+  id: '/api/hanashite',
+  path: '/api/hanashite',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiActivateProRoute = ApiActivateProRouteImport.update({
@@ -131,6 +149,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/favorit': typeof FavoritRoute
+  '/hanashite': typeof HanashiteRouteWithChildren
   '/panduan-wisata': typeof PanduanWisataRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
@@ -144,7 +163,9 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/terms-of-service': typeof TermsOfServiceRoute
   '/api/activate-pro': typeof ApiActivateProRoute
+  '/api/hanashite': typeof ApiHanashiteRoute
   '/api/translate': typeof ApiTranslateRoute
+  '/hanashite/$scenarioId': typeof HanashiteScenarioIdRoute
   '/api/public/payments/reconcile': typeof ApiPublicPaymentsReconcileRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -152,6 +173,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/favorit': typeof FavoritRoute
+  '/hanashite': typeof HanashiteRouteWithChildren
   '/panduan-wisata': typeof PanduanWisataRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
@@ -165,7 +187,9 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/terms-of-service': typeof TermsOfServiceRoute
   '/api/activate-pro': typeof ApiActivateProRoute
+  '/api/hanashite': typeof ApiHanashiteRoute
   '/api/translate': typeof ApiTranslateRoute
+  '/hanashite/$scenarioId': typeof HanashiteScenarioIdRoute
   '/api/public/payments/reconcile': typeof ApiPublicPaymentsReconcileRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -174,6 +198,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/favorit': typeof FavoritRoute
+  '/hanashite': typeof HanashiteRouteWithChildren
   '/panduan-wisata': typeof PanduanWisataRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
@@ -187,7 +212,9 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/terms-of-service': typeof TermsOfServiceRoute
   '/api/activate-pro': typeof ApiActivateProRoute
+  '/api/hanashite': typeof ApiHanashiteRoute
   '/api/translate': typeof ApiTranslateRoute
+  '/hanashite/$scenarioId': typeof HanashiteScenarioIdRoute
   '/api/public/payments/reconcile': typeof ApiPublicPaymentsReconcileRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -197,6 +224,7 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/favorit'
+    | '/hanashite'
     | '/panduan-wisata'
     | '/pricing'
     | '/privacy'
@@ -210,7 +238,9 @@ export interface FileRouteTypes {
     | '/terms'
     | '/terms-of-service'
     | '/api/activate-pro'
+    | '/api/hanashite'
     | '/api/translate'
+    | '/hanashite/$scenarioId'
     | '/api/public/payments/reconcile'
     | '/api/public/payments/webhook'
   fileRoutesByTo: FileRoutesByTo
@@ -218,6 +248,7 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/favorit'
+    | '/hanashite'
     | '/panduan-wisata'
     | '/pricing'
     | '/privacy'
@@ -231,7 +262,9 @@ export interface FileRouteTypes {
     | '/terms'
     | '/terms-of-service'
     | '/api/activate-pro'
+    | '/api/hanashite'
     | '/api/translate'
+    | '/hanashite/$scenarioId'
     | '/api/public/payments/reconcile'
     | '/api/public/payments/webhook'
   id:
@@ -239,6 +272,7 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/favorit'
+    | '/hanashite'
     | '/panduan-wisata'
     | '/pricing'
     | '/privacy'
@@ -252,7 +286,9 @@ export interface FileRouteTypes {
     | '/terms'
     | '/terms-of-service'
     | '/api/activate-pro'
+    | '/api/hanashite'
     | '/api/translate'
+    | '/hanashite/$scenarioId'
     | '/api/public/payments/reconcile'
     | '/api/public/payments/webhook'
   fileRoutesById: FileRoutesById
@@ -261,6 +297,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRoute
   FavoritRoute: typeof FavoritRoute
+  HanashiteRoute: typeof HanashiteRouteWithChildren
   PanduanWisataRoute: typeof PanduanWisataRoute
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
@@ -274,6 +311,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   TermsOfServiceRoute: typeof TermsOfServiceRoute
   ApiActivateProRoute: typeof ApiActivateProRoute
+  ApiHanashiteRoute: typeof ApiHanashiteRoute
   ApiTranslateRoute: typeof ApiTranslateRoute
   ApiPublicPaymentsReconcileRoute: typeof ApiPublicPaymentsReconcileRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
@@ -365,6 +403,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PanduanWisataRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/hanashite': {
+      id: '/hanashite'
+      path: '/hanashite'
+      fullPath: '/hanashite'
+      preLoaderRoute: typeof HanashiteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/favorit': {
       id: '/favorit'
       path: '/favorit'
@@ -386,11 +431,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/hanashite/$scenarioId': {
+      id: '/hanashite/$scenarioId'
+      path: '/$scenarioId'
+      fullPath: '/hanashite/$scenarioId'
+      preLoaderRoute: typeof HanashiteScenarioIdRouteImport
+      parentRoute: typeof HanashiteRoute
+    }
     '/api/translate': {
       id: '/api/translate'
       path: '/api/translate'
       fullPath: '/api/translate'
       preLoaderRoute: typeof ApiTranslateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/hanashite': {
+      id: '/api/hanashite'
+      path: '/api/hanashite'
+      fullPath: '/api/hanashite'
+      preLoaderRoute: typeof ApiHanashiteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/activate-pro': {
@@ -417,10 +476,23 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface HanashiteRouteChildren {
+  HanashiteScenarioIdRoute: typeof HanashiteScenarioIdRoute
+}
+
+const HanashiteRouteChildren: HanashiteRouteChildren = {
+  HanashiteScenarioIdRoute: HanashiteScenarioIdRoute,
+}
+
+const HanashiteRouteWithChildren = HanashiteRoute._addFileChildren(
+  HanashiteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
   FavoritRoute: FavoritRoute,
+  HanashiteRoute: HanashiteRouteWithChildren,
   PanduanWisataRoute: PanduanWisataRoute,
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
@@ -434,6 +506,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   TermsOfServiceRoute: TermsOfServiceRoute,
   ApiActivateProRoute: ApiActivateProRoute,
+  ApiHanashiteRoute: ApiHanashiteRoute,
   ApiTranslateRoute: ApiTranslateRoute,
   ApiPublicPaymentsReconcileRoute: ApiPublicPaymentsReconcileRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
