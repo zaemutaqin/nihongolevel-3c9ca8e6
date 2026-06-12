@@ -180,22 +180,24 @@ export function NaturalnessBar({
   return (
     <div className="w-full">
       {!compact && (
-        <p className="text-[11px] font-medium text-muted-foreground mb-1">
+        <p className="text-[10px] uppercase tracking-[0.18em] font-bold text-foreground/60 mb-1.5">
           {t("nat.label")}
         </p>
       )}
-      <div className={cn("flex gap-1 w-full rounded-full overflow-hidden", "h-1.5")}>
+      <div className="flex gap-[2px] w-full h-2">
         {[1, 2, 3].map((seg) => (
           <div
             key={seg}
             className={cn(
-              "flex-1 rounded-full",
-              seg <= meta.filled ? meta.color : meta.track,
+              "flex-1",
+              seg <= meta.filled
+                ? value === "native" ? "bg-primary" : "bg-foreground"
+                : "bg-foreground/10",
             )}
           />
         ))}
       </div>
-      <p className="mt-1 text-[11px] font-semibold text-foreground/80">{t(meta.key)}</p>
+      <p className="mt-1.5 text-[11px] font-bold uppercase tracking-wider text-foreground">{t(meta.key)}</p>
     </div>
   );
 }
