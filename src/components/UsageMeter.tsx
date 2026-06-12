@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getMyUsage } from "@/lib/usage.functions";
 import { useAuth } from "@/lib/auth";
+import { useIsPro } from "@/hooks/useIsPro";
 import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
@@ -17,6 +18,7 @@ interface Props {
 export function UsageMeter({ feature, className }: Props) {
   const { user, profile } = useAuth();
   const { lang } = useT();
+  const { isPro } = useIsPro();
   const isId = lang === "id";
   const fetchUsage = useServerFn(getMyUsage);
 
@@ -29,7 +31,7 @@ export function UsageMeter({ feature, className }: Props) {
   });
 
   if (!user) return null;
-  if (profile?.is_pro) {
+  if (isPro) {
     return (
       <div
         className={cn(
