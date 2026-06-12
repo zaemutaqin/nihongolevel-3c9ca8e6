@@ -44,6 +44,44 @@ const ACCENT = "#D9F26B";
 const LAVENDER = "#E8D5F2";
 const CREAM = "#F2EDE4";
 
+const FAQ_ID = [
+  {
+    q: "Apa bedanya dengan aplikasi belajar bahasa Jepang lain?",
+    a: "Fokus kami bukan grammar dari nol, tapi situasi nyata di Jepang: interview Tokutei Ginou, ngobrol dengan atasan, dan kehidupan sehari-hari. Cocok untuk yang sudah punya dasar (N5/N4).",
+  },
+  {
+    q: "Apakah suara saya direkam?",
+    a: "Tidak. Mic browser hanya untuk speech-to-text lokal. Transkrip teks dikirim ke AI untuk dievaluasi.",
+  },
+  {
+    q: "Apakah Pro berlangganan bulanan?",
+    a: "Tidak. Pro $19 sekali bayar, akses seumur hidup ke semua fitur sekarang & yang akan datang.",
+  },
+  {
+    q: "Skenario apa saja yang tersedia sekarang?",
+    a: "Interview Simulator: Tokutei Ginou, Staff Restoran. Life Simulator: konbini, restoran ramen, apartemen, klinik, izakaya, dan banyak lagi.",
+  },
+];
+
+const FAQ_EN = [
+  {
+    q: "How is this different from other Japanese learning apps?",
+    a: "We don't teach grammar from scratch. We focus on real situations in Japan: Tokutei Ginou interviews, talking to bosses, daily life. Best if you already have N5/N4 basics.",
+  },
+  {
+    q: "Is my voice recorded?",
+    a: "No. The browser mic is used for local speech-to-text only. Only the text transcript is sent to the AI.",
+  },
+  {
+    q: "Is Pro a monthly subscription?",
+    a: "No. Pro is a one-time $19 payment for lifetime access to current and future features.",
+  },
+  {
+    q: "Which scenarios are available now?",
+    a: "Interview Simulator: Tokutei Ginou, Restaurant Staff. Life Simulator: konbini, ramen shop, apartment hunting, clinic, izakaya, and more.",
+  },
+];
+
 function HomeIndex() {
   const { lang } = useT();
   const { user } = useAuth();
