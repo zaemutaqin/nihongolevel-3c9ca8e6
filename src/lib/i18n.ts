@@ -50,8 +50,8 @@ const ID: Dict = {
   "nav.translate_short": "Translator",
 
   // Home
-  "home.title": "Belajar Bicara Bahasa Jepang Natural",
-  "home.subtitle": "Belajar berbicara seperti orang Jepang",
+  "home.title": "Translator Jepang untuk Kerja & Kehidupan",
+  "home.subtitle": "Dapatkan 4 level: Casual, Polite, Workplace, dan Keigo — siap dipakai di tempat kerja Jepang.",
   "home.inputLabel": "Kalimat Bahasa Indonesia",
   "home.placeholder": "Ketik situasi atau kalimat dalam Bahasa Indonesia...",
   "home.addContext": "Tambah konteks (opsional)",
