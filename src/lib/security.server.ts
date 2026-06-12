@@ -170,6 +170,9 @@ export type AuditEvent =
   | "auth_failure"
   | "hanashite_success"
   | "hanashite_fail"
+  | "interview_message"
+  | "interview_feedback"
+  | "interview_fail"
   | "name_gen_success"
   | "name_gen_fail";
 
