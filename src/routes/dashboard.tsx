@@ -203,20 +203,20 @@ function DashboardPage() {
 
       {/* SECTION A — Today */}
       <Section title={t("dash.today")}>
-        <div className="rounded-2xl border-2 border-primary/30 bg-gradient-to-br from-primary/5 to-transparent p-5 shadow-sm">
+        <div className="rounded-2xl border border-foreground/10 bg-[#E8D5F2] p-5">
           <div className="flex items-start justify-between gap-3 mb-3">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wide text-primary">
+              <p className="text-xs font-semibold uppercase tracking-wide text-foreground/70">
                 {t("dash.needReview")}
               </p>
-              <p className="text-2xl font-bold mt-0.5">
+              <p className="text-2xl font-bold mt-0.5 text-foreground">
                 {needsReview.length}{" "}
-                <span className="text-sm font-normal text-muted-foreground">
+                <span className="text-sm font-normal text-foreground/70">
                   {t("dash.expressions")}
                 </span>
               </p>
             </div>
-            <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-700 border border-amber-300/50">
+            <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-[#D9F26B] text-foreground border border-foreground/15">
               <Flame className="w-3.5 h-3.5" /> {streak} {t("dash.streak")}
             </span>
           </div>
@@ -481,7 +481,7 @@ function QuickReviewModal({ fav, onClose }: { fav: FavoriteEntry; onClose: () =>
               </button>
               <button
                 onClick={() => handle(true)}
-                className="rounded-lg border border-green-500/40 bg-green-500/10 text-green-700 py-2.5 text-sm font-semibold hover:bg-green-500/15 transition"
+                className="rounded-lg border border-foreground/15 bg-[#D9F26B] text-foreground py-2.5 text-sm font-semibold hover:opacity-90 transition"
               >
                 {t("qrm.remember")}
               </button>

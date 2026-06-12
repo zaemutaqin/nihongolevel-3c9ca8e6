@@ -101,8 +101,8 @@ function RiwayatPage() {
         </div>
       ) : (
         <div className="space-y-4">
-          {filtered.map((h) => (
-            <HistoryCard key={h.id} entry={h} />
+          {filtered.map((h, i) => (
+            <HistoryCard key={h.id} entry={h} index={i} />
           ))}
         </div>
       )}
@@ -110,13 +110,14 @@ function RiwayatPage() {
   );
 }
 
-function HistoryCard({ entry }: { entry: HistoryEntry }) {
+function HistoryCard({ entry, index = 0 }: { entry: HistoryEntry; index?: number }) {
   const { t } = useT();
   const [open, setOpen] = useState(false);
   const [tick, setTick] = useState(0);
+  const bg = index % 2 === 0 ? "#E8D5F2" : "#D9F26B";
 
   return (
-    <div className="rounded-2xl border border-border bg-card shadow-sm p-5">
+    <div className="rounded-2xl border border-foreground/10 p-5" style={{ background: bg }}>
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <p className="text-xs text-muted-foreground">{formatIndonesianDate(entry.date)}</p>

@@ -93,12 +93,12 @@ function InterviewIndex() {
       </header>
 
       {!user && (
-        <div className="mb-10 -mx-4 sm:mx-0 bg-[#0F172A] px-6 py-8 sm:px-10 sm:py-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
+        <div className="mb-10 -mx-4 sm:mx-0 rounded-2xl bg-[#E8D5F2] px-6 py-8 sm:px-10 sm:py-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
           <div className="max-w-xl">
-            <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-[#F5F1E8]/60">
+            <p className="inline-block text-[10px] font-bold uppercase tracking-[0.28em] bg-[#D9F26B] text-foreground px-2.5 py-1 rounded-full">
               {isId ? "Akses Diperlukan" : "Access Required"}
             </p>
-            <h2 className="mt-2 font-display text-2xl sm:text-3xl text-[#F5F1E8] leading-tight">
+            <h2 className="mt-3 font-display text-2xl sm:text-3xl text-foreground leading-tight">
               {isId
                 ? "Masuk untuk mulai latihan interview."
                 : "Sign in to start practicing interviews."}
@@ -153,24 +153,25 @@ function InterviewIndex() {
           key={activeCat}
           className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 animate-in fade-in slide-in-from-bottom-1 duration-300"
         >
-          {visible.map((s) => (
+          {visible.map((s, i) => (
             <Link
               key={s.id}
               to="/interview/$scenarioId"
               params={{ scenarioId: s.id }}
-              className="group relative flex flex-col rounded-2xl bg-white p-6 border border-foreground/10 hover:-translate-y-0.5 hover:border-foreground/25 transition"
+              className="group relative flex flex-col rounded-2xl p-6 border border-foreground/10 hover:-translate-y-0.5 hover:border-foreground/25 transition"
+              style={{ background: i % 2 === 0 ? "#E8D5F2" : "#D9F26B" }}
             >
-              <span className="absolute top-4 right-4 text-[10px] font-bold uppercase tracking-[0.18em] bg-[#0F172A] text-[#F5F1E8] px-2 py-1 rounded-md">
+              <span className="absolute top-4 right-4 text-[10px] font-bold uppercase tracking-[0.18em] bg-foreground text-background px-2 py-1 rounded-md">
                 {s.level}
               </span>
               <div className="text-3xl mb-4">{s.emoji}</div>
               <h3 className="font-black text-lg leading-tight tracking-tight text-foreground">
                 {isId ? s.title_id : s.title_en}
               </h3>
-              <p className="mt-2 text-sm text-muted-foreground line-clamp-3 leading-relaxed flex-1">
+              <p className="mt-2 text-sm text-foreground/70 line-clamp-3 leading-relaxed flex-1">
                 {isId ? s.description_id : s.description_en}
               </p>
-              <div className="mt-5 inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-[0.22em] text-primary">
+              <div className="mt-5 inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-[0.22em] text-foreground">
                 {isId ? "Mulai" : "Start"}
                 <ChevronRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
               </div>

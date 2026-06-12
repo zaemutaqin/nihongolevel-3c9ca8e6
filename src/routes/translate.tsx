@@ -387,7 +387,7 @@ function Index() {
 
       <UsageMeter feature="translate" className="mb-4" />
 
-      <section className="rounded-2xl bg-white border border-foreground/10 overflow-hidden">
+      <section className="rounded-2xl bg-[#E8D5F2] border border-foreground/10 overflow-hidden">
         <div className="p-6 sm:p-7">
           <label
             htmlFor="input"
@@ -486,12 +486,13 @@ function Index() {
           {t("home.examplesLabel")}
         </p>
         <div className="flex flex-wrap gap-2">
-          {EXAMPLES.map((ex) => (
+          {EXAMPLES.map((ex, i) => (
             <button
               key={ex}
               onClick={() => useExample(ex)}
               disabled={loading}
-              className="rounded-full bg-white border border-foreground/15 px-4 py-2 text-sm text-foreground/80 hover:border-foreground/40 hover:text-foreground transition disabled:opacity-50"
+              className="rounded-full border border-foreground/10 px-4 py-2 text-sm text-foreground hover:border-foreground/40 transition disabled:opacity-50"
+              style={{ background: i % 2 === 0 ? "#D9F26B" : "#E8D5F2" }}
             >
               {ex}
             </button>
