@@ -387,7 +387,7 @@ function Index() {
 
       <UsageMeter feature="translate" className="mb-4" />
 
-      <section className="rounded-2xl bg-white border border-foreground/10 overflow-hidden">
+      <section className="rounded-2xl bg-[#E8D5F2] border border-foreground/10 overflow-hidden">
         <div className="p-6 sm:p-7">
           <label
             htmlFor="input"
