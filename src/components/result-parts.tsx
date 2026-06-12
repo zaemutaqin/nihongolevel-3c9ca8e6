@@ -413,8 +413,8 @@ export function LevelCard({
 
 function InfoRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg bg-muted/50 p-3 text-sm">
-      <p className="text-xs font-semibold text-foreground mb-0.5">{label}</p>
+    <div className="border-l-2 border-foreground/30 pl-3 text-sm">
+      <p className="text-[10px] uppercase tracking-[0.15em] font-bold text-foreground/60 mb-0.5">{label}</p>
       <p className="text-foreground/80">{value}</p>
     </div>
   );
@@ -429,83 +429,64 @@ export function MostNaturalCard({
   onFavorite?: () => void;
   isFav?: boolean;
 }) {
-  const tone = "level-n3";
   const { t } = useT();
   const japanese = cleanJapanese(data.japanese);
   const [whyOpen, setWhyOpen] = useState(false);
   return (
-    <div
-      className="rounded-2xl border-2 p-6 sm:p-8 shadow-md natural-pulse-border"
-      style={{
-        borderColor: `var(--${tone})`,
-        background: `linear-gradient(135deg, color-mix(in oklab, var(--${tone}) 14%, transparent), color-mix(in oklab, var(--${tone}) 4%, transparent))`,
-      }}
-    >
-      <div className="flex items-center gap-2 mb-3 flex-wrap">
-        <Star className="w-4 h-4" style={{ color: `var(--${tone})` }} fill="currentColor" />
-        <h2
-          className="text-sm font-bold uppercase tracking-wide"
-          style={{ color: `var(--${tone})` }}
-        >
+    <div className="bg-foreground text-background p-8 sm:p-12">
+      <div className="flex items-center gap-2 mb-6">
+        <Star className="w-3.5 h-3.5 text-primary" fill="currentColor" />
+        <h2 className="text-[11px] font-bold uppercase tracking-[0.25em] text-background/70">
           {t("mn.label")}
         </h2>
       </div>
-      <div className="flex items-start gap-3">
-        <p className="font-jp text-3xl sm:text-4xl leading-snug text-foreground flex-1 break-words">
+
+      <div className="flex items-start gap-4">
+        <p className="font-jp font-bold flex-1 break-words leading-[1.05] text-background"
+          style={{ fontSize: "clamp(2.5rem, 9vw, 5.5rem)" }}>
           {japanese}
         </p>
         <SpeakerButton text={japanese} />
       </div>
-      <p className="mt-2 italic text-sm text-muted-foreground">{data.romaji}</p>
 
-      <p
-        className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full"
-        style={{
-          backgroundColor: `color-mix(in oklab, var(--${tone}) 16%, transparent)`,
-          color: `var(--${tone})`,
-        }}
-      >
+      <p className="mt-4 italic text-base text-background/60">{data.romaji}</p>
+
+      <div className="mt-6 inline-block bg-primary text-primary-foreground px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em]">
         {t("mn.badge")}
-      </p>
-
-      <div className="mt-4">
-        <NaturalnessBar value="native" />
       </div>
-      <p className="mt-4 text-sm text-foreground/80">{data.reason}</p>
+
+      <p className="mt-6 text-base text-background/85 max-w-2xl leading-relaxed">{data.reason}</p>
 
       {data.native_note && (
-        <div className="mt-3 rounded-lg border border-border/60 bg-background/60 overflow-hidden">
+        <div className="mt-6 border-t border-background/20 pt-4">
           <button
             onClick={() => setWhyOpen((v) => !v)}
             aria-expanded={whyOpen}
-            className="w-full flex items-center justify-between px-3 py-2.5 text-sm font-semibold hover:bg-muted/40 transition"
+            className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.18em] font-bold text-background/80 hover:text-background transition"
           >
-            <span>{t("mn.why")}</span>
             <ChevronDown
-              className={cn(
-                "w-4 h-4 text-muted-foreground transition-transform",
-                whyOpen && "rotate-180",
-              )}
+              className={cn("w-3.5 h-3.5 transition-transform", whyOpen && "rotate-180")}
             />
+            {t("mn.why")}
           </button>
           {whyOpen && (
-            <p className="px-3 pb-3 text-sm text-foreground/80 italic">{data.native_note}</p>
+            <p className="mt-3 text-sm text-background/75 italic max-w-2xl">{data.native_note}</p>
           )}
         </div>
       )}
 
       {onFavorite && (
-        <div className="mt-4">
+        <div className="mt-6">
           <button
             onClick={onFavorite}
             className={cn(
-              "inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold border transition shadow-sm",
+              "inline-flex items-center gap-1.5 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.18em] transition",
               isFav
-                ? "bg-amber-100 border-amber-300 text-amber-800"
-                : "bg-background border-border text-foreground hover:bg-muted",
+                ? "bg-primary text-primary-foreground"
+                : "bg-background/10 text-background hover:bg-background/20",
             )}
           >
-            <Star className="w-4 h-4" fill={isFav ? "currentColor" : "none"} />
+            <Star className="w-3.5 h-3.5" fill={isFav ? "currentColor" : "none"} />
             {isFav ? t("mn.savedFav") : t("mn.saveFav")}
           </button>
         </div>
