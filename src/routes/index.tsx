@@ -39,7 +39,6 @@ export const Route = createFileRoute("/")({
 // Flat design tokens — slate/navy ink for softer contrast than pure black
 const INK = "#0F172A"; // dark slate (instead of #000)
 const INK_SOFT = "#334155"; // body text
-const MUTED = "#64748B";
 const ACCENT = "#22C55E";
 
 // Map scenario id -> lucide icon (replaces generic emoji)
