@@ -153,7 +153,7 @@ function HomeIndex() {
         {/* POPULAR SCENARIOS — borderless */}
         <section className="mb-28 sm:mb-36">
           <div className="mb-12 max-w-2xl">
-            <div className="text-[11px] font-bold uppercase tracking-[0.3em] mb-3" style={{ color: ACCENT }}>
+            <div className="text-[11px] font-bold uppercase tracking-[0.3em] mb-3" style={{ color: INK }}>
               {isId ? "Mulai Latihan" : "Start Practicing"}
             </div>
             <h2 className="text-3xl sm:text-5xl font-black leading-[1.05] tracking-tight">
