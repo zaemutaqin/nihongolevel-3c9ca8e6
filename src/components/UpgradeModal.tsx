@@ -121,28 +121,6 @@ export function UpgradeModal({ open, onClose }: UpgradeModalProps) {
             </ul>
 
             <div className="mt-6 grid gap-3">
-              {/* Monthly */}
-              <button
-                onClick={() => handleUpgrade("pro_monthly")}
-                disabled={loading || signingIn}
-                className="w-full rounded-xl border-2 border-border bg-background hover:border-primary p-4 text-left transition disabled:opacity-60"
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="text-xs font-semibold uppercase text-muted-foreground">
-                      {lang === "id" ? "Bulanan" : "Monthly"}
-                    </div>
-                    <div className="text-xl font-bold">
-                      $4.99<span className="text-xs font-medium text-muted-foreground">{lang === "id" ? "/bulan" : "/mo"}</span>
-                    </div>
-                    <div className="text-[11px] text-muted-foreground">
-                      {lang === "id" ? "Batal kapan saja" : "Cancel anytime"}
-                    </div>
-                  </div>
-                  {(loading || signingIn) ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-                </div>
-              </button>
-
               {/* Lifetime */}
               <button
                 onClick={() => handleUpgrade("pro_lifetime")}
@@ -150,7 +128,7 @@ export function UpgradeModal({ open, onClose }: UpgradeModalProps) {
                 className="relative w-full rounded-xl border-2 border-primary bg-primary/5 hover:bg-primary/10 p-4 text-left transition disabled:opacity-60"
               >
                 <span className="absolute -top-2 right-3 inline-flex items-center rounded-full bg-primary text-primary-foreground px-2 py-0.5 text-[10px] font-bold uppercase">
-                  {lang === "id" ? "Hemat" : "Best value"}
+                  {lang === "id" ? "Sekali Bayar" : "One-time"}
                 </span>
                 <div className="flex items-center justify-between">
                   <div>
@@ -158,13 +136,13 @@ export function UpgradeModal({ open, onClose }: UpgradeModalProps) {
                       {lang === "id" ? "Seumur Hidup" : "Lifetime"}
                     </div>
                     <div className="text-xl font-bold">
-                      $50<span className="text-xs font-medium text-muted-foreground"> {lang === "id" ? "sekali bayar" : "one-time"}</span>
+                      $20<span className="text-xs font-medium text-muted-foreground"> {lang === "id" ? "sekali bayar" : "one-time"}</span>
                     </div>
                     <div className="text-[11px] text-muted-foreground">
-                      {lang === "id" ? "≈ 10 bulan · selamanya" : "≈ 10 months · forever"}
+                      {lang === "id" ? "Bayar sekali, milik selamanya" : "Pay once, yours forever"}
                     </div>
                   </div>
-                  <Crown className="w-4 h-4 text-primary" />
+                  {(loading || signingIn) ? <Loader2 className="w-4 h-4 animate-spin" /> : <Crown className="w-4 h-4 text-primary" />}
                 </div>
               </button>
 
