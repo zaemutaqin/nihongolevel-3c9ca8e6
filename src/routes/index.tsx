@@ -400,9 +400,9 @@ function WhyItem({
     >
       <div
         className="w-11 h-11 rounded-xl flex items-center justify-center mb-5"
-        style={{ background: "rgba(220,38,38,0.10)" }}
+        style={{ background: ACCENT }}
       >
-        <Icon className="w-5 h-5" style={{ color: ACCENT }} strokeWidth={2} />
+        <Icon className="w-5 h-5" style={{ color: INK }} strokeWidth={2} />
       </div>
       <h3 className="font-black text-xl mb-2 tracking-tight" style={{ color: INK }}>
         {title}
