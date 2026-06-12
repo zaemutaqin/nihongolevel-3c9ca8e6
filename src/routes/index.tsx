@@ -6,6 +6,22 @@ import {
   UtensilsCrossed,
   Briefcase,
   Map as MapIcon,
+  Store,
+  Hotel,
+  Beer,
+  Train,
+  Stethoscope,
+  Scissors,
+  Mailbox,
+  Landmark,
+  Home,
+  Handshake,
+  Utensils,
+  Shield,
+  ShoppingBag,
+  Flame,
+  Mic,
+  Car,
   Sparkles,
 } from "lucide-react";
 import { SCENARIOS } from "@/lib/hanashite-scenarios";
@@ -45,7 +61,23 @@ const ACCENT = "#22C55E";
 const SCENARIO_ICONS: Record<string, typeof UtensilsCrossed> = {
   sc_ramen: UtensilsCrossed,
   sc_meeting: Briefcase,
-  sc_directions: MapIcon,
+  sc_shibuya: MapIcon,
+  sc_konbini: Store,
+  sc_hotel: Hotel,
+  sc_izakaya: Beer,
+  sc_train: Train,
+  sc_clinic: Stethoscope,
+  sc_salon: Scissors,
+  sc_yuubin: Mailbox,
+  sc_ginkou: Landmark,
+  sc_apato: Home,
+  sc_interview: Handshake,
+  sc_restoran: Utensils,
+  sc_immigration: Shield,
+  sc_shopping: ShoppingBag,
+  sc_onsen: Flame,
+  sc_karaoke: Mic,
+  sc_taxi: Car,
 };
 
 function HomeIndex() {
@@ -115,7 +147,7 @@ function HomeIndex() {
           </div>
         </header>
 
-        {/* SKENARIO GRID */}
+        {/* SKENARIO GRID — compact */}
         <section id="skenario" className="mb-24">
           <h2
             className="text-2xl sm:text-3xl font-black mb-8 inline-block pb-2"
@@ -123,77 +155,62 @@ function HomeIndex() {
           >
             {isId ? "Pilih Skenario" : "Choose a Scenario"}
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
             {SCENARIOS.map((s) => {
               const locked = !s.free && !isPro;
               const title = isId ? s.title_id : s.title_en;
-              const situation = isId ? s.situation_id : s.situation_en;
-              const role = isId ? s.role_id : s.role_en;
-              const tone = isId ? s.tone_id : s.tone_en;
               const Icon = SCENARIO_ICONS[s.id] ?? Sparkles;
               return (
                 <article
                   key={s.id}
-                  className="p-6 flex flex-col bg-white"
+                  className="relative p-4 flex flex-col items-center text-center bg-white hover:bg-[#F8FAFC] transition-colors"
                   style={{ border: `2px solid ${INK}` }}
                 >
-                  <div className="flex items-start justify-between mb-4">
-                    <div
-                      className="w-12 h-12 flex items-center justify-center"
-                      style={{ border: `2px solid ${INK}`, background: "#F1F5F9" }}
-                    >
-                      <Icon className="w-6 h-6" style={{ color: INK }} />
-                    </div>
-                    <span
-                      className="px-2 py-1 text-[10px] font-black uppercase tracking-wider"
-                      style={
-                        s.free
-                          ? { background: ACCENT, color: "white" }
-                          : { background: INK, color: "white" }
-                      }
-                    >
-                      {s.free ? "Free" : "Pro"}
-                    </span>
+                  {/* Free / Pro badge */}
+                  <span
+                    className="absolute top-0 right-0 px-2 py-0.5 text-[9px] font-black uppercase tracking-wider"
+                    style={
+                      s.free
+                        ? { background: ACCENT, color: "white" }
+                        : { background: INK, color: "white" }
+                    }
+                  >
+                    {s.free ? "Free" : "Pro"}
+                  </span>
+
+                  {/* Icon */}
+                  <div
+                    className="w-10 h-10 flex items-center justify-center mb-3"
+                    style={{ border: `2px solid ${INK}`, background: "#F1F5F9" }}
+                  >
+                    <Icon className="w-5 h-5" style={{ color: INK }} />
                   </div>
-                  <h3 className="text-xl font-bold mb-2" style={{ color: INK }}>
+
+                  {/* Title */}
+                  <h3 className="text-sm font-bold leading-snug mb-3" style={{ color: INK }}>
                     {title}
                   </h3>
-                  <p className="text-sm mb-5 flex-1" style={{ color: INK_SOFT }}>
-                    {situation}
-                  </p>
-                  <div className="flex flex-wrap gap-2 mb-6">
-                    <span
-                      className="px-2 py-1 text-[10px] font-bold"
-                      style={{ background: "#F1F5F9", color: INK }}
-                    >
-                      👤 {role}
-                    </span>
-                    <span
-                      className="px-2 py-1 text-[10px] font-bold"
-                      style={{ background: "#F1F5F9", color: INK }}
-                    >
-                      🎯 {tone}
-                    </span>
-                  </div>
+
+                  {/* Action */}
                   {locked ? (
                     <Link
                       to="/pricing"
-                      className="inline-flex w-full items-center justify-center gap-2 py-3 text-sm font-bold hover:bg-[#F8FAFC] transition-colors"
+                      className="mt-auto inline-flex w-full items-center justify-center gap-1.5 py-2 text-[11px] font-bold hover:bg-white transition-colors"
                       style={{ border: `2px solid ${INK}`, color: INK }}
                     >
-                      <Lock className="w-4 h-4" />
-                      {isId ? "Upgrade ke Pro" : "Upgrade to Pro"}
+                      <Lock className="w-3.5 h-3.5" />
+                      {isId ? "Pro" : "Pro"}
                     </Link>
                   ) : (
                     <Link
                       to="/hanashite/$scenarioId"
                       params={{ scenarioId: s.id }}
-                      className="inline-flex w-full items-center justify-center gap-2 py-3 text-sm font-bold hover:bg-[#F8FAFC] transition-colors aria-disabled:opacity-50 aria-disabled:pointer-events-none"
+                      className="mt-auto inline-flex w-full items-center justify-center gap-1.5 py-2 text-[11px] font-bold hover:bg-white transition-colors aria-disabled:opacity-50 aria-disabled:pointer-events-none"
                       style={{ border: `2px solid ${INK}`, color: INK }}
                       aria-disabled={!user}
                     >
-                      <MessageCircle className="w-4 h-4" />
-                      {isId ? "Mulai Berlatih" : "Start Practice"}
+                      <MessageCircle className="w-3.5 h-3.5" />
+                      {isId ? "Mulai" : "Start"}
                     </Link>
                   )}
                 </article>
