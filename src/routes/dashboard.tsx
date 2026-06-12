@@ -63,7 +63,25 @@ function DashboardPage() {
     staleTime: 30_000,
   });
 
-  if (!user) return <LockedFeature />;
+  if (!user) {
+    const isId = t("home.title") !== undefined; // lang detection not needed; copy in both
+    return (
+      <div className="mx-auto max-w-md px-6 py-16 text-center">
+        <div className="mx-auto mb-5 inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 text-3xl">
+          📊
+        </div>
+        <h2 className="text-xl font-bold">
+          Masuk untuk lihat progress kamu
+        </h2>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Pantau riwayat interview, skor grammar/naturalness/confidence, dan favorit kamu.
+        </p>
+        <div className="mt-6 flex justify-center">
+          <SignInButton />
+        </div>
+      </div>
+    );
+  }
 
 
   const streak = useMemo(() => getStreakDays(), [history]);
