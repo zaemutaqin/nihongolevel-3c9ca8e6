@@ -69,7 +69,7 @@ export function UpgradeModal({ open, onClose }: UpgradeModalProps) {
     }
   };
 
-  const handleUpgrade = async (priceId: "pro_lifetime" | "pro_monthly") => {
+  const handleUpgrade = async (priceId: "pro_lifetime") => {
     gtagEvent("upgrade_clicked", { signed_in: user ? "yes" : "no", plan: priceId });
     if (!user) {
       await triggerSignIn();
