@@ -22,6 +22,7 @@ import { useT } from "@/lib/i18n";
 import type { IntentType } from "@/lib/translate.functions";
 import { useAuth } from "@/lib/auth";
 import { LockedFeature } from "@/components/LockedFeature";
+import { SignInButton } from "@/components/SignInButton";
 import { getMyInterviewSessions, type InterviewSessionSummary } from "@/lib/interview-history.functions";
 
 
