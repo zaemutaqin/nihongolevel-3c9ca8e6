@@ -6,6 +6,7 @@ import { useAuth } from "@/lib/auth";
 import { usePaddleCheckout } from "@/hooks/usePaddleCheckout";
 import { lovable } from "@/integrations/lovable";
 import { supabase } from "@/integrations/supabase/client";
+import { gtagEvent } from "@/lib/gtag";
 
 interface UpgradeModalProps {
   open: boolean;
