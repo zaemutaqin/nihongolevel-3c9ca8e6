@@ -137,6 +137,8 @@ export function AppShell() {
         <Outlet />
       </main>
 
+      <StreakReminder />
+
       <div className="hidden sm:block">
         <SiteFooter />
       </div>
