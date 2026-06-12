@@ -46,6 +46,28 @@ export const Route = createFileRoute("/api/nama-jepang")({
         const lang = parsed.data.lang;
         const explLang = lang === "en" ? "English" : "Indonesian";
 
+        // Per-IP daily rate limit (unauthenticated endpoint)
+        const ipAttempts = await countEventsForIp(
+          ip,
+          ["name_gen_success", "name_gen_fail"],
+          hoursAgoIso(24),
+        );
+        if (ipAttempts >= IP_DAY_MAX) {
+          await audit({
+            event_type: "name_gen_fail",
+            ip_address: ip,
+            success: false,
+            error_code: "RATE_LIMITED",
+            metadata: { ipAttempts },
+          });
+          return jsonResponse(
+            { error: "RATE_LIMITED", retry_after: 86400 },
+            429,
+            allowedOrigin,
+            { "Retry-After": "86400" },
+          );
+        }
+
         const apiKey = process.env.LOVABLE_API_KEY;
         if (!apiKey) return jsonResponse({ error: "SERVER_MISCONFIGURED" }, 500, allowedOrigin);
 
