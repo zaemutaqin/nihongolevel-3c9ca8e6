@@ -474,3 +474,44 @@ function QuickReviewModal({ fav, onClose }: { fav: FavoriteEntry; onClose: () =>
     </div>
   );
 }
+
+function ScoreBox({ label, value }: { label: string; value: number | null }) {
+  return (
+    <div className="rounded-xl border border-border bg-background p-3 text-center">
+      <p className="text-[10px] uppercase font-semibold tracking-wide text-muted-foreground">{label}</p>
+      <p className="text-2xl font-bold mt-1">
+        {value !== null ? value : "–"}
+        {value !== null && <span className="text-xs font-normal text-muted-foreground">/100</span>}
+      </p>
+    </div>
+  );
+}
+
+function SessionRow({ s }: { s: InterviewSessionSummary }) {
+  const date = new Date(s.created_at).toLocaleDateString("id-ID", { day: "numeric", month: "short" });
+  const avg =
+    s.completed && s.grammar_score !== null && s.naturalness_score !== null && s.confidence_score !== null
+      ? Math.round((s.grammar_score + s.naturalness_score + s.confidence_score) / 3)
+      : null;
+  return (
+    <Link
+      to="/interview"
+      className="flex items-center justify-between gap-3 rounded-lg border border-border bg-background hover:bg-muted/50 hover:border-primary/40 transition px-3 py-2.5"
+    >
+      <div className="min-w-0 flex-1">
+        <p className="text-sm font-medium truncate">{s.scenario_title}</p>
+        <p className="text-[11px] text-muted-foreground">{date}{s.vocabulary_level ? ` · ${s.vocabulary_level}` : ""}</p>
+      </div>
+      {avg !== null ? (
+        <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-primary/10 text-primary border border-primary/30">
+          {avg}/100
+        </span>
+      ) : (
+        <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full bg-muted text-muted-foreground">
+          {s.completed ? "Selesai" : "Berlangsung"}
+        </span>
+      )}
+    </Link>
+  );
+}
+
