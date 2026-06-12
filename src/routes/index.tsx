@@ -54,7 +54,7 @@ function HomeIndex() {
           <div>
             <span
               className="inline-block text-[10px] font-bold uppercase tracking-[0.24em] mb-5 px-3.5 py-1.5 rounded-full"
-              style={{ background: ACCENT, color: INK }}
+              style={{ background: LAVENDER, color: INK }}
             >
               {isId ? "AI Coach untuk Pekerja Indonesia" : "AI Coach for Workers"}
             </span>
@@ -129,21 +129,25 @@ function HomeIndex() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-10 gap-y-12">
             <WhyItem
               icon={Languages}
+              tint={ACCENT}
               title={isId ? "Translator Natural" : "Natural Translator"}
               desc={isId ? "4 level: Casual, Polite, Workplace, Keigo. Bukan terjemahan kaku." : "4 levels: Casual, Polite, Workplace, Keigo. Not stiff translation."}
             />
             <WhyItem
               icon={Briefcase}
+              tint={LAVENDER}
               title={isId ? "Latihan Interview" : "Interview Practice"}
               desc={isId ? "AI berperan jadi pewawancara Jepang. Tanpa rasa malu." : "AI plays the Japanese interviewer. Zero anxiety."}
             />
             <WhyItem
               icon={MessageSquare}
+              tint={ACCENT}
               title={isId ? "Simulasi Nyata" : "Real-Life Sim"}
               desc={isId ? "Konbini, restoran, klinik, hotel — siap menghadapi situasi nyata." : "Konbini, restaurant, clinic, hotel — ready for real situations."}
             />
             <WhyItem
               icon={Trophy}
+              tint={LAVENDER}
               title={isId ? "Pantau Kemajuan" : "Track Progress"}
               desc={isId ? "Skor grammar, naturalness, confidence. Riwayat semua sesi tersimpan." : "Grammar, naturalness, confidence scores. Full session history."}
             />
@@ -167,12 +171,12 @@ function HomeIndex() {
               { to: "/hanashite/sc_ramen" as const, emoji: "🍜", label: isId ? "Restoran" : "Restaurant" },
               { to: "/hanashite/sc_apato" as const, emoji: "🏠", label: isId ? "Apartemen" : "Apartment" },
               { to: "/hanashite/sc_clinic" as const, emoji: "🏥", label: isId ? "Rumah Sakit" : "Hospital" },
-            ].map(({ to, emoji, label }) => (
+            ].map(({ to, emoji, label }, i) => (
               <Link
                 key={to}
                 to={to}
-                className="group flex flex-col items-center justify-center text-center bg-white rounded-2xl py-8 px-4 hover:-translate-y-1 transition-transform"
-                style={{ border: `1px solid rgba(15,23,42,0.08)` }}
+                className="group flex flex-col items-center justify-center text-center rounded-2xl py-8 px-4 hover:-translate-y-1 transition-transform"
+                style={{ background: i % 2 === 0 ? LAVENDER : ACCENT }}
               >
                 <span className="text-4xl mb-4" aria-hidden>
                   {emoji}
@@ -388,10 +392,12 @@ function WhyItem({
   icon: Icon,
   title,
   desc,
+  tint,
 }: {
   icon: typeof Sparkles;
   title: string;
   desc: string;
+  tint?: string;
 }) {
   return (
     <div
@@ -400,7 +406,7 @@ function WhyItem({
     >
       <div
         className="w-11 h-11 rounded-xl flex items-center justify-center mb-5"
-        style={{ background: ACCENT }}
+        style={{ background: tint ?? ACCENT }}
       >
         <Icon className="w-5 h-5" style={{ color: INK }} strokeWidth={2} />
       </div>
