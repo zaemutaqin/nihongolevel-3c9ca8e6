@@ -108,10 +108,80 @@ function DashboardPage() {
   };
 
 
+  const isPro = !!profile?.is_pro;
+  const sessions = interviewQuery.data ?? [];
+  const completed = sessions.filter((s) => s.completed);
+  const avg = (key: "grammar_score" | "naturalness_score" | "confidence_score") => {
+    const vals = completed.map((s) => s[key]).filter((v): v is number => typeof v === "number");
+    if (!vals.length) return null;
+    return Math.round(vals.reduce((a, b) => a + b, 0) / vals.length);
+  };
+  const avgGrammar = avg("grammar_score");
+  const avgNatural = avg("naturalness_score");
+  const avgConfidence = avg("confidence_score");
+
   return (
     <div className="mx-auto max-w-3xl px-4 py-8">
       <h1 className="text-2xl font-bold mb-1">{t("dash.title")}</h1>
       <p className="text-sm text-muted-foreground mb-6">{t("dash.subtitle")}</p>
+
+      {/* SECTION INTERVIEW — Progress (semua user login) */}
+      <Section title="Progress Interview">
+        <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+          <div className="flex items-center gap-2 mb-4">
+            <Briefcase className="w-4 h-4 text-primary" />
+            <p className="text-sm font-semibold">Latihan Interview Kerja</p>
+          </div>
+
+          {interviewQuery.isLoading ? (
+            <p className="text-sm text-muted-foreground">Memuat…</p>
+          ) : sessions.length === 0 ? (
+            <div className="text-center py-6">
+              <p className="text-sm text-muted-foreground mb-3">
+                Belum ada sesi interview. Mulai latihan pertamamu sekarang.
+              </p>
+              <Link
+                to="/interview"
+                className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:opacity-90 transition"
+              >
+                Mulai Interview <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-3 gap-3 mb-4">
+                <ScoreBox label="Grammar" value={avgGrammar} />
+                <ScoreBox label="Naturalness" value={avgNatural} />
+                <ScoreBox label="Confidence" value={avgConfidence} />
+              </div>
+              <p className="text-[11px] uppercase font-semibold tracking-wide text-muted-foreground mb-2">
+                Sesi terakhir
+              </p>
+              <div className="space-y-2">
+                {sessions.slice(0, 5).map((s) => (
+                  <SessionRow key={s.id} s={s} />
+                ))}
+              </div>
+              <Link
+                to="/interview"
+                className="mt-4 inline-flex items-center gap-2 text-xs font-semibold text-primary hover:underline"
+              >
+                Mulai sesi baru <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </>
+          )}
+        </div>
+      </Section>
+
+      {!isPro && (
+        <Section title="Fitur Pro">
+          <LockedFeature />
+        </Section>
+      )}
+
+      {isPro && <>
+
+
 
       {/* SECTION A — Today */}
       <Section title={t("dash.today")}>
