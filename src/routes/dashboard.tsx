@@ -70,10 +70,10 @@ function DashboardPage() {
           📊
         </div>
         <h2 className="text-xl font-bold">
-          Masuk untuk lihat progress kamu
+          {t("dash.signin.title")}
         </h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          Pantau riwayat interview, skor grammar/naturalness/confidence, dan favorit kamu.
+          {t("dash.signin.desc")}
         </p>
         <div className="mt-6 flex justify-center">
           <SignInButton />
