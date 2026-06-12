@@ -390,5 +390,5 @@ export const SCENARIOS: Scenario[] = [
 ];
 
 export function getScenario(id: string): Scenario | undefined {
-  return SCENARIOS.find((s) => s.id === s);
+  return SCENARIOS.find((s) => s.id === id);
 }
