@@ -50,8 +50,8 @@ const ID: Dict = {
   "nav.translate_short": "Translator",
 
   // Home
-  "home.title": "Belajar Bicara Bahasa Jepang Natural",
-  "home.subtitle": "Belajar berbicara seperti orang Jepang",
+  "home.title": "Translator Jepang untuk Kerja & Kehidupan",
+  "home.subtitle": "Dapatkan 4 level: Casual, Polite, Workplace, dan Keigo — siap dipakai di tempat kerja Jepang.",
   "home.inputLabel": "Kalimat Bahasa Indonesia",
   "home.placeholder": "Ketik situasi atau kalimat dalam Bahasa Indonesia...",
   "home.addContext": "Tambah konteks (opsional)",
@@ -277,8 +277,8 @@ const EN: Dict = {
   "nav.interview_short": "Interview",
   "nav.translate_short": "Translator",
 
-  "home.title": "Learn to Speak Natural Japanese",
-  "home.subtitle": "Learn to speak like a native Japanese",
+  "home.title": "Japanese Translator for Work & Life",
+  "home.subtitle": "Get 4 levels: Casual, Polite, Workplace, and Keigo — ready to use at your Japanese workplace.",
   "home.inputLabel": "Sentence in English",
   "home.placeholder": "Type a situation or sentence in English...",
   "home.addContext": "Add context (optional)",
