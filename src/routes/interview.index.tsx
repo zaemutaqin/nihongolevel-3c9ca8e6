@@ -93,19 +93,28 @@ function InterviewIndex() {
       </header>
 
       {!user && (
-        <div className="mb-8 rounded-xl border border-border bg-card p-6 text-center">
-          <p className="mb-4 text-sm text-muted-foreground">
-            {isId ? "Masuk dulu untuk mulai latihan interview." : "Sign in to start practicing."}
-          </p>
-          <SignInButton />
+        <div className="mb-10 -mx-4 sm:mx-0 bg-[#0F172A] px-6 py-8 sm:px-10 sm:py-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
+          <div className="max-w-xl">
+            <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-[#F5F1E8]/60">
+              {isId ? "Akses Diperlukan" : "Access Required"}
+            </p>
+            <h2 className="mt-2 font-display text-2xl sm:text-3xl text-[#F5F1E8] leading-tight">
+              {isId
+                ? "Masuk untuk mulai latihan interview."
+                : "Sign in to start practicing interviews."}
+            </h2>
+          </div>
+          <div className="shrink-0">
+            <SignInButton />
+          </div>
         </div>
       )}
 
       {user && <UsageMeter feature="interview" className="mb-6" />}
 
       <section className="mb-12">
-        <div className="mb-5 flex items-end justify-between gap-3">
-          <h2 className="font-display text-2xl sm:text-3xl">
+        <div className="mb-8 flex items-end justify-between gap-3 border-b-2 border-foreground pb-4">
+          <h2 className="font-display text-3xl sm:text-4xl">
             {isId ? "Pilih Skenario" : "Choose a Scenario"}
           </h2>
           <span className="text-[11px] uppercase tracking-[0.22em] font-semibold text-muted-foreground">
@@ -113,9 +122,9 @@ function InterviewIndex() {
           </span>
         </div>
 
-        {/* Category tabs */}
-        <div className="-mx-4 mb-6 overflow-x-auto px-4">
-          <div className="flex min-w-max items-center gap-2 border-b border-border pb-px">
+        {/* Category tabs — editorial */}
+        <div className="-mx-4 mb-10 overflow-x-auto px-4">
+          <div className="flex min-w-max items-center gap-6">
             {([
               { id: "all" as const, label_id: "Semua", label_en: "All", emoji: "✦" },
               ...SCENARIO_CATEGORIES,
@@ -126,14 +135,16 @@ function InterviewIndex() {
                   key={c.id}
                   onClick={() => setActiveCat(c.id as typeof activeCat)}
                   className={cn(
-                    "relative -mb-px inline-flex items-center gap-1.5 whitespace-nowrap px-3 py-2.5 text-[11px] font-semibold uppercase tracking-[0.18em] transition",
-                    active ? "text-primary" : "text-muted-foreground hover:text-foreground",
+                    "relative inline-flex items-center gap-1.5 whitespace-nowrap py-2 text-[12px] uppercase tracking-[0.2em] transition",
+                    active
+                      ? "text-primary font-extrabold"
+                      : "text-foreground/60 font-semibold hover:text-foreground",
                   )}
                 >
                   <span className="text-sm">{c.emoji}</span>
                   {isId ? c.label_id : c.label_en}
                   {active && (
-                    <span className="absolute inset-x-1 -bottom-px h-[3px] bg-primary" />
+                    <span className="absolute inset-x-0 -bottom-1 h-[4px] bg-primary" />
                   )}
                 </button>
               );
@@ -143,30 +154,28 @@ function InterviewIndex() {
 
         <div
           key={activeCat}
-          className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 animate-in fade-in slide-in-from-bottom-1 duration-300"
+          className="grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 animate-in fade-in slide-in-from-bottom-1 duration-300"
         >
           {visible.map((s) => (
             <Link
               key={s.id}
               to="/interview/$scenarioId"
               params={{ scenarioId: s.id }}
-              className="group relative flex flex-col bg-card border border-border p-4 hover:border-primary hover:-translate-y-0.5 transition-all"
+              className="group relative flex flex-col pt-5 border-t-[3px] border-foreground hover:opacity-80 transition-opacity"
             >
-              <div className="flex items-start justify-between gap-3">
-                <div className="text-2xl">{s.emoji}</div>
-                <span className="text-[10px] font-bold uppercase tracking-[0.15em] bg-foreground text-background px-1.5 py-0.5">
-                  {s.level}
-                </span>
-              </div>
-              <h3 className="mt-3 font-display text-lg leading-snug">
+              <span className="absolute top-0 right-0 -translate-y-1/2 text-[10px] font-bold uppercase tracking-[0.18em] bg-[#0F172A] text-[#F5F1E8] px-2 py-1">
+                {s.level}
+              </span>
+              <div className="text-3xl mb-3">{s.emoji}</div>
+              <h3 className="font-display text-2xl leading-tight text-foreground">
                 {isId ? s.title_id : s.title_en}
               </h3>
-              <p className="mt-1.5 text-xs text-muted-foreground line-clamp-2 leading-relaxed flex-1">
+              <p className="mt-2 text-sm text-muted-foreground line-clamp-3 leading-relaxed flex-1">
                 {isId ? s.description_id : s.description_en}
               </p>
-              <div className="mt-3 inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">
+              <div className="mt-4 inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-[0.22em] text-primary">
                 {isId ? "Mulai" : "Start"}
-                <ChevronRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
+                <ChevronRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
               </div>
             </Link>
           ))}
