@@ -8,12 +8,13 @@ import { cn } from "@/lib/utils";
 export function SignInButton({
   className,
   size = "md",
-  showEmailOption = true,
+  showEmailOption,
 }: {
   className?: string;
   size?: "sm" | "md";
   showEmailOption?: boolean;
 }) {
+  const showEmail = showEmailOption ?? size === "md";
   const lang = useLang();
   const [loading, setLoading] = useState(false);
   const redirectPath =
