@@ -402,8 +402,16 @@ function WhyItem({
   desc: string;
 }) {
   return (
-    <div>
-      <Icon className="w-12 h-12 mb-5" style={{ color: ACCENT }} strokeWidth={1.5} />
+    <div
+      className="p-7 rounded-2xl"
+      style={{ background: "#FAEDE8" }}
+    >
+      <div
+        className="w-11 h-11 rounded-xl flex items-center justify-center mb-5"
+        style={{ background: "rgba(220,38,38,0.12)" }}
+      >
+        <Icon className="w-5 h-5" style={{ color: ACCENT }} strokeWidth={2} />
+      </div>
       <h3 className="font-black text-xl mb-2 tracking-tight" style={{ color: INK }}>
         {title}
       </h3>
