@@ -71,6 +71,57 @@ export type Database = {
         }
         Relationships: []
       }
+      interview_sessions: {
+        Row: {
+          completed: boolean
+          confidence_score: number | null
+          created_at: string
+          grammar_score: number | null
+          id: string
+          naturalness_score: number | null
+          scenario_id: string
+          scenario_title: string
+          suggestions: Json | null
+          summary: string | null
+          transcript: Json
+          updated_at: string
+          user_id: string
+          vocabulary_level: string | null
+        }
+        Insert: {
+          completed?: boolean
+          confidence_score?: number | null
+          created_at?: string
+          grammar_score?: number | null
+          id?: string
+          naturalness_score?: number | null
+          scenario_id: string
+          scenario_title: string
+          suggestions?: Json | null
+          summary?: string | null
+          transcript?: Json
+          updated_at?: string
+          user_id: string
+          vocabulary_level?: string | null
+        }
+        Update: {
+          completed?: boolean
+          confidence_score?: number | null
+          created_at?: string
+          grammar_score?: number | null
+          id?: string
+          naturalness_score?: number | null
+          scenario_id?: string
+          scenario_title?: string
+          suggestions?: Json | null
+          summary?: string | null
+          transcript?: Json
+          updated_at?: string
+          user_id?: string
+          vocabulary_level?: string | null
+        }
+        Relationships: []
+      }
       nihongo_data: {
         Row: {
           data: Json
