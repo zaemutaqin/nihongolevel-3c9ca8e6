@@ -87,7 +87,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "apple-mobile-web-app-title", content: "NihongoLevel" },
       { name: "mobile-web-app-capable", content: "yes" },
 
-      { title: "NihongoLevel" },
+      { title: "NihongoLevel — Natural Japanese AI Coach" },
       { name: "description", content: "Belajar berbicara seperti orang Jepang — bukan sekadar lulus JLPT" },
       { name: "author", content: "Lovable" },
       { property: "og:title", content: "NihongoLevel — Belajar Bahasa Jepang Natural dengan AI" },

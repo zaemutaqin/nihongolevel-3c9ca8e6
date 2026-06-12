@@ -20,7 +20,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Latih interview Tokutei Ginou, percakapan dengan atasan Jepang, dan situasi sehari-hari di Jepang dengan AI. Translator natural + simulasi wawancara untuk pekerja Indonesia.",
+          "Latih interview Tokutei Ginou & percakapan sehari-hari di Jepang dengan AI. Translator natural + simulasi wawancara.",
       },
       { property: "og:title", content: "NihongoLevel — Prepare for Work and Life in Japan" },
       {
