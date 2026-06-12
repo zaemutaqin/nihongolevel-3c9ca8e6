@@ -129,20 +129,17 @@ export function SocialAnalysisCard({ data }: { data: SocialAnalysis }) {
     { Icon: AlertTriangle, label: t("sa.risk"), value: data.wrong_context_risk },
   ];
   return (
-    <div
-      className="rounded-2xl border bg-card shadow-sm p-5"
-      style={{ borderLeft: "4px solid var(--intent-asking_others)" }}
-    >
-      <h2 className="text-sm font-bold uppercase tracking-wide mb-3 text-foreground/80">
+    <div className="border-l-[3px] border-primary pl-5">
+      <h2 className="text-[11px] font-bold uppercase tracking-[0.25em] mb-4 text-foreground">
         {t("sa.title")}
       </h2>
       <ul className="space-y-3">
         {rows.map(({ Icon, label, value }) => (
           <li key={label} className="flex items-start gap-3">
-            <Icon className="w-4 h-4 mt-0.5 flex-shrink-0 text-muted-foreground" />
+            <Icon className="w-4 h-4 mt-0.5 flex-shrink-0 text-foreground/60" />
             <div className="min-w-0">
-              <p className="text-xs font-semibold text-foreground">{label}</p>
-              <p className="text-sm text-muted-foreground">{value}</p>
+              <p className="text-[10px] uppercase tracking-[0.15em] font-bold text-foreground/60">{label}</p>
+              <p className="text-sm text-foreground/85 mt-0.5">{value}</p>
             </div>
           </li>
         ))}
