@@ -184,7 +184,7 @@ function DashboardPage() {
                 to="/interview"
                 className="mt-4 inline-flex items-center gap-2 text-xs font-semibold text-primary hover:underline"
               >
-                Mulai sesi baru <ArrowRight className="w-3.5 h-3.5" />
+                {t("dash.iv.newSession")} <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </>
           )}
