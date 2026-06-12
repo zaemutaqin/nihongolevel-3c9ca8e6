@@ -226,86 +226,81 @@ function HomeIndex() {
           </div>
         </section>
 
-        {/* PRICING — high-contrast color blocking */}
+        {/* PRICING — colored cards with numerals */}
         <section className="mb-28 sm:mb-36">
-          <div className="text-center mb-12">
-            <div className="text-[11px] font-bold uppercase tracking-[0.3em] mb-3" style={{ color: ACCENT }}>
-              {isId ? "Investasi" : "Investment"}
-            </div>
-            <h2 className="text-3xl sm:text-5xl font-black tracking-tight mb-3">
-              {isId ? "Harga" : "Pricing"}
-            </h2>
-            <p className="text-base" style={{ color: INK_SOFT }}>
-              {isId ? "Mulai gratis. Upgrade kapan saja." : "Start free. Upgrade any time."}
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-            {/* FREE — minimal */}
+          <h2 className="text-3xl sm:text-5xl font-black tracking-tight mb-8">
+            {isId ? "Harga" : "Pricing"}
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {/* FREE */}
             <div
-              className="p-8 sm:p-10 flex flex-col rounded-3xl bg-white"
-              style={{ border: `1px solid rgba(15,23,42,0.08)` }}
+              className="rounded-3xl p-6 sm:p-7 flex flex-col relative overflow-hidden"
+              style={{ background: "#E8D5F2" }}
             >
-              <div className="text-xs font-bold uppercase tracking-[0.24em] mb-6" style={{ color: INK_SOFT }}>
-                Free
+              <div className="flex items-start justify-between mb-4">
+                <h3 className="text-2xl sm:text-3xl font-black leading-tight max-w-[60%]" style={{ color: INK }}>
+                  Free
+                </h3>
+                <span className="text-3xl sm:text-4xl font-black tracking-tight" style={{ color: INK }}>
+                  01
+                </span>
               </div>
-              <div className="flex items-baseline gap-2 mb-2">
-                <span className="text-6xl font-black tracking-tight">$0</span>
-              </div>
-              <div className="text-sm mb-4" style={{ color: INK_SOFT }}>
+              <div className="text-sm mb-3" style={{ color: INK_SOFT }}>
                 {isId ? "selamanya" : "forever"}
               </div>
-              <p className="text-sm mb-8" style={{ color: INK_SOFT }}>
-                {isId ? "Cocok untuk mencoba sebelum upgrade." : "Perfect for trying before you upgrade."}
-              </p>
-              <ul className="space-y-3 mb-8 flex-1">
+              <div className="flex items-baseline gap-2 mb-5">
+                <span className="text-4xl sm:text-5xl font-black tracking-tight" style={{ color: INK }}>$0</span>
+              </div>
+              <ul className="space-y-2 mb-6 flex-1">
                 {(isId
                   ? ["10 translator request / hari", "2 sesi interview / hari", "2 sesi simulasi / hari", "Riwayat dasar"]
                   : ["10 translator requests / day", "2 interview sessions / day", "2 life-sim sessions / day", "Basic history"]
                 ).map((f) => (
-                  <li key={f} className="flex items-start gap-3 text-sm">
-                    <span className="mt-0.5 flex-shrink-0" style={{ color: ACCENT }}>✓</span>
+                  <li key={f} className="flex items-start gap-2 text-sm" style={{ color: INK }}>
+                    <span className="mt-0.5 flex-shrink-0">✓</span>
                     <span>{f}</span>
                   </li>
                 ))}
               </ul>
               <Link
                 to="/translate"
-                className="inline-flex items-center justify-center gap-2 px-6 py-4 rounded-full text-sm font-bold hover:bg-black/5 transition"
-                style={{ background: "#EEF7FB", color: INK }}
+                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold text-white hover:opacity-90 transition"
+                style={{ background: INK }}
               >
                 {isId ? "Mulai Gratis" : "Start Free"}
               </Link>
             </div>
 
-            {/* PRO — dominant red color block */}
+            {/* PRO */}
             <div
-              className="p-8 sm:p-10 flex flex-col relative rounded-3xl"
-              style={{ background: ACCENT, color: CREAM }}
+              className="rounded-3xl p-6 sm:p-7 flex flex-col relative overflow-hidden"
+              style={{ background: "#D9F26B" }}
             >
-              <div
-                className="absolute top-6 right-6 text-[10px] font-bold uppercase tracking-[0.2em] px-3 py-1.5 rounded-full"
-                style={{ background: "rgba(0,0,0,0.25)", color: CREAM }}
-              >
-                Lifetime Access
+              <div className="flex items-start justify-between mb-4">
+                <div className="max-w-[60%]">
+                  <h3 className="text-2xl sm:text-3xl font-black leading-tight" style={{ color: INK }}>
+                    Pro
+                  </h3>
+                  <div className="text-sm mt-1" style={{ color: INK_SOFT }}>
+                    Lifetime Access
+                  </div>
+                </div>
+                <span className="text-3xl sm:text-4xl font-black tracking-tight" style={{ color: INK }}>
+                  02
+                </span>
               </div>
-              <div className="text-xs font-bold uppercase tracking-[0.24em] mb-6 opacity-90">
-                Pro
-              </div>
-              <div className="flex items-baseline gap-2 mb-2">
-                <span className="text-6xl font-black tracking-tight">$19</span>
-              </div>
-              <div className="text-sm mb-4 opacity-90">
+              <div className="text-sm mb-3" style={{ color: INK_SOFT }}>
                 {isId ? "sekali bayar" : "one-time"}
               </div>
-              <p className="text-sm mb-8 opacity-90">
-                {isId ? "Bayar sekali, akses semua fitur selamanya." : "Pay once, unlock everything forever."}
-              </p>
-              <ul className="space-y-3 mb-8 flex-1">
+              <div className="flex items-baseline gap-2 mb-5">
+                <span className="text-4xl sm:text-5xl font-black tracking-tight" style={{ color: INK }}>$19</span>
+              </div>
+              <ul className="space-y-2 mb-6 flex-1">
                 {(isId
                   ? ["Translator unlimited", "Interview unlimited", "Semua skenario terbuka", "Riwayat & analitik lengkap"]
                   : ["Unlimited translator", "Unlimited interviews", "All scenarios unlocked", "Full history & analytics"]
                 ).map((f) => (
-                  <li key={f} className="flex items-start gap-3 text-sm">
+                  <li key={f} className="flex items-start gap-2 text-sm" style={{ color: INK }}>
                     <span className="mt-0.5 flex-shrink-0">✓</span>
                     <span>{f}</span>
                   </li>
@@ -313,8 +308,8 @@ function HomeIndex() {
               </ul>
               <Link
                 to="/pricing"
-                className="inline-flex items-center justify-center gap-2 px-6 py-4 rounded-full text-sm font-bold hover:opacity-90 transition"
-                style={{ background: CREAM, color: ACCENT }}
+                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold text-white hover:opacity-90 transition"
+                style={{ background: INK }}
               >
                 {isId ? "Upgrade ke Pro" : "Upgrade to Pro"}
                 <ArrowRight className="w-4 h-4" />
@@ -322,6 +317,7 @@ function HomeIndex() {
             </div>
           </div>
         </section>
+
 
         {/* FAQ — minimal bottom-border list */}
         <section className="mb-16 max-w-3xl">
