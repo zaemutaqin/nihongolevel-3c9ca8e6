@@ -1,5 +1,5 @@
 import { Link, Outlet } from "@tanstack/react-router";
-import { Home, Search, History, Star, BarChart3, RotateCw, Lock } from "lucide-react";
+import { Home, Search, History, Star, BarChart3, RotateCw, Lock, Briefcase, Languages } from "lucide-react";
 import { Toaster } from "@/components/ui/sonner";
 import { useT, setLang, type Lang } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
@@ -15,10 +15,10 @@ import { UserMenu } from "./UserMenu";
 type NavItem = { to: string; key: string; Icon: typeof Search; exact?: boolean; proOnly?: boolean };
 const NAV: NavItem[] = [
   { to: "/", key: "home", Icon: Home, exact: true },
-  { to: "/riwayat", key: "history", Icon: History, proOnly: true },
-  { to: "/favorit", key: "favorites", Icon: Star, proOnly: true },
+  { to: "/interview", key: "interview", Icon: Briefcase },
+  { to: "/translate", key: "translate", Icon: Languages },
   { to: "/dashboard", key: "dashboard", Icon: BarChart3, proOnly: true },
-  { to: "/review", key: "review", Icon: RotateCw, proOnly: true },
+  { to: "/riwayat", key: "history", Icon: History, proOnly: true },
 ];
 
 function LangToggle({ lang, size = "md" }: { lang: Lang; size?: "sm" | "md" | "xs" }) {
