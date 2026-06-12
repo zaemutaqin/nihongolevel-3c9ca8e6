@@ -11,7 +11,7 @@ import {
 import { useT } from "@/lib/i18n";
 import { useAuth } from "@/lib/auth";
 
-import heroIllustration from "@/assets/hero-illustration.png";
+import heroIllustration from "@/assets/hero-illustration.webp";
 
 export const Route = createFileRoute("/")({
   head: () => ({
