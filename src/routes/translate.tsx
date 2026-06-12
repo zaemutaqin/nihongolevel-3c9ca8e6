@@ -375,37 +375,41 @@ function Index() {
     : false;
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8 sm:py-12">
+    <div className="mx-auto max-w-3xl px-4 py-10 sm:py-16">
       <header className="text-center mb-8">
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+        <h1 className="text-3xl sm:text-5xl font-black tracking-tight leading-tight">
           {t("home.title")}
         </h1>
-
-        <p className="mt-2 text-sm text-muted-foreground">{t("home.subtitle")}</p>
+        <p className="mt-4 text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
+          {t("home.subtitle")}
+        </p>
       </header>
 
       <UsageMeter feature="translate" className="mb-4" />
 
+      <section className="rounded-2xl bg-white border border-foreground/10 overflow-hidden">
+        <div className="p-6 sm:p-7">
+          <label
+            htmlFor="input"
+            className="block text-[11px] uppercase tracking-[0.22em] font-bold mb-3 text-foreground/60"
+          >
+            {t("home.inputLabel")}
+          </label>
+          <textarea
+            id="input"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={onKeyDown}
+            placeholder={t("home.placeholder")}
+            rows={4}
+            className="w-full resize-none bg-transparent border-0 px-0 py-1 text-base sm:text-lg outline-none placeholder:text-foreground/35"
+          />
+        </div>
 
-
-      <section className="pb-8 border-b-[3px] border-foreground">
-        <label htmlFor="input" className="block text-[11px] uppercase tracking-[0.2em] font-bold mb-3 text-foreground">
-          {t("home.inputLabel")}
-        </label>
-        <textarea
-          id="input"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={onKeyDown}
-          placeholder={t("home.placeholder")}
-          rows={3}
-          className="w-full resize-none bg-transparent border-0 border-b border-foreground/30 px-0 py-2 text-lg outline-none transition focus:border-foreground placeholder:text-foreground/40"
-        />
-
-        <div className="mt-5">
+        <div className="border-t border-foreground/10 px-6 sm:px-7 py-4">
           <button
             onClick={() => setContextOpen((v) => !v)}
-            className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.2em] font-bold text-foreground/70 hover:text-foreground transition"
+            className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.22em] font-bold text-foreground/70 hover:text-foreground transition"
             aria-expanded={contextOpen}
           >
             <span>{t("home.addContext")}</span>
@@ -454,15 +458,16 @@ function Index() {
           )}
         </div>
 
-        <div className="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <p className="text-[11px] text-foreground/60">
-            {t("home.shortcut")} <kbd className="px-1.5 py-0.5 bg-foreground/10 text-foreground/80 font-mono">Ctrl</kbd> +{" "}
-            <kbd className="px-1.5 py-0.5 bg-foreground/10 text-foreground/80 font-mono">Enter</kbd>
+        <div className="border-t border-foreground/10 px-6 sm:px-7 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <p className="text-[12px] text-foreground/60">
+            {t("home.shortcut")}{" "}
+            <kbd className="px-1.5 py-0.5 bg-foreground/10 text-foreground/80 font-mono rounded">Ctrl</kbd> +{" "}
+            <kbd className="px-1.5 py-0.5 bg-foreground/10 text-foreground/80 font-mono rounded">Enter</kbd>
           </p>
           <button
             onClick={() => handleTranslate()}
             disabled={loading}
-            className="inline-flex items-center justify-center gap-2 bg-primary px-7 py-3 text-sm font-bold uppercase tracking-[0.15em] text-primary-foreground transition hover:bg-primary/90 disabled:opacity-60 disabled:cursor-not-allowed"
+            className="inline-flex items-center justify-center gap-2 bg-primary px-7 py-3 rounded-full text-sm font-bold uppercase tracking-[0.15em] text-primary-foreground transition hover:opacity-90 disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {loading ? (
               <>
@@ -474,23 +479,27 @@ function Index() {
             )}
           </button>
         </div>
-
-        <div className="mt-6">
-          <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-foreground/50 mb-2">{t("home.examplesLabel")}</p>
-          <div className="flex flex-wrap gap-x-4 gap-y-1.5">
-            {EXAMPLES.map((ex) => (
-              <button
-                key={ex}
-                onClick={() => useExample(ex)}
-                disabled={loading}
-                className="text-sm text-foreground/80 underline underline-offset-4 decoration-foreground/20 hover:decoration-foreground hover:text-foreground transition disabled:opacity-50"
-              >
-                {ex}
-              </button>
-            ))}
-          </div>
-        </div>
       </section>
+
+      <div className="mt-8">
+        <p className="text-[10px] uppercase tracking-[0.22em] font-bold text-foreground/55 mb-3">
+          {t("home.examplesLabel")}
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {EXAMPLES.map((ex) => (
+            <button
+              key={ex}
+              onClick={() => useExample(ex)}
+              disabled={loading}
+              className="rounded-full bg-white border border-foreground/15 px-4 py-2 text-sm text-foreground/80 hover:border-foreground/40 hover:text-foreground transition disabled:opacity-50"
+            >
+              {ex}
+            </button>
+          ))}
+        </div>
+      </div>
+
+
 
 
 
