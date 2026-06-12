@@ -52,9 +52,10 @@ export function registerPwa() {
       console.warn("[pwa] SW registration failed", err);
     });
   };
-  if ("requestIdleCallback" in window) {
-    (window as Window & { requestIdleCallback: (cb: () => void) => void }).requestIdleCallback(start);
+  const w = window as Window & { requestIdleCallback?: (cb: () => void) => void };
+  if (typeof w.requestIdleCallback === "function") {
+    w.requestIdleCallback(start);
   } else {
-    window.setTimeout(start, 1500);
+    w.setTimeout(start, 1500);
   }
 }
