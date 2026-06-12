@@ -7,10 +7,6 @@ import {
   ChevronDown,
   MessageSquare,
   Sparkles,
-  Building2,
-  UtensilsCrossed,
-  Stethoscope,
-  Store,
 } from "lucide-react";
 import { useT } from "@/lib/i18n";
 import { useAuth } from "@/lib/auth";
