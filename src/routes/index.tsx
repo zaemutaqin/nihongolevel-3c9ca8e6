@@ -194,8 +194,9 @@ function HomeIndex() {
 
         {/* HOW IT WORKS — dark navy with massive red numerals */}
         <section
-          className="mb-28 sm:mb-36 px-8 sm:px-14 py-14 sm:py-20 text-white"
+          className="mb-28 sm:mb-36 rounded-3xl px-6 sm:px-10 lg:px-14 py-14 sm:py-20 text-white"
           style={{ background: INK }}
+
         >
           <div className="text-[11px] font-bold uppercase tracking-[0.3em] mb-3" style={{ color: ACCENT }}>
             {isId ? "Proses" : "Process"}
