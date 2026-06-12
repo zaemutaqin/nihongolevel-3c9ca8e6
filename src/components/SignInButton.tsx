@@ -23,6 +23,7 @@ export function SignInButton({
 
   const handle = async () => {
     setLoading(true);
+    gtagEvent("signin_clicked", { provider: "google", from: redirectPath });
     try {
       const r = await lovable.auth.signInWithOAuth("google", {
         redirect_uri: window.location.origin + redirectPath,
