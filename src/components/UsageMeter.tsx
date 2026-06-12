@@ -31,7 +31,7 @@ export function UsageMeter({ feature, className }: Props) {
   });
 
   if (!user) return null;
-  if (profile?.is_pro) {
+  if (isPro) {
     return (
       <div
         className={cn(
