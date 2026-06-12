@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect, useRef, type KeyboardEvent } from "react";
 import { AlertCircle, Zap, Loader2, ChevronDown } from "lucide-react";
 import {
