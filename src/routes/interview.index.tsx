@@ -5,6 +5,7 @@ import { INTERVIEW_SCENARIOS } from "@/lib/interview-scenarios";
 import { useT } from "@/lib/i18n";
 import { useAuth } from "@/lib/auth";
 import { SignInButton } from "@/components/SignInButton";
+import { UsageMeter } from "@/components/UsageMeter";
 import { supabase } from "@/integrations/supabase/client";
 
 type SessionRow = {
@@ -84,7 +85,10 @@ function InterviewIndex() {
         </div>
       )}
 
+      {user && <UsageMeter feature="interview" className="mb-6" />}
+
       <section className="mb-12">
+
         <h2 className="text-lg font-bold mb-4">{isId ? "Pilih Skenario" : "Choose a Scenario"}</h2>
         <div className="grid gap-4 sm:grid-cols-2">
           {INTERVIEW_SCENARIOS.map((s) => (

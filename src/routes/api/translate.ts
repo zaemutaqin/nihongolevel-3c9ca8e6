@@ -17,10 +17,10 @@ import {
 } from "@/lib/security.server";
 
 // Per-tier daily caps. Hourly anomaly cap is a hard block above any tier.
-// Translator is open: guests get a generous IP-based daily cap to deter
-// automated abuse; logged-in users (free or Pro) are effectively unlimited.
-const GUEST_DAY_MAX = 20;
-const FREE_DAY_MAX = 100000;
+// Free plan (PRD): 10 translations/day. Pro: effectively unlimited.
+// Guests: small IP-based cap to deter automated abuse before sign-in.
+const GUEST_DAY_MAX = 10;
+const FREE_DAY_MAX = 10;
 const PRO_DAY_MAX = 100000;
 const IP_HOUR_BLOCK = 60;        // > this in 1h → 24h block
 const USER_DAY_FLAG = 500;       // > this in 24h → flag (still allow)

@@ -15,6 +15,7 @@ import { useT } from "@/lib/i18n";
 import { gtagEvent } from "@/lib/gtag";
 import { useAuth } from "@/lib/auth";
 import { SignInButton } from "@/components/SignInButton";
+import { UsageMeter } from "@/components/UsageMeter";
 
 
 
@@ -380,6 +381,10 @@ function Index() {
 
         <p className="mt-2 text-sm text-muted-foreground">{t("home.subtitle")}</p>
       </header>
+
+      <UsageMeter feature="translate" className="mb-4" />
+
+
 
       <section className="rounded-2xl border border-border bg-card p-6 shadow-sm">
         <label htmlFor="input" className="block text-sm font-medium mb-2">
