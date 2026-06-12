@@ -129,21 +129,25 @@ function HomeIndex() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-10 gap-y-12">
             <WhyItem
               icon={Languages}
+              tint={ACCENT}
               title={isId ? "Translator Natural" : "Natural Translator"}
               desc={isId ? "4 level: Casual, Polite, Workplace, Keigo. Bukan terjemahan kaku." : "4 levels: Casual, Polite, Workplace, Keigo. Not stiff translation."}
             />
             <WhyItem
               icon={Briefcase}
+              tint={LAVENDER}
               title={isId ? "Latihan Interview" : "Interview Practice"}
               desc={isId ? "AI berperan jadi pewawancara Jepang. Tanpa rasa malu." : "AI plays the Japanese interviewer. Zero anxiety."}
             />
             <WhyItem
               icon={MessageSquare}
+              tint={ACCENT}
               title={isId ? "Simulasi Nyata" : "Real-Life Sim"}
               desc={isId ? "Konbini, restoran, klinik, hotel — siap menghadapi situasi nyata." : "Konbini, restaurant, clinic, hotel — ready for real situations."}
             />
             <WhyItem
               icon={Trophy}
+              tint={LAVENDER}
               title={isId ? "Pantau Kemajuan" : "Track Progress"}
               desc={isId ? "Skor grammar, naturalness, confidence. Riwayat semua sesi tersimpan." : "Grammar, naturalness, confidence scores. Full session history."}
             />
