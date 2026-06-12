@@ -323,7 +323,7 @@ function HomeIndex() {
         {/* FAQ — minimal bottom-border list */}
         <section className="mb-16 max-w-3xl">
           <div className="mb-10">
-            <div className="text-[11px] font-bold uppercase tracking-[0.3em] mb-3" style={{ color: ACCENT }}>
+            <div className="text-[11px] font-bold uppercase tracking-[0.3em] mb-3" style={{ color: INK }}>
               {isId ? "Pertanyaan" : "Questions"}
             </div>
             <h2 className="text-3xl sm:text-5xl font-black tracking-tight">FAQ</h2>
