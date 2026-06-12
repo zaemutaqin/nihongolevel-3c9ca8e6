@@ -1,16 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 // Cron-triggered endpoint. Sends a daily streak reminder push to every user
-// who has at least one push subscription. Authenticated by Supabase anon key
-// passed via the `apikey` header (matches the pg_cron schedule).
+// who has at least one push subscription. Authenticated by a private
+// CRON_SECRET passed via the `x-cron-secret` header.
 
 export const Route = createFileRoute("/api/public/hooks/daily-streak-push")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const apiKey = request.headers.get("apikey");
-        const expected = process.env.SUPABASE_PUBLISHABLE_KEY;
-        if (!apiKey || !expected || apiKey !== expected) {
+        const { safeStringEqual } = await import("@/lib/security.server");
+        const provided = request.headers.get("x-cron-secret") ?? "";
+        const expected = process.env.CRON_SECRET ?? "";
+        if (!expected || !provided || !safeStringEqual(provided, expected)) {
           return new Response("Unauthorized", { status: 401 });
         }
 
