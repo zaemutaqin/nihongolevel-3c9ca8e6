@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { useT } from "@/lib/i18n";
 import { useAuth } from "@/lib/auth";
-import { SignInButton } from "@/components/SignInButton";
+
 import heroIllustration from "@/assets/hero-illustration.png";
 
 export const Route = createFileRoute("/")({
@@ -105,14 +105,6 @@ function HomeIndex() {
               </Link>
             </div>
 
-            {!user && (
-              <div className="mt-7 flex items-center gap-3">
-                <SignInButton />
-                <span className="text-sm" style={{ color: INK_SOFT }}>
-                  {isId ? "Gratis. Tanpa kartu kredit." : "Free. No credit card."}
-                </span>
-              </div>
-            )}
           </div>
 
           {/* Right: single flat illustration */}
