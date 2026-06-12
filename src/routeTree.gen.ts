@@ -26,6 +26,7 @@ import { Route as NamaJepangRouteImport } from './routes/nama-jepang'
 import { Route as GameKanaRouteImport } from './routes/game-kana'
 import { Route as FavoritRouteImport } from './routes/favorit'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as KamusSlangIndexRouteImport } from './routes/kamus-slang.index'
 import { Route as InterviewIndexRouteImport } from './routes/interview.index'
@@ -125,6 +126,11 @@ const DashboardRoute = DashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -195,6 +201,7 @@ const ApiPublicPaymentsReconcileRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
   '/favorit': typeof FavoritRoute
   '/game-kana': typeof GameKanaRoute
@@ -227,6 +234,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
   '/favorit': typeof FavoritRoute
   '/game-kana': typeof GameKanaRoute
@@ -260,6 +268,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
   '/favorit': typeof FavoritRoute
   '/game-kana': typeof GameKanaRoute
@@ -294,6 +303,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/auth'
     | '/dashboard'
     | '/favorit'
     | '/game-kana'
@@ -326,6 +336,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/auth'
     | '/dashboard'
     | '/favorit'
     | '/game-kana'
@@ -358,6 +369,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/auth'
     | '/dashboard'
     | '/favorit'
     | '/game-kana'
@@ -391,6 +403,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthRoute: typeof AuthRoute
   DashboardRoute: typeof DashboardRoute
   FavoritRoute: typeof FavoritRoute
   GameKanaRoute: typeof GameKanaRoute
@@ -543,6 +556,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -639,6 +659,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthRoute: AuthRoute,
   DashboardRoute: DashboardRoute,
   FavoritRoute: FavoritRoute,
   GameKanaRoute: GameKanaRoute,
