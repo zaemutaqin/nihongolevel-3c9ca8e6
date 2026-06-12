@@ -169,7 +169,9 @@ export type AuditEvent =
   | "activate_pro_rate_limited"
   | "auth_failure"
   | "hanashite_success"
-  | "hanashite_fail";
+  | "hanashite_fail"
+  | "name_gen_success"
+  | "name_gen_fail";
 
 export interface AuditEntry {
   event_type: AuditEvent;

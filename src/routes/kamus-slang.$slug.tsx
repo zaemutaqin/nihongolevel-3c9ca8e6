@@ -117,7 +117,7 @@ function SlangDetail() {
         </section>
 
         <div className="flex flex-wrap gap-1.5">
-          {e.tags.map((t) => (
+          {e.tags.map((t: string) => (
             <span key={t} className="text-[11px] px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
               #{t}
             </span>
