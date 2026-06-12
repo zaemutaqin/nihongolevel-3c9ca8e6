@@ -64,13 +64,13 @@ function HomeIndex() {
                   Siap Kerja & Hidup
                   <br />
                   di Jepang dengan{" "}
-                  <span style={{ color: ACCENT }}>AI</span>
+                  <span className="px-2 rounded-md" style={{ background: ACCENT, color: INK }}>AI</span>
                 </>
               ) : (
                 <>
                   Prepare for Work & Life
                   <br />
-                  in Japan with <span style={{ color: ACCENT }}>AI</span>
+                  in Japan with <span className="px-2 rounded-md" style={{ background: ACCENT, color: INK }}>AI</span>
                 </>
               )}
             </h1>
