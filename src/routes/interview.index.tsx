@@ -161,7 +161,7 @@ function InterviewIndex() {
               key={s.id}
               to="/interview/$scenarioId"
               params={{ scenarioId: s.id }}
-              className="group relative flex flex-col pt-5 border-t-[3px] border-foreground hover:opacity-80 transition-opacity"
+              className="group relative flex flex-col pt-5 border-t-[3px] border-foreground bg-white hover:opacity-80 transition-opacity"
             >
               <span className="absolute top-0 right-0 -translate-y-1/2 text-[10px] font-bold uppercase tracking-[0.18em] bg-[#0F172A] text-[#F5F1E8] px-2 py-1">
                 {s.level}
