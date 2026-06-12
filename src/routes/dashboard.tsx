@@ -1,6 +1,8 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Flame, Star, ArrowRight, RotateCw, X } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { Flame, Star, ArrowRight, RotateCw, X, Briefcase, MessageSquare } from "lucide-react";
 import {
   getHistory,
   getFavorites,
@@ -20,6 +22,8 @@ import { useT } from "@/lib/i18n";
 import type { IntentType } from "@/lib/translate.functions";
 import { useAuth } from "@/lib/auth";
 import { LockedFeature } from "@/components/LockedFeature";
+import { getMyInterviewSessions, type InterviewSessionSummary } from "@/lib/interview-history.functions";
+
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
