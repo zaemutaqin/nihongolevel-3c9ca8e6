@@ -95,20 +95,13 @@ export function JlptRef({ level, className }: { level: string; className?: strin
 
 export function IntentBadge({ intent }: { intent: IntentInfo }) {
   const meta = useIntentLabel(intent.type);
-  const color = `var(--intent-${intent.type})`;
   return (
-    <div
-      className="rounded-2xl border p-4 sm:p-5"
-      style={{ borderColor: color + "55", backgroundColor: color + "12" }}
-    >
-      <div
-        className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold text-white"
-        style={{ backgroundColor: color }}
-      >
+    <div>
+      <div className="inline-flex items-center gap-2 px-2.5 py-1 bg-foreground text-background text-[11px] font-bold uppercase tracking-[0.18em]">
         <span>{meta.emoji}</span>
         <span>{meta.label}</span>
       </div>
-      <p className="mt-2 text-sm text-foreground/80">{intent.explanation}</p>
+      <p className="mt-3 text-sm text-foreground/75 leading-relaxed">{intent.explanation}</p>
     </div>
   );
 }
