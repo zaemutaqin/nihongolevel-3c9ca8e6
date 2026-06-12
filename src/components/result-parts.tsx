@@ -95,20 +95,13 @@ export function JlptRef({ level, className }: { level: string; className?: strin
 
 export function IntentBadge({ intent }: { intent: IntentInfo }) {
   const meta = useIntentLabel(intent.type);
-  const color = `var(--intent-${intent.type})`;
   return (
-    <div
-      className="rounded-2xl border p-4 sm:p-5"
-      style={{ borderColor: color + "55", backgroundColor: color + "12" }}
-    >
-      <div
-        className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold text-white"
-        style={{ backgroundColor: color }}
-      >
+    <div>
+      <div className="inline-flex items-center gap-2 px-2.5 py-1 bg-foreground text-background text-[11px] font-bold uppercase tracking-[0.18em]">
         <span>{meta.emoji}</span>
         <span>{meta.label}</span>
       </div>
-      <p className="mt-2 text-sm text-foreground/80">{intent.explanation}</p>
+      <p className="mt-3 text-sm text-foreground/75 leading-relaxed">{intent.explanation}</p>
     </div>
   );
 }
@@ -136,20 +129,17 @@ export function SocialAnalysisCard({ data }: { data: SocialAnalysis }) {
     { Icon: AlertTriangle, label: t("sa.risk"), value: data.wrong_context_risk },
   ];
   return (
-    <div
-      className="rounded-2xl border bg-card shadow-sm p-5"
-      style={{ borderLeft: "4px solid var(--intent-asking_others)" }}
-    >
-      <h2 className="text-sm font-bold uppercase tracking-wide mb-3 text-foreground/80">
+    <div className="border-l-[3px] border-primary pl-5">
+      <h2 className="text-[11px] font-bold uppercase tracking-[0.25em] mb-4 text-foreground">
         {t("sa.title")}
       </h2>
       <ul className="space-y-3">
         {rows.map(({ Icon, label, value }) => (
           <li key={label} className="flex items-start gap-3">
-            <Icon className="w-4 h-4 mt-0.5 flex-shrink-0 text-muted-foreground" />
+            <Icon className="w-4 h-4 mt-0.5 flex-shrink-0 text-foreground/60" />
             <div className="min-w-0">
-              <p className="text-xs font-semibold text-foreground">{label}</p>
-              <p className="text-sm text-muted-foreground">{value}</p>
+              <p className="text-[10px] uppercase tracking-[0.15em] font-bold text-foreground/60">{label}</p>
+              <p className="text-sm text-foreground/85 mt-0.5">{value}</p>
             </div>
           </li>
         ))}
@@ -180,22 +170,24 @@ export function NaturalnessBar({
   return (
     <div className="w-full">
       {!compact && (
-        <p className="text-[11px] font-medium text-muted-foreground mb-1">
+        <p className="text-[10px] uppercase tracking-[0.18em] font-bold text-foreground/60 mb-1.5">
           {t("nat.label")}
         </p>
       )}
-      <div className={cn("flex gap-1 w-full rounded-full overflow-hidden", "h-1.5")}>
+      <div className="flex gap-[2px] w-full h-2">
         {[1, 2, 3].map((seg) => (
           <div
             key={seg}
             className={cn(
-              "flex-1 rounded-full",
-              seg <= meta.filled ? meta.color : meta.track,
+              "flex-1",
+              seg <= meta.filled
+                ? value === "native" ? "bg-primary" : "bg-foreground"
+                : "bg-foreground/10",
             )}
           />
         ))}
       </div>
-      <p className="mt-1 text-[11px] font-semibold text-foreground/80">{t(meta.key)}</p>
+      <p className="mt-1.5 text-[11px] font-bold uppercase tracking-wider text-foreground">{t(meta.key)}</p>
     </div>
   );
 }
@@ -291,75 +283,71 @@ export function LevelCard({
   onFavorite?: () => void;
   isFav?: boolean;
 }) {
-  const meta = styleMeta(level);
-  const tone = meta.tone;
+  
   const { t } = useT();
   const [grammarOpen, setGrammarOpen] = useState(false);
   const japanese = cleanJapanese(data.japanese);
 
   return (
-    <div
-      className="rounded-2xl border bg-card shadow-sm overflow-hidden"
-      style={{ borderColor: `var(--${tone})` + "40" }}
-    >
-      <div className="px-5 pt-5 pb-4">
-        <div className="flex items-center gap-2 mb-3 flex-wrap">
-          <StylePill level={level} />
-          <JlptRef level={level} />
-        </div>
+    <div className="border-t-[3px] border-foreground pt-6">
+      <div className="flex items-center gap-3 mb-4">
+        <span className="inline-flex items-center px-2.5 py-1 bg-foreground text-background text-[11px] font-bold uppercase tracking-[0.15em]">
+          {(t(`style.${level.toUpperCase()}`) || level)}
+        </span>
+        <span className="text-[10px] uppercase tracking-[0.18em] font-semibold text-foreground/50">
+          {t("style.equiv")} {level?.toUpperCase()}
+        </span>
+      </div>
 
-        <div className="flex items-start gap-2">
-          <p className="font-jp text-2xl sm:text-3xl leading-snug text-foreground flex-1 break-words">
-            {japanese}
-          </p>
-          <SpeakerButton text={japanese} />
-        </div>
+      <div className="flex items-start gap-3">
+        <p className="font-jp text-4xl sm:text-5xl font-bold leading-[1.15] text-foreground flex-1 break-words">
+          {japanese}
+        </p>
+        <SpeakerButton text={japanese} />
+      </div>
 
-        <div className="mt-4">
-          <NaturalnessBar value={data.naturalness} />
-        </div>
+      <div className="mt-5 max-w-xs">
+        <NaturalnessBar value={data.naturalness} />
+      </div>
 
-        {data.when_to_use && (
-          <p className="mt-3 text-sm text-foreground/80 line-clamp-1">
-            <span className="text-xs font-semibold text-foreground/60">{t("rp.whenUsed")}</span>
-            {data.when_to_use}
-          </p>
-        )}
+      {data.when_to_use && (
+        <p className="mt-4 text-sm text-foreground/80 line-clamp-1">
+          <span className="text-[10px] uppercase tracking-[0.15em] font-bold text-foreground/50 mr-2">{t("rp.whenUsed")}</span>
+          {data.when_to_use}
+        </p>
+      )}
 
-        <div className="mt-4 flex items-center gap-2 flex-wrap">
+      <div className="mt-4 flex items-center gap-4 flex-wrap">
+        <button
+          onClick={onToggle}
+          aria-expanded={open}
+          className="inline-flex items-center gap-1 text-[11px] uppercase tracking-[0.18em] font-bold text-foreground hover:text-primary transition"
+        >
+          <ChevronDown
+            className={cn("w-3.5 h-3.5 transition-transform", open && "rotate-180")}
+          />
+          {open ? t("rp.hide") : t("rp.viewDetails")}
+        </button>
+        {onFavorite && (
           <button
-            onClick={onToggle}
-            aria-expanded={open}
-            className="inline-flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-lg border border-border hover:bg-muted transition"
+            onClick={onFavorite}
+            className={cn(
+              "inline-flex items-center gap-1 text-[11px] uppercase tracking-[0.18em] font-bold transition",
+              isFav ? "text-primary" : "text-foreground/60 hover:text-foreground",
+            )}
           >
-            <ChevronDown
-              className={cn("w-3.5 h-3.5 transition-transform", open && "rotate-180")}
-            />
-            {open ? t("rp.hide") : t("rp.viewDetails")}
+            <Star className="w-3 h-3" fill={isFav ? "currentColor" : "none"} />
+            {isFav ? t("rp.saved") : t("rp.saveFav")}
           </button>
-          {onFavorite && (
-            <button
-              onClick={onFavorite}
-              className={cn(
-                "inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold border transition",
-                isFav
-                  ? "bg-amber-100 border-amber-300 text-amber-800"
-                  : "bg-background border-border text-foreground hover:bg-muted",
-              )}
-            >
-              <Star className="w-3 h-3" fill={isFav ? "currentColor" : "none"} />
-              {isFav ? t("rp.saved") : t("rp.saveFav")}
-            </button>
-          )}
-        </div>
+        )}
       </div>
 
       {open && (
-        <div className="px-5 pb-5 pt-1 space-y-4 border-t border-border/60">
-          <p className="mt-4 italic text-sm text-muted-foreground">{data.romaji}</p>
+        <div className="mt-5 pt-5 border-t border-foreground/15 space-y-4">
+          <p className="italic text-sm text-foreground/60">{data.romaji}</p>
 
           {data.naturalness_note && (
-            <p className="text-xs text-muted-foreground">{data.naturalness_note}</p>
+            <p className="text-xs text-foreground/60">{data.naturalness_note}</p>
           )}
 
           {data.suitable_for && (
@@ -373,26 +361,23 @@ export function LevelCard({
           )}
 
           {data.grammar?.length > 0 && (
-            <div className="rounded-lg border border-border overflow-hidden">
+            <div>
               <button
                 onClick={() => setGrammarOpen((v) => !v)}
-                className="w-full flex items-center justify-between px-3 py-2.5 text-sm font-semibold hover:bg-muted/40 transition"
+                className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.18em] font-bold text-foreground hover:text-primary transition"
                 aria-expanded={grammarOpen}
               >
-                <span>{t("rp.grammar")}</span>
                 <ChevronDown
-                  className={cn(
-                    "w-4 h-4 text-muted-foreground transition-transform",
-                    grammarOpen && "rotate-180",
-                  )}
+                  className={cn("w-3.5 h-3.5 transition-transform", grammarOpen && "rotate-180")}
                 />
+                {t("rp.grammar")}
               </button>
               {grammarOpen && (
-                <ul className="px-3 pb-3 space-y-2">
+                <ul className="mt-3 space-y-3">
                   {data.grammar.map((g, i) => (
-                    <li key={i} className="rounded-lg border border-border p-3 text-sm">
-                      <p className="font-jp font-medium text-foreground">{g.pattern}</p>
-                      <p className="mt-1 text-muted-foreground">{g.explanation}</p>
+                    <li key={i} className="border-l-2 border-foreground pl-3 text-sm">
+                      <p className="font-jp font-bold text-foreground">{g.pattern}</p>
+                      <p className="mt-1 text-foreground/70">{g.explanation}</p>
                     </li>
                   ))}
                 </ul>
@@ -402,7 +387,7 @@ export function LevelCard({
 
           {data.kanji?.length > 0 && (
             <div>
-              <h3 className="text-sm font-semibold mb-2">{t("rp.kanji")}</h3>
+              <h3 className="text-[11px] uppercase tracking-[0.18em] font-bold mb-3 text-foreground">{t("rp.kanji")}</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {data.kanji.map((k, i) => (
                   <KanjiCard key={i} k={k} />
@@ -410,13 +395,6 @@ export function LevelCard({
               </div>
             </div>
           )}
-
-          <button
-            onClick={onToggle}
-            className="w-full text-xs font-medium text-muted-foreground hover:text-foreground py-2 transition"
-          >
-            ▴ {t("rp.hide")}
-          </button>
         </div>
       )}
     </div>
@@ -425,8 +403,8 @@ export function LevelCard({
 
 function InfoRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg bg-muted/50 p-3 text-sm">
-      <p className="text-xs font-semibold text-foreground mb-0.5">{label}</p>
+    <div className="border-l-2 border-foreground/30 pl-3 text-sm">
+      <p className="text-[10px] uppercase tracking-[0.15em] font-bold text-foreground/60 mb-0.5">{label}</p>
       <p className="text-foreground/80">{value}</p>
     </div>
   );
@@ -441,83 +419,64 @@ export function MostNaturalCard({
   onFavorite?: () => void;
   isFav?: boolean;
 }) {
-  const tone = "level-n3";
   const { t } = useT();
   const japanese = cleanJapanese(data.japanese);
   const [whyOpen, setWhyOpen] = useState(false);
   return (
-    <div
-      className="rounded-2xl border-2 p-6 sm:p-8 shadow-md natural-pulse-border"
-      style={{
-        borderColor: `var(--${tone})`,
-        background: `linear-gradient(135deg, color-mix(in oklab, var(--${tone}) 14%, transparent), color-mix(in oklab, var(--${tone}) 4%, transparent))`,
-      }}
-    >
-      <div className="flex items-center gap-2 mb-3 flex-wrap">
-        <Star className="w-4 h-4" style={{ color: `var(--${tone})` }} fill="currentColor" />
-        <h2
-          className="text-sm font-bold uppercase tracking-wide"
-          style={{ color: `var(--${tone})` }}
-        >
+    <div className="bg-foreground text-background p-8 sm:p-12">
+      <div className="flex items-center gap-2 mb-6">
+        <Star className="w-3.5 h-3.5 text-primary" fill="currentColor" />
+        <h2 className="text-[11px] font-bold uppercase tracking-[0.25em] text-background/70">
           {t("mn.label")}
         </h2>
       </div>
-      <div className="flex items-start gap-3">
-        <p className="font-jp text-3xl sm:text-4xl leading-snug text-foreground flex-1 break-words">
+
+      <div className="flex items-start gap-4">
+        <p className="font-jp font-bold flex-1 break-words leading-[1.05] text-background"
+          style={{ fontSize: "clamp(2.5rem, 9vw, 5.5rem)" }}>
           {japanese}
         </p>
         <SpeakerButton text={japanese} />
       </div>
-      <p className="mt-2 italic text-sm text-muted-foreground">{data.romaji}</p>
 
-      <p
-        className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full"
-        style={{
-          backgroundColor: `color-mix(in oklab, var(--${tone}) 16%, transparent)`,
-          color: `var(--${tone})`,
-        }}
-      >
+      <p className="mt-4 italic text-base text-background/60">{data.romaji}</p>
+
+      <div className="mt-6 inline-block bg-primary text-primary-foreground px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em]">
         {t("mn.badge")}
-      </p>
-
-      <div className="mt-4">
-        <NaturalnessBar value="native" />
       </div>
-      <p className="mt-4 text-sm text-foreground/80">{data.reason}</p>
+
+      <p className="mt-6 text-base text-background/85 max-w-2xl leading-relaxed">{data.reason}</p>
 
       {data.native_note && (
-        <div className="mt-3 rounded-lg border border-border/60 bg-background/60 overflow-hidden">
+        <div className="mt-6 border-t border-background/20 pt-4">
           <button
             onClick={() => setWhyOpen((v) => !v)}
             aria-expanded={whyOpen}
-            className="w-full flex items-center justify-between px-3 py-2.5 text-sm font-semibold hover:bg-muted/40 transition"
+            className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.18em] font-bold text-background/80 hover:text-background transition"
           >
-            <span>{t("mn.why")}</span>
             <ChevronDown
-              className={cn(
-                "w-4 h-4 text-muted-foreground transition-transform",
-                whyOpen && "rotate-180",
-              )}
+              className={cn("w-3.5 h-3.5 transition-transform", whyOpen && "rotate-180")}
             />
+            {t("mn.why")}
           </button>
           {whyOpen && (
-            <p className="px-3 pb-3 text-sm text-foreground/80 italic">{data.native_note}</p>
+            <p className="mt-3 text-sm text-background/75 italic max-w-2xl">{data.native_note}</p>
           )}
         </div>
       )}
 
       {onFavorite && (
-        <div className="mt-4">
+        <div className="mt-6">
           <button
             onClick={onFavorite}
             className={cn(
-              "inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold border transition shadow-sm",
+              "inline-flex items-center gap-1.5 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.18em] transition",
               isFav
-                ? "bg-amber-100 border-amber-300 text-amber-800"
-                : "bg-background border-border text-foreground hover:bg-muted",
+                ? "bg-primary text-primary-foreground"
+                : "bg-background/10 text-background hover:bg-background/20",
             )}
           >
-            <Star className="w-4 h-4" fill={isFav ? "currentColor" : "none"} />
+            <Star className="w-3.5 h-3.5" fill={isFav ? "currentColor" : "none"} />
             {isFav ? t("mn.savedFav") : t("mn.saveFav")}
           </button>
         </div>
@@ -540,35 +499,29 @@ export function AlternativesSection({ items }: { items: AlternativeExpression[] 
   const { t } = useT();
   const sorted = [...items].sort((a, b) => (a.rank ?? 99) - (b.rank ?? 99));
   return (
-    <section>
-      <h2 className="text-sm font-bold uppercase tracking-wide mb-3 text-foreground/80">
+    <section className="border-t-[3px] border-foreground pt-6">
+      <h2 className="text-[11px] font-bold uppercase tracking-[0.25em] mb-8 text-foreground">
         {t("alt.title")}
       </h2>
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
         {sorted.map((alt, i) => {
-          const meta = styleMeta(alt.level);
           const rank = alt.rank ?? i + 1;
           const japanese = cleanJapanese(alt.japanese);
           return (
-            <div
-              key={i}
-              className="rounded-2xl border bg-card p-4 shadow-sm flex flex-col"
-              style={{ borderColor: `var(--${meta.tone})` + "40" }}
-            >
-              <div className="flex items-start gap-2 mb-2">
+            <div key={i} className="flex flex-col">
+              <div className="flex items-baseline gap-3 mb-3">
                 <span
-                  className="text-lg leading-none font-bold"
-                  style={{ color: `var(--${meta.tone})` }}
+                  className="text-2xl leading-none font-bold text-primary"
                   aria-label={`Peringkat ${rank}`}
                 >
                   {RANK_CIRCLE[rank - 1] ?? `(${rank})`}
                 </span>
                 <div className="min-w-0 flex-1">
-                  <p className="text-xs font-bold text-foreground leading-tight">
+                  <p className="text-[11px] uppercase tracking-[0.15em] font-bold text-foreground leading-tight">
                     {alt.role_label ?? t("alt.fallback")}
                   </p>
                   {alt.context_label && (
-                    <p className="text-[11px] text-muted-foreground mt-0.5">
+                    <p className="text-[11px] text-foreground/55 mt-0.5">
                       {alt.context_label}
                     </p>
                   )}
@@ -576,22 +529,23 @@ export function AlternativesSection({ items }: { items: AlternativeExpression[] 
               </div>
 
               <div className="flex items-start gap-2">
-                <p className="font-jp text-xl leading-snug text-foreground flex-1 break-words">
+                <p className="font-jp text-2xl sm:text-3xl font-bold leading-[1.2] text-foreground flex-1 break-words">
                   {japanese}
                 </p>
                 <SpeakerButton text={japanese} size="sm" />
               </div>
-              <p className="mt-1 italic text-xs text-muted-foreground">{alt.romaji}</p>
+              <p className="mt-2 italic text-xs text-foreground/55">{alt.romaji}</p>
 
-              <div className="mt-3">
+              <div className="mt-4 max-w-[180px]">
                 <NaturalnessBar value={naturalnessFromRank(rank)} compact />
               </div>
 
               <div className="mt-3 flex items-center gap-2 flex-wrap">
-                <StylePill level={alt.level} size="sm" />
-                <JlptRef level={alt.level} />
+                <span className="inline-flex items-center px-2 py-0.5 bg-foreground text-background text-[10px] font-bold uppercase tracking-[0.15em]">
+                  {(t(`style.${(alt.level || '').toUpperCase()}`) || alt.level)}
+                </span>
               </div>
-              <p className="mt-2 text-xs text-foreground/80">{alt.explanation}</p>
+              <p className="mt-3 text-sm text-foreground/75 leading-relaxed">{alt.explanation}</p>
             </div>
           );
         })}
