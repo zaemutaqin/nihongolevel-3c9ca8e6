@@ -27,7 +27,8 @@ export default defineConfig({
           navigateFallback: null,
           runtimeCaching: [
             {
-              urlPattern: ({ url }) => url.origin === self.location.origin && /\.(?:js|css|woff2)$/.test(url.pathname),
+              urlPattern: ({ url }) =>
+                url.origin === self.location.origin && /\.(?:js|css|woff2)$/.test(url.pathname),
               handler: "CacheFirst",
               options: {
                 cacheName: "static-assets",
@@ -35,7 +36,9 @@ export default defineConfig({
               },
             },
             {
-              urlPattern: ({ url }) => url.origin === self.location.origin && /\.(?:png|jpg|jpeg|svg|webp|ico)$/.test(url.pathname),
+              urlPattern: ({ url }) =>
+                url.origin === self.location.origin &&
+                /\.(?:png|jpg|jpeg|svg|webp|ico)$/.test(url.pathname),
               handler: "CacheFirst",
               options: {
                 cacheName: "image-cache",
