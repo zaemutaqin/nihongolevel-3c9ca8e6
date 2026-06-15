@@ -21,20 +21,14 @@ export default defineConfig({
         workbox: {
           importScripts: ["/push-handler.js"],
           globPatterns: ["**/*.{js,css,html,svg,png,ico,webp,woff2}"],
-          navigateFallback: "/",
-          navigateFallbackDenylist: [/^\/api\//, /^\/~oauth/, /^\/sitemap\.xml$/, /^\/robots\.txt$/],
+          // Do not cache navigations/HTML. OAuth redirects must always hit the
+          // network, and a stale cached document can keep showing the SSR error
+          // fallback after a successful Google login.
+          navigateFallback: null,
           runtimeCaching: [
             {
-              urlPattern: ({ request }) => request.mode === "navigate",
-              handler: "NetworkFirst",
-              options: {
-                cacheName: "html-cache",
-                networkTimeoutSeconds: 3,
-                expiration: { maxEntries: 50, maxAgeSeconds: 60 * 60 * 24 },
-              },
-            },
-            {
-              urlPattern: ({ url }) => url.origin === self.location.origin && /\.(?:js|css|woff2)$/.test(url.pathname),
+              urlPattern: ({ url }) =>
+                url.origin === self.location.origin && /\.(?:js|css|woff2)$/.test(url.pathname),
               handler: "CacheFirst",
               options: {
                 cacheName: "static-assets",
@@ -42,7 +36,9 @@ export default defineConfig({
               },
             },
             {
-              urlPattern: ({ url }) => url.origin === self.location.origin && /\.(?:png|jpg|jpeg|svg|webp|ico)$/.test(url.pathname),
+              urlPattern: ({ url }) =>
+                url.origin === self.location.origin &&
+                /\.(?:png|jpg|jpeg|svg|webp|ico)$/.test(url.pathname),
               handler: "CacheFirst",
               options: {
                 cacheName: "image-cache",

@@ -3,6 +3,7 @@
 // - Unregisters any matching SW in those contexts
 
 const SW_PATH = "/sw.js";
+const SW_CACHE_PREFIXES = ["workbox-", "html-cache", "static-assets", "image-cache"];
 
 function isForbiddenContext(): boolean {
   if (!import.meta.env.PROD) return true;
@@ -39,8 +40,23 @@ async function unregisterMatchingSWs() {
   }
 }
 
+async function clearOldDocumentCaches() {
+  if (typeof window === "undefined" || !("caches" in window)) return;
+  try {
+    const names = await caches.keys();
+    await Promise.allSettled(
+      names
+        .filter((name) => SW_CACHE_PREFIXES.some((prefix) => name.startsWith(prefix)))
+        .map((name) => caches.delete(name)),
+    );
+  } catch {
+    // ignore
+  }
+}
+
 export function registerPwa() {
   if (typeof window === "undefined") return;
+  void clearOldDocumentCaches();
   if (isForbiddenContext()) {
     void unregisterMatchingSWs();
     return;
