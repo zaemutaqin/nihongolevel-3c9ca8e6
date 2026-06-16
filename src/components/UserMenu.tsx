@@ -10,6 +10,7 @@ import { PushNotificationToggle } from "./PushNotificationToggle";
 
 export function UserMenu() {
   const { user, profile, signOut, refreshProfile } = useAuth();
+  const { isPro } = useIsPro();
   const lang = useLang();
   const [open, setOpen] = useState(false);
   const [showProInput, setShowProInput] = useState(false);
@@ -32,7 +33,6 @@ export function UserMenu() {
   const name = profile?.full_name ?? user.user_metadata?.full_name ?? user.email ?? "User";
   const email = profile?.email ?? user.email ?? "";
   const avatar = profile?.avatar_url ?? user.user_metadata?.avatar_url ?? null;
-  const { isPro } = useIsPro();
   const initial = (name || email || "?")[0].toUpperCase();
 
   const activate = async () => {
@@ -120,15 +120,23 @@ export function UserMenu() {
           {!isPro && (
             <div className="p-3 border-b border-border space-y-2">
               <button
-                onClick={() => { setOpen(false); setShowUpgrade(true); }}
+                onClick={() => {
+                  setOpen(false);
+                  setShowUpgrade(true);
+                }}
                 className="w-full inline-flex items-center justify-center gap-2 px-3 py-2 rounded-md bg-primary text-primary-foreground text-sm font-semibold hover:opacity-90 transition"
               >
                 <Crown className="w-4 h-4" />
-                {lang === "id" ? "Upgrade ke Pro — $19 sekali bayar" : "Upgrade to Pro — $19 one-time"}
+                {lang === "id"
+                  ? "Upgrade ke Pro — $19 sekali bayar"
+                  : "Upgrade to Pro — $19 one-time"}
               </button>
               {!showProInput ? (
                 <button
-                  onClick={() => { setShowProInput(true); setMsg(null); }}
+                  onClick={() => {
+                    setShowProInput(true);
+                    setMsg(null);
+                  }}
                   className="w-full inline-flex items-center gap-2 px-2 py-1.5 rounded-md text-xs text-muted-foreground hover:bg-muted transition"
                 >
                   <KeyRound className="w-3.5 h-3.5" />
@@ -148,7 +156,11 @@ export function UserMenu() {
                     disabled={activating || !code.trim()}
                     className="w-full inline-flex items-center justify-center gap-2 px-3 py-2 rounded-md border border-border text-sm font-semibold disabled:opacity-50"
                   >
-                    {activating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+                    {activating ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Check className="w-4 h-4" />
+                    )}
                     {lang === "id" ? "Aktifkan Pro" : "Activate Pro"}
                   </button>
                 </div>
@@ -162,7 +174,10 @@ export function UserMenu() {
           </div>
 
           <button
-            onClick={() => { setOpen(false); signOut(); }}
+            onClick={() => {
+              setOpen(false);
+              signOut();
+            }}
             className="w-full inline-flex items-center gap-2 px-4 py-3 text-sm text-left hover:bg-muted transition"
           >
             <LogOut className="w-4 h-4" />
