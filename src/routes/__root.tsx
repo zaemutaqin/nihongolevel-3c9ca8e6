@@ -81,7 +81,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { name: "referrer", content: "strict-origin-when-cross-origin" },
       { name: "google-site-verification", content: "XZY2JS-v9QhzW-dEEys51zE7vvF2WEZMr6rtR_kUnmU" },
-      { name: "theme-color", content: "#dc2626" },
+      { name: "theme-color", content: "#5B3DDB" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-status-bar-style", content: "default" },
       { name: "apple-mobile-web-app-title", content: "NihongoLevel" },
