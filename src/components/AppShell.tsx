@@ -127,7 +127,10 @@ export function AppShell() {
       {/* Mobile top bar */}
       <div className="sm:hidden sticky top-0 z-30 flex items-center justify-between px-4 py-2.5 border-b border-border bg-background/90 backdrop-blur">
         <Link to="/" className="font-bold inline-flex items-center gap-2">
-          <span>Nihongo<span className="text-primary">Level</span></span>
+          <span className="inline-flex items-baseline">
+            Nihongo<span className="text-primary">Level</span>
+            <span className="ml-1 inline-block w-1.5 h-1.5 rounded-full bg-lime-500" aria-hidden />
+          </span>
           <ProBadgeInline />
         </Link>
         <div className="flex items-center gap-2">
