@@ -7,7 +7,6 @@ import {
   Briefcase,
   TrendingUp,
   PlayCircle,
-  X,
 } from "lucide-react";
 import { useT } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
