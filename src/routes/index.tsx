@@ -1,446 +1,183 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
 import {
   ArrowRight,
-  Briefcase,
-  Languages,
-  Trophy,
-  ChevronDown,
-  MessageSquare,
   Sparkles,
+  Languages,
+  Briefcase,
+  TrendingUp,
+  PlayCircle,
 } from "lucide-react";
 import { useT } from "@/lib/i18n";
-import { useAuth } from "@/lib/auth";
-
-import heroIllustration from "@/assets/hero-illustration.webp";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "NihongoLevel — Prepare for Work and Life in Japan with AI" },
+      { title: "NihongoLevel — Siap Kerja & Hidup di Jepang dengan AI" },
       {
         name: "description",
         content:
-          "Latih interview Tokutei Ginou & percakapan sehari-hari di Jepang dengan AI. Translator natural + simulasi wawancara.",
+          "Dari nol sampai siap interview kerja di Jepang. Kurikulum bertahap, latihan AI, dan translator natural dalam satu aplikasi.",
       },
-      { property: "og:title", content: "NihongoLevel — Prepare for Work and Life in Japan" },
+      { property: "og:title", content: "NihongoLevel — Siap Kerja & Hidup di Jepang dengan AI" },
       {
         property: "og:description",
         content:
-          "Practice Japanese interviews, workplace conversations, and real-life Japanese before moving to Japan.",
+          "Dari nol sampai siap interview kerja di Jepang. Kurikulum bertahap, latihan AI, translator natural.",
       },
       { property: "og:url", content: "/" },
     ],
-    links: [
-      { rel: "canonical", href: "/" },
-      { rel: "preload", as: "image", href: heroIllustration, fetchpriority: "high" } as any,
-    ],
-    scripts: [
-      {
-        type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "FAQPage",
-          mainEntity: FAQ_ID.map((f) => ({
-            "@type": "Question",
-            name: f.q,
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: f.a,
-            },
-          })),
-        }),
-      },
-    ],
+    links: [{ rel: "canonical", href: "/" }],
   }),
   component: HomeIndex,
 });
 
-const INK = "#2A1A1E";
-const INK_SOFT = "#5C4A4F";
-const ACCENT = "#D9F26B";
-const LAVENDER = "#E8D5F2";
-const CREAM = "#F2EDE4";
-
-const FAQ_ID = [
-  {
-    q: "Apa bedanya dengan aplikasi belajar bahasa Jepang lain?",
-    a: "Fokus kami bukan grammar dari nol, tapi situasi nyata di Jepang: interview Tokutei Ginou, ngobrol dengan atasan, dan kehidupan sehari-hari. Cocok untuk yang sudah punya dasar (N5/N4).",
-  },
-  {
-    q: "Apakah suara saya direkam?",
-    a: "Tidak. Mic browser hanya untuk speech-to-text lokal. Transkrip teks dikirim ke AI untuk dievaluasi.",
-  },
-  {
-    q: "Apakah Pro berlangganan bulanan?",
-    a: "Tidak. Pro $19 sekali bayar, akses seumur hidup ke semua fitur sekarang & yang akan datang.",
-  },
-  {
-    q: "Skenario apa saja yang tersedia sekarang?",
-    a: "Interview Simulator: Tokutei Ginou, Staff Restoran. Life Simulator: konbini, restoran ramen, apartemen, klinik, izakaya, dan banyak lagi.",
-  },
-];
-
-const FAQ_EN = [
-  {
-    q: "How is this different from other Japanese learning apps?",
-    a: "We don't teach grammar from scratch. We focus on real situations in Japan: Tokutei Ginou interviews, talking to bosses, daily life. Best if you already have N5/N4 basics.",
-  },
-  {
-    q: "Is my voice recorded?",
-    a: "No. The browser mic is used for local speech-to-text only. Only the text transcript is sent to the AI.",
-  },
-  {
-    q: "Is Pro a monthly subscription?",
-    a: "No. Pro is a one-time $19 payment for lifetime access to current and future features.",
-  },
-  {
-    q: "Which scenarios are available now?",
-    a: "Interview Simulator: Tokutei Ginou, Restaurant Staff. Life Simulator: konbini, ramen shop, apartment hunting, clinic, izakaya, and more.",
-  },
-];
-
 function HomeIndex() {
   const { lang } = useT();
-  const { user } = useAuth();
   const isId = lang === "id";
+  const [onboardingOpen, setOnboardingOpen] = useState(false);
+
+  const pillars = [
+    {
+      Icon: Sparkles,
+      title: isId ? "Dari nol" : "From zero",
+      desc: isId
+        ? "Mulai dari hiragana, katakana, kosakata harian. Tidak perlu pengalaman sebelumnya."
+        : "Start with hiragana, katakana, daily vocab. No prior experience needed.",
+    },
+    {
+      Icon: Languages,
+      title: "Translator",
+      desc: isId
+        ? "Empat gaya bahasa natural: santai, sopan, kerja, keigo. Bukan terjemahan kaku."
+        : "Four natural styles: casual, polite, workplace, keigo. Never stiff.",
+    },
+    {
+      Icon: Briefcase,
+      title: "Interview AI",
+      desc: isId
+        ? "Latihan wawancara untuk 20 bidang kerja — dari pabrik sampai perhotelan."
+        : "Interview practice for 20 work fields — factory to hospitality.",
+    },
+    {
+      Icon: TrendingUp,
+      title: "Progress",
+      desc: isId
+        ? "Pantau level kamu di tiap tahap. Tahu persis kapan kamu siap berangkat."
+        : "Track your level at every stage. Know exactly when you're ready to go.",
+    },
+  ];
 
   return (
-    <div className="w-full" style={{ background: CREAM, color: INK }}>
-      <div className="mx-auto w-full max-w-5xl px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
-        {/* HERO — editorial split with illustration */}
-        <header className="mb-24 sm:mb-32 grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-10 lg:gap-12 items-center">
-          <div>
-            <span
-              className="inline-block text-[10px] font-bold uppercase tracking-[0.24em] mb-5 px-3.5 py-1.5 rounded-full"
-              style={{ background: LAVENDER, color: INK }}
-            >
-              {isId ? "AI Coach untuk Pekerja Indonesia" : "AI Coach for Workers"}
+    <div className="w-full bg-background text-foreground">
+      {/* HERO */}
+      <section className="relative bg-violet-50">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24 lg:py-28">
+          <div className="max-w-3xl">
+            <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.2em] mb-6 px-3 py-1.5 rounded-full bg-violet-100 text-violet-700">
+              <span className="w-1.5 h-1.5 rounded-full bg-lime-500" />
+              {isId ? "AI Coach Bahasa Jepang" : "Japanese AI Coach"}
             </span>
-            <h1 className="font-black leading-[1.05] mb-6 text-[40px] sm:text-[52px] lg:text-[56px] tracking-[-0.02em]">
+
+            <h1 className="font-black leading-[1.05] tracking-[-0.02em] text-[40px] sm:text-[56px] lg:text-[64px] text-violet-900 mb-6">
               {isId ? (
                 <>
-                  Siap Kerja & Hidup
-                  <br />
-                  di Jepang dengan{" "}
-                  <span className="px-2 rounded-md" style={{ background: ACCENT, color: INK }}>AI</span>
+                  Siap kerja & hidup di Jepang dengan{" "}
+                  <span className="inline-block px-2.5 rounded-md bg-lime-400 text-violet-900">AI</span>
                 </>
               ) : (
                 <>
-                  Prepare for Work & Life
-                  <br />
-                  in Japan with <span className="px-2 rounded-md" style={{ background: ACCENT, color: INK }}>AI</span>
+                  Ready to work & live in Japan with{" "}
+                  <span className="inline-block px-2.5 rounded-md bg-lime-400 text-violet-900">AI</span>
                 </>
               )}
             </h1>
-            <p
-              className="text-base sm:text-lg leading-relaxed mb-8 max-w-lg"
-              style={{ color: INK_SOFT }}
-            >
+
+            <p className="text-base sm:text-lg leading-relaxed text-mutedink max-w-xl mb-10">
               {isId
-                ? "Latih wawancara kerja, percakapan dengan atasan, dan situasi sehari-hari di Jepang sebelum berangkat. Skenario realistis + feedback grammar & keigo instan."
-                : "Practice interviews, workplace conversations, and real-life Japanese before moving to Japan. Realistic scenarios + instant grammar & keigo feedback."}
+                ? "Dari nol sampai siap interview kerja. Kurikulum bertahap, latihan dengan AI, dan translator natural — semua dalam satu tempat."
+                : "From zero to interview-ready. A step-by-step curriculum, AI practice, and a natural translator — all in one place."}
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Link
-                to="/interview"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-sm sm:text-base font-bold hover:opacity-90 transition"
-                style={{ background: INK, color: "#fff" }}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+              <Button
+                size="lg"
+                onClick={() => setOnboardingOpen(true)}
+                className="h-12 px-7 rounded-full text-base font-bold shadow-md"
               >
-                {isId ? "Coba Interview Simulator" : "Try Interview Simulator"}
+                {isId ? "Mulai belajar gratis" : "Start learning free"}
                 <ArrowRight className="w-4 h-4" />
-              </Link>
-              <Link
-                to="/translate"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-sm sm:text-base font-bold hover:bg-black/5 transition"
-                style={{ color: INK }}
+              </Button>
+              <Button
+                size="lg"
+                variant="ghost"
+                asChild
+                className="h-12 px-5 rounded-full text-sm font-semibold text-violet-700"
               >
-                {isId ? "Mulai Gratis" : "Start Free"}
-                <ArrowRight className="w-4 h-4" />
-              </Link>
+                <a href="#cara-kerja">
+                  <PlayCircle className="w-4 h-4" />
+                  {isId ? "Lihat cara kerja" : "See how it works"}
+                </a>
+              </Button>
             </div>
+          </div>
+        </div>
+      </section>
 
+      {/* FOUR PILLARS */}
+      <section id="cara-kerja" className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
+        <div className="max-w-2xl mb-12">
+          <div className="text-[11px] font-bold uppercase tracking-[0.3em] mb-3 text-violet-600">
+            {isId ? "Empat Pilar" : "Four Pillars"}
           </div>
-
-          {/* Right: single flat illustration */}
-          <div className="hidden lg:block">
-            <img
-              src={heroIllustration}
-              alt={isId ? "Ilustrasi pekerja Indonesia belajar bahasa Jepang" : "Indonesian worker learning Japanese"}
-              width={1024}
-              height={1024}
-              loading="eager"
-              fetchPriority="high"
-              decoding="async"
-              className="w-full h-auto"
-            />
-          </div>
-        </header>
-
-        {/* WHY NIHONGOLEVEL — borderless editorial */}
-        <section className="mb-28 sm:mb-36">
-          <div className="mb-12 max-w-2xl">
-            <div className="text-[11px] font-bold uppercase tracking-[0.3em] mb-3" style={{ color: INK }}>
-              {isId ? "Empat Pilar" : "Four Pillars"}
-            </div>
-            <h2 className="text-3xl sm:text-5xl font-black leading-[1.05] tracking-tight">
-              {isId ? "Kenapa NihongoLevel" : "Why NihongoLevel"}
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-10 gap-y-12">
-            <WhyItem
-              icon={Languages}
-              tint={ACCENT}
-              title={isId ? "Translator Natural" : "Natural Translator"}
-              desc={isId ? "4 level: Casual, Polite, Workplace, Keigo. Bukan terjemahan kaku." : "4 levels: Casual, Polite, Workplace, Keigo. Not stiff translation."}
-            />
-            <WhyItem
-              icon={Briefcase}
-              tint={LAVENDER}
-              title={isId ? "Latihan Interview" : "Interview Practice"}
-              desc={isId ? "AI berperan jadi pewawancara Jepang. Tanpa rasa malu." : "AI plays the Japanese interviewer. Zero anxiety."}
-            />
-            <WhyItem
-              icon={MessageSquare}
-              tint={ACCENT}
-              title={isId ? "Simulasi Nyata" : "Real-Life Sim"}
-              desc={isId ? "Konbini, restoran, klinik, hotel — siap menghadapi situasi nyata." : "Konbini, restaurant, clinic, hotel — ready for real situations."}
-            />
-            <WhyItem
-              icon={Trophy}
-              tint={LAVENDER}
-              title={isId ? "Pantau Kemajuan" : "Track Progress"}
-              desc={isId ? "Skor grammar, naturalness, confidence. Riwayat semua sesi tersimpan." : "Grammar, naturalness, confidence scores. Full session history."}
-            />
-          </div>
-        </section>
-
-        {/* POPULAR SCENARIOS — borderless */}
-        <section className="mb-28 sm:mb-36">
-          <div className="mb-12 max-w-2xl">
-            <div className="text-[11px] font-bold uppercase tracking-[0.3em] mb-3" style={{ color: INK }}>
-              {isId ? "Mulai Latihan" : "Start Practicing"}
-            </div>
-            <h2 className="text-3xl sm:text-5xl font-black leading-[1.05] tracking-tight">
-              {isId ? "Skenario Populer" : "Popular Scenarios"}
-            </h2>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-            {[
-              { to: "/interview" as const, emoji: "💼", label: isId ? "Wawancara Kerja" : "Job Interview" },
-              { to: "/hanashite/sc_konbini" as const, emoji: "🏪", label: "Konbini" },
-              { to: "/hanashite/sc_ramen" as const, emoji: "🍜", label: isId ? "Restoran" : "Restaurant" },
-              { to: "/hanashite/sc_apato" as const, emoji: "🏠", label: isId ? "Apartemen" : "Apartment" },
-              { to: "/hanashite/sc_clinic" as const, emoji: "🏥", label: isId ? "Rumah Sakit" : "Hospital" },
-            ].map(({ to, emoji, label }, i) => (
-              <Link
-                key={to}
-                to={to}
-                className="group flex flex-col items-center justify-center text-center rounded-2xl py-8 px-4 hover:-translate-y-1 transition-transform"
-                style={{ background: i % 2 === 0 ? LAVENDER : ACCENT }}
-              >
-                <span className="text-4xl mb-4" aria-hidden>
-                  {emoji}
-                </span>
-                <span
-                  className="text-sm font-bold leading-tight"
-                  style={{ color: INK }}
-                >
-                  {label}
-                </span>
-              </Link>
-            ))}
-          </div>
-        </section>
-
-        {/* HOW IT WORKS — dark navy with massive red numerals */}
-        <section
-          className="mb-28 sm:mb-36 rounded-3xl px-6 sm:px-10 lg:px-14 py-14 sm:py-20 text-white"
-          style={{ background: INK }}
-
-        >
-          <div className="text-[11px] font-bold uppercase tracking-[0.3em] mb-3" style={{ color: ACCENT }}>
-            {isId ? "Proses" : "Process"}
-          </div>
-          <h2 className="text-3xl sm:text-5xl font-black mb-14 tracking-tight">
-            {isId ? "Cara Kerja" : "How It Works"}
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black leading-[1.1] tracking-tight text-violet-900">
+            {isId ? "Satu aplikasi, jalan lengkap" : "One app, the full path"}
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-10 gap-y-14">
-            {(isId
-              ? [
-                  "Pilih skenario interview atau situasi.",
-                  "Latihan langsung dengan AI bahasa Jepang.",
-                  "Dapat feedback grammar, naturalness, confidence.",
-                  "Ulang sampai siap berangkat ke Jepang.",
-                ]
-              : [
-                  "Pick an interview scenario or situation.",
-                  "Practice directly with the AI in Japanese.",
-                  "Get grammar, naturalness, confidence feedback.",
-                  "Repeat until you're ready for Japan.",
-                ]
-            ).map((step, i) => (
-              <div key={i}>
-                <div
-                  className="font-black leading-none mb-5 tracking-[-0.04em]"
-                  style={{ color: ACCENT, fontSize: "clamp(64px, 8vw, 96px)" }}
-                >
-                  {String(i + 1).padStart(2, "0")}
-                </div>
-                <p className="font-bold leading-snug text-lg">{step}</p>
-              </div>
-            ))}
-          </div>
-        </section>
+          <p className="mt-4 text-base sm:text-lg text-mutedink">
+            {isId
+              ? "Bukan sekadar belajar kosakata — kamu dibimbing langkah demi langkah sampai siap bicara dengan orang Jepang sungguhan."
+              : "Not just vocabulary drills — you're guided step by step until you can hold a real conversation in Japanese."}
+          </p>
+        </div>
 
-        {/* PRICING — colored cards with numerals */}
-        <section className="mb-28 sm:mb-36">
-          <h2 className="text-3xl sm:text-5xl font-black tracking-tight mb-8">
-            {isId ? "Harga" : "Pricing"}
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {/* FREE */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {pillars.map(({ Icon, title, desc }) => (
             <div
-              className="rounded-3xl p-6 sm:p-7 flex flex-col relative overflow-hidden"
-              style={{ background: "#E8D5F2" }}
+              key={title}
+              className="rounded-2xl border border-hairline bg-card p-6 hover:border-violet-300 hover:shadow-sm transition"
             >
-              <div className="flex items-start justify-between mb-4">
-                <h3 className="text-2xl sm:text-3xl font-black leading-tight max-w-[60%]" style={{ color: INK }}>
-                  Free
-                </h3>
-                <span className="text-3xl sm:text-4xl font-black tracking-tight" style={{ color: INK }}>
-                  01
-                </span>
+              <div className="w-12 h-12 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center mb-5">
+                <Icon className="w-6 h-6" />
               </div>
-              <div className="text-sm mb-3" style={{ color: INK_SOFT }}>
-                {isId ? "selamanya" : "forever"}
-              </div>
-              <div className="flex items-baseline gap-2 mb-5">
-                <span className="text-4xl sm:text-5xl font-black tracking-tight" style={{ color: INK }}>$0</span>
-              </div>
-              <ul className="space-y-2 mb-6 flex-1">
-                {(isId
-                  ? ["10 translator request / hari", "2 sesi interview / hari", "2 sesi simulasi / hari", "Riwayat dasar"]
-                  : ["10 translator requests / day", "2 interview sessions / day", "2 life-sim sessions / day", "Basic history"]
-                ).map((f) => (
-                  <li key={f} className="flex items-start gap-2 text-sm" style={{ color: INK }}>
-                    <span className="mt-0.5 flex-shrink-0">✓</span>
-                    <span>{f}</span>
-                  </li>
-                ))}
-              </ul>
-              <Link
-                to="/translate"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold text-white hover:opacity-90 transition"
-                style={{ background: INK }}
-              >
-                {isId ? "Mulai Gratis" : "Start Free"}
-              </Link>
+              <h3 className="text-lg font-bold text-violet-900 mb-2">{title}</h3>
+              <p className="text-sm leading-relaxed text-mutedink">{desc}</p>
             </div>
+          ))}
+        </div>
+      </section>
 
-            {/* PRO */}
-            <div
-              className="rounded-3xl p-6 sm:p-7 flex flex-col relative overflow-hidden"
-              style={{ background: "#D9F26B" }}
-            >
-              <div className="flex items-start justify-between mb-4">
-                <div className="max-w-[60%]">
-                  <h3 className="text-2xl sm:text-3xl font-black leading-tight" style={{ color: INK }}>
-                    Pro
-                  </h3>
-                  <div className="text-sm mt-1" style={{ color: INK_SOFT }}>
-                    Lifetime Access
-                  </div>
-                </div>
-                <span className="text-3xl sm:text-4xl font-black tracking-tight" style={{ color: INK }}>
-                  02
-                </span>
-              </div>
-              <div className="text-sm mb-3" style={{ color: INK_SOFT }}>
-                {isId ? "sekali bayar" : "one-time"}
-              </div>
-              <div className="flex items-baseline gap-2 mb-5">
-                <span className="text-4xl sm:text-5xl font-black tracking-tight" style={{ color: INK }}>$19</span>
-              </div>
-              <ul className="space-y-2 mb-6 flex-1">
-                {(isId
-                  ? ["Translator unlimited", "Interview unlimited", "Semua skenario terbuka", "Riwayat & analitik lengkap"]
-                  : ["Unlimited translator", "Unlimited interviews", "All scenarios unlocked", "Full history & analytics"]
-                ).map((f) => (
-                  <li key={f} className="flex items-start gap-2 text-sm" style={{ color: INK }}>
-                    <span className="mt-0.5 flex-shrink-0">✓</span>
-                    <span>{f}</span>
-                  </li>
-                ))}
-              </ul>
-              <Link
-                to="/pricing"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold text-white hover:opacity-90 transition"
-                style={{ background: INK }}
-              >
-                {isId ? "Upgrade ke Pro" : "Upgrade to Pro"}
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
+      {/* Onboarding modal — placeholder, logic comes in next step */}
+      <Dialog open={onboardingOpen} onOpenChange={setOnboardingOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-violet-900">
+              {isId ? "Onboarding" : "Onboarding"}
+            </DialogTitle>
+            <DialogDescription>
+              {isId
+                ? "Alur onboarding akan diisi di tahap berikutnya."
+                : "The onboarding flow will be wired up in the next step."}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="rounded-xl bg-violet-50 border border-dashed border-violet-300 p-6 text-sm text-violet-700">
+            {isId
+              ? "Placeholder — belum ada konten."
+              : "Placeholder — no content yet."}
           </div>
-        </section>
-
-
-        {/* FAQ — minimal bottom-border list */}
-        <section className="mb-16 max-w-3xl">
-          <div className="mb-10">
-            <div className="text-[11px] font-bold uppercase tracking-[0.3em] mb-3" style={{ color: INK }}>
-              {isId ? "Pertanyaan" : "Questions"}
-            </div>
-            <h2 className="text-3xl sm:text-5xl font-black tracking-tight">FAQ</h2>
-          </div>
-          <div style={{ borderTop: `1px solid ${INK}` }}>
-            {(isId ? FAQ_ID : FAQ_EN).map((f, i) => (
-              <details key={i} className="group py-6" style={{ borderBottom: `1px solid ${INK}` }}>
-                <summary className="cursor-pointer list-none flex items-center justify-between gap-6">
-                  <span className="font-bold text-lg leading-snug">{f.q}</span>
-                  <ChevronDown className="w-5 h-5 flex-shrink-0 transition-transform group-open:rotate-180" />
-                </summary>
-                <p className="mt-4 text-base leading-relaxed" style={{ color: INK_SOFT }}>
-                  {f.a}
-                </p>
-              </details>
-            ))}
-          </div>
-        </section>
-      </div>
-    </div>
-  );
-}
-
-function WhyItem({
-  icon: Icon,
-  title,
-  desc,
-  tint,
-}: {
-  icon: typeof Sparkles;
-  title: string;
-  desc: string;
-  tint?: string;
-}) {
-  return (
-    <div
-      className="p-7 rounded-2xl bg-white"
-      style={{ border: `1px solid rgba(15,23,42,0.08)` }}
-    >
-      <div
-        className="w-11 h-11 rounded-xl flex items-center justify-center mb-5"
-        style={{ background: tint ?? ACCENT }}
-      >
-        <Icon className="w-5 h-5" style={{ color: INK }} strokeWidth={2} />
-      </div>
-      <h3 className="font-black text-xl mb-2 tracking-tight" style={{ color: INK }}>
-        {title}
-      </h3>
-      <p className="text-sm leading-relaxed" style={{ color: INK_SOFT }}>
-        {desc}
-      </p>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
