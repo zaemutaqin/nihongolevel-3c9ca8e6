@@ -1,5 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
+import { useState, useMemo } from "react";
+import { zodValidator, fallback } from "@tanstack/zod-adapter";
+import { z } from "zod";
 import {
   ArrowRight,
   Sparkles,
@@ -7,12 +9,26 @@ import {
   Briefcase,
   TrendingUp,
   PlayCircle,
+  Check,
+  CheckCircle2,
 } from "lucide-react";
 import { useT } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
+
+const searchSchema = z.object({
+  onboarding: fallback(z.coerce.number().int().min(0).max(1), 0).default(0),
+});
 
 export const Route = createFileRoute("/")({
+  validateSearch: zodValidator(searchSchema),
   head: () => ({
     meta: [
       { title: "NihongoLevel — Siap Kerja & Hidup di Jepang dengan AI" },
@@ -34,10 +50,22 @@ export const Route = createFileRoute("/")({
   component: HomeIndex,
 });
 
+type Location = "id" | "jp";
+type Level = "none" | "some" | "basic";
+
 function HomeIndex() {
   const { lang } = useT();
   const isId = lang === "id";
-  const [onboardingOpen, setOnboardingOpen] = useState(false);
+  const search = Route.useSearch();
+  const navigate = useNavigate({ from: "/" });
+  const router = useRouter();
+
+  const open = search.onboarding === 1;
+
+  const setOpen = (v: boolean) => {
+    if (v) navigate({ search: { onboarding: 1 } });
+    else navigate({ search: { onboarding: 0 } });
+  };
 
   const pillars = [
     {
@@ -71,7 +99,9 @@ function HomeIndex() {
   ];
 
   return (
-    <div className="w-full bg-background text-foreground">
+    <div className={cn("w-full bg-background text-foreground transition", open && "blur-sm")}
+         aria-hidden={open}
+    >
       {/* HERO */}
       <section className="relative bg-violet-50">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24 lg:py-28">
@@ -104,7 +134,7 @@ function HomeIndex() {
             <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
               <Button
                 size="lg"
-                onClick={() => setOnboardingOpen(true)}
+                onClick={() => setOpen(true)}
                 className="h-12 px-7 rounded-full text-base font-bold shadow-md"
               >
                 {isId ? "Mulai belajar gratis" : "Start learning free"}
@@ -158,26 +188,258 @@ function HomeIndex() {
         </div>
       </section>
 
-      {/* Onboarding modal — placeholder, logic comes in next step */}
-      <Dialog open={onboardingOpen} onOpenChange={setOnboardingOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-violet-900">
-              {isId ? "Onboarding" : "Onboarding"}
-            </DialogTitle>
-            <DialogDescription>
-              {isId
-                ? "Alur onboarding akan diisi di tahap berikutnya."
-                : "The onboarding flow will be wired up in the next step."}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="rounded-xl bg-violet-50 border border-dashed border-violet-300 p-6 text-sm text-violet-700">
-            {isId
-              ? "Placeholder — belum ada konten."
-              : "Placeholder — no content yet."}
-          </div>
-        </DialogContent>
-      </Dialog>
+      <OnboardingModal
+        open={open}
+        onOpenChange={setOpen}
+        isId={isId}
+        onFinish={(level) => {
+          const target =
+            level === "none" ? "/belajar/level-0" : level === "some" ? "/belajar/level-1" : "/belajar/level-2";
+          // close modal, then navigate
+          navigate({ search: { onboarding: 0 } });
+          router.navigate({ to: target });
+        }}
+      />
     </div>
+  );
+}
+
+function OnboardingModal({
+  open,
+  onOpenChange,
+  isId,
+  onFinish,
+}: {
+  open: boolean;
+  onOpenChange: (v: boolean) => void;
+  isId: boolean;
+  onFinish: (level: Level) => void;
+}) {
+  const [step, setStep] = useState(0); // 0, 1, 2 (result)
+  const [location, setLocation] = useState<Location | null>(null);
+  const [level, setLevel] = useState<Level | null>(null);
+
+  // Reset when closed
+  const handleOpenChange = (v: boolean) => {
+    if (!v) {
+      setTimeout(() => {
+        setStep(0);
+        setLocation(null);
+        setLevel(null);
+      }, 200);
+    }
+    onOpenChange(v);
+  };
+
+  const recommendation = useMemo(() => {
+    if (level === "none")
+      return {
+        code: "Level 0",
+        title: isId ? "Fondasi mutlak" : "Absolute foundation",
+        desc: isId
+          ? "Hiragana, katakana, dan kata-kata pertama untuk memulai."
+          : "Hiragana, katakana, and your first words to get started.",
+      };
+    if (level === "some")
+      return {
+        code: "Level 1",
+        title: isId ? "Kehidupan sehari-hari" : "Daily life",
+        desc: isId
+          ? "Belanja, transportasi, makan di luar, percakapan ringan."
+          : "Shopping, transport, eating out, small talk.",
+      };
+    return {
+      code: "Level 2",
+      title: isId ? "Bahasa tempat kerja" : "Workplace Japanese",
+      desc: isId
+        ? "Bicara sopan dengan atasan dan rekan kerja, situasi kantor & pabrik."
+        : "Polite talk with bosses and coworkers, office & factory scenarios.",
+    };
+  }, [level, isId]);
+
+  return (
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogContent className="sm:max-w-lg p-0 overflow-hidden rounded-2xl border-violet-100">
+        {/* Progress dots */}
+        <div className="px-6 pt-6 pb-2 flex items-center gap-2">
+          {[0, 1, 2].map((i) => (
+            <div
+              key={i}
+              className={cn(
+                "h-1.5 flex-1 rounded-full transition",
+                i <= step ? "bg-violet-600" : "bg-violet-100",
+              )}
+            />
+          ))}
+        </div>
+
+        {step === 0 && (
+          <div className="px-6 pb-6 pt-2">
+            <DialogHeader>
+              <DialogTitle className="text-xl text-violet-900">
+                {isId ? "Kamu sekarang ada di mana?" : "Where are you right now?"}
+              </DialogTitle>
+              <DialogDescription>
+                {isId
+                  ? "Ini membantu menyesuaikan materi yang paling relevan."
+                  : "Helps us tailor the most relevant material."}
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="mt-5 grid gap-3">
+              <ChoiceCard
+                selected={location === "id"}
+                onClick={() => setLocation("id")}
+                title={isId ? "Masih di Indonesia" : "Still in Indonesia"}
+                sub={isId ? "Sedang persiapan keberangkatan" : "Preparing to depart"}
+              />
+              <ChoiceCard
+                selected={location === "jp"}
+                onClick={() => setLocation("jp")}
+                title={isId ? "Sudah di Jepang" : "Already in Japan"}
+                sub={isId ? "Sudah bekerja atau baru tiba" : "Working or just arrived"}
+              />
+            </div>
+
+            <div className="mt-6 flex justify-end">
+              <Button
+                disabled={!location}
+                onClick={() => setStep(1)}
+                className="rounded-full px-6"
+              >
+                {isId ? "Lanjut" : "Next"}
+                <ArrowRight className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {step === 1 && (
+          <div className="px-6 pb-6 pt-2">
+            <DialogHeader>
+              <DialogTitle className="text-xl text-violet-900">
+                {isId ? "Seberapa jauh bahasa Jepangmu?" : "How far is your Japanese?"}
+              </DialogTitle>
+              <DialogDescription>
+                {isId
+                  ? "Jujur saja — tidak ada jawaban yang salah."
+                  : "Be honest — there is no wrong answer."}
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="mt-5 grid gap-3">
+              <ChoiceCard
+                selected={level === "none"}
+                onClick={() => setLevel("none")}
+                title={isId ? "Belum tahu sama sekali" : "Nothing yet"}
+                sub={isId ? "Hiragana pun belum kenal" : "Don't know hiragana yet"}
+              />
+              <ChoiceCard
+                selected={level === "some"}
+                onClick={() => setLevel("some")}
+                title={isId ? "Tahu sedikit" : "I know a little"}
+                sub={isId ? "Bisa baca hiragana, tahu beberapa kata" : "Can read hiragana, know some words"}
+              />
+              <ChoiceCard
+                selected={level === "basic"}
+                onClick={() => setLevel("basic")}
+                title={isId ? "Sudah bisa percakapan dasar" : "Basic conversation"}
+                sub={isId ? "Sekitar level N4-N3" : "Roughly N4-N3"}
+              />
+            </div>
+
+            <div className="mt-6 flex justify-between">
+              <Button variant="ghost" onClick={() => setStep(0)} className="rounded-full">
+                {isId ? "Kembali" : "Back"}
+              </Button>
+              <Button
+                disabled={!level}
+                onClick={() => setStep(2)}
+                className="rounded-full px-6"
+              >
+                {isId ? "Lihat hasil" : "See result"}
+                <ArrowRight className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {step === 2 && level && (
+          <div className="px-6 pb-6 pt-2">
+            <DialogHeader>
+              <div className="mx-auto w-12 h-12 rounded-full bg-lime-400 text-violet-900 flex items-center justify-center mb-3">
+                <CheckCircle2 className="w-7 h-7" />
+              </div>
+              <DialogTitle className="text-2xl text-violet-900 text-center">
+                {isId ? "Jalur belajarmu sudah siap" : "Your learning path is ready"}
+              </DialogTitle>
+              <DialogDescription className="text-center">
+                {isId
+                  ? "Rekomendasi berdasarkan jawabanmu."
+                  : "Recommended based on your answers."}
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="mt-5 rounded-2xl border border-violet-200 bg-violet-50 p-5">
+              <div className="text-[11px] font-bold uppercase tracking-[0.2em] text-violet-600 mb-1">
+                {recommendation.code}
+              </div>
+              <div className="text-lg font-bold text-violet-900 mb-1">
+                {recommendation.title}
+              </div>
+              <p className="text-sm text-mutedink">{recommendation.desc}</p>
+            </div>
+
+            <Button
+              onClick={() => onFinish(level)}
+              className="mt-6 w-full h-12 rounded-full text-base font-bold bg-lime-500 text-violet-900 hover:bg-lime-600 shadow-md"
+            >
+              {isId ? "Mulai sesi pertama sekarang" : "Start your first session now"}
+              <ArrowRight className="w-4 h-4" />
+            </Button>
+          </div>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function ChoiceCard({
+  selected,
+  onClick,
+  title,
+  sub,
+}: {
+  selected: boolean;
+  onClick: () => void;
+  title: string;
+  sub: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        "text-left rounded-xl border p-4 transition flex items-start gap-3 cursor-pointer",
+        selected
+          ? "border-violet-600 bg-violet-50 ring-2 ring-violet-600/20"
+          : "border-hairline bg-background hover:border-violet-300 hover:bg-violet-50/50",
+      )}
+    >
+      <div
+        className={cn(
+          "mt-0.5 w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition",
+          selected ? "border-violet-600 bg-violet-600 text-white" : "border-hairline",
+        )}
+      >
+        {selected && <Check className="w-3 h-3" strokeWidth={3} />}
+      </div>
+      <div className="flex-1">
+        <div className={cn("font-semibold", selected ? "text-violet-900" : "text-foreground")}>
+          {title}
+        </div>
+        <div className="text-xs text-mutedink mt-0.5">{sub}</div>
+      </div>
+    </button>
   );
 }
