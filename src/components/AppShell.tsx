@@ -177,7 +177,7 @@ function ProBadgeInline() {
   const { profile } = useAuth();
   if (!profile?.is_pro) return null;
   return (
-    <span className="inline-flex items-center gap-0.5 rounded-full bg-yellow-400/15 text-yellow-700 dark:text-yellow-300 px-1.5 py-0.5 text-[10px] font-bold uppercase">
+    <span className="inline-flex items-center gap-0.5 rounded-full bg-lime-400 text-violet-900 px-1.5 py-0.5 text-[10px] font-bold uppercase">
       Pro ✓
     </span>
   );
