@@ -87,7 +87,10 @@ export function AppShell() {
             {/* Top row: logo (left) + lang + user (right) */}
             <div className="flex items-center justify-between">
               <Link to="/" className="font-extrabold text-2xl inline-flex items-center gap-2 tracking-tight">
-                <span>Nihongo<span className="text-primary">Level</span></span>
+                <span className="inline-flex items-baseline">
+                  Nihongo<span className="text-primary">Level</span>
+                  <span className="ml-1 inline-block w-1.5 h-1.5 rounded-full bg-lime-500" aria-hidden />
+                </span>
                 <ProBadgeInline />
               </Link>
               <div className="flex items-center gap-3">
