@@ -81,9 +81,15 @@ function InterviewPlay() {
   const [error, setError] = useState<string | null>(null);
   const [evaluation, setEvaluation] = useState<Evaluation | null>(null);
   const [evaluating, setEvaluating] = useState(false);
+  const [phase, setPhase] = useState<"briefing" | "chat">("briefing");
 
   const recogRef = useRef<SR | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
+
+  const hints: ScenarioHint[] = scenario ? getScenarioHints(scenario.id) : [];
+  const isGuestDemo = !user && scenario?.id === "iv_kaigo";
+  const userTurnCount = messages.filter((m) => m.role === "user").length;
+  const guestLimitReached = isGuestDemo && userTurnCount >= 3;
 
   useEffect(() => {
     if (!scenario) return;
@@ -98,16 +104,18 @@ function InterviewPlay() {
 
   if (!scenario) return null;
 
-  if (!user) {
+  // Block non-Kaigo scenarios for guests
+  if (!user && scenario.id !== "iv_kaigo") {
     return (
       <div className="mx-auto max-w-md px-4 py-16 text-center">
-        <p className="mb-4">{isId ? "Masuk dulu untuk berlatih." : "Sign in to practice."}</p>
-        <Link to="/interview" className="text-primary underline">
+        <p className="mb-4">{isId ? "Masuk dulu untuk berlatih skenario ini." : "Sign in to practice this scenario."}</p>
+        <Link to="/interview" className="text-violet-700 underline">
           {isId ? "Kembali" : "Back"}
         </Link>
       </div>
     );
   }
+
 
   const speak = (text: string, id: string) => {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
