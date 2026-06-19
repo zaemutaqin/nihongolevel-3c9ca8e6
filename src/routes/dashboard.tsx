@@ -24,6 +24,7 @@ import { useAuth } from "@/lib/auth";
 import { LockedFeature } from "@/components/LockedFeature";
 import { SignInButton } from "@/components/SignInButton";
 import { getMyInterviewSessions, type InterviewSessionSummary } from "@/lib/interview-history.functions";
+import { getDueReviews } from "@/lib/review.functions";
 
 
 export const Route = createFileRoute("/dashboard")({
