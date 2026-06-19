@@ -53,20 +53,8 @@ export const Route = createFileRoute("/dashboard")({
   component: DashboardPage,
 });
 
-function getStreakDaysSafe(history: HistoryEntry[]): number {
-  // Compute streak from history client-side (legacy local-storage based)
-  if (history.length === 0) return 0;
-  const days = new Set(
-    history.map((h) => new Date(h.ts).toISOString().slice(0, 10)),
-  );
-  let streak = 0;
-  const cursor = new Date();
-  while (days.has(cursor.toISOString().slice(0, 10))) {
-    streak++;
-    cursor.setDate(cursor.getDate() - 1);
-  }
-  return streak;
-}
+
+
 
 function DashboardPage() {
   const { t } = useT();
