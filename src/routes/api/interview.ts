@@ -171,10 +171,12 @@ CRITICAL RULES:
           return jsonResponse({ reply }, 200, allowedOrigin);
         }
 
-        // mode === "feedback" — generate evaluation + save session
+        // mode === "feedback" — generate evaluation + save session (auth required, guarded above)
+        if (!userId) return jsonResponse({ error: "AUTH_REQUIRED" }, 401, allowedOrigin);
         if (messages.length === 0) {
           return jsonResponse({ error: "INVALID_INPUT" }, 400, allowedOrigin);
         }
+
         const transcript = messages
           .map((m) => `${m.role === "user" ? "Candidate" : "Interviewer"}: ${m.content}`)
           .join("\n");
