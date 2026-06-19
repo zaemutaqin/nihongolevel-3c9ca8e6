@@ -383,7 +383,7 @@ function InterviewPlay() {
             className={cn("flex gap-2", m.role === "user" ? "justify-end" : "justify-start")}
           >
             {m.role === "assistant" && (
-              <div className="w-8 h-8 rounded-full bg-primary/15 flex items-center justify-center text-sm flex-shrink-0">
+              <div className="w-8 h-8 rounded-full bg-violet-100 flex items-center justify-center text-sm flex-shrink-0">
                 {scenario.emoji}
               </div>
             )}
@@ -391,7 +391,7 @@ function InterviewPlay() {
               className={cn(
                 "max-w-[78%] rounded-2xl px-3.5 py-2.5 text-sm",
                 m.role === "user"
-                  ? "bg-primary text-primary-foreground rounded-br-sm"
+                  ? "bg-violet-600 text-white rounded-br-sm"
                   : "bg-card border border-border rounded-bl-sm",
               )}
               style={{ fontFamily: '"Noto Sans JP", sans-serif' }}
@@ -402,7 +402,7 @@ function InterviewPlay() {
                   onClick={() => speak(m.content, m.id)}
                   className={cn(
                     "mt-1.5 inline-flex items-center gap-1 text-[11px] text-muted-foreground hover:text-foreground transition",
-                    speaking === m.id && "text-primary",
+                    speaking === m.id && "text-violet-700",
                   )}
                 >
                   <Volume2 className="w-3 h-3" />
@@ -420,7 +420,7 @@ function InterviewPlay() {
         ))}
         {loading && (
           <div className="flex gap-2 justify-start">
-            <div className="w-8 h-8 rounded-full bg-primary/15 flex items-center justify-center text-sm flex-shrink-0">
+            <div className="w-8 h-8 rounded-full bg-violet-100 flex items-center justify-center text-sm flex-shrink-0">
               {scenario.emoji}
             </div>
             <div className="bg-card border border-border rounded-2xl rounded-bl-sm px-3.5 py-3">
@@ -445,7 +445,7 @@ function InterviewPlay() {
 
 
         {evaluation && (
-          <div className="mt-6 rounded-2xl border-2 border-primary/40 bg-primary/5 p-5 space-y-4">
+          <div className="mt-6 rounded-2xl border-2 border-violet-300 bg-violet-50 p-5 space-y-4">
             <div className="flex items-center gap-2">
               <Trophy className="w-5 h-5 text-primary" />
               <h3 className="font-bold">{isId ? "Hasil Evaluasi" : "Evaluation Result"}</h3>
