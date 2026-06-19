@@ -9,9 +9,10 @@ export const Route = createFileRoute("/api/public/payments/reconcile")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const apiKey = request.headers.get("apikey");
-        const expected = process.env.SUPABASE_PUBLISHABLE_KEY;
-        if (!apiKey || !expected || apiKey !== expected) {
+        const { safeStringEqual } = await import("@/lib/security.server");
+        const provided = request.headers.get("x-cron-secret") ?? "";
+        const expected = process.env.CRON_SECRET ?? "";
+        if (!expected || !provided || !safeStringEqual(provided, expected)) {
           return new Response("Unauthorized", { status: 401 });
         }
         return Response.json({ ok: true, model: "lifetime", revoked: 0 });
