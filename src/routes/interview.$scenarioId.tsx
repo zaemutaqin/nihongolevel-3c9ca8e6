@@ -278,6 +278,75 @@ function InterviewPlay() {
   };
 
 
+  // ===== Briefing screen =====
+  if (phase === "briefing") {
+    return (
+      <div className="mx-auto max-w-2xl px-4 py-6 sm:py-10">
+        <button
+          onClick={() => navigate({ to: "/interview" })}
+          className="inline-flex items-center gap-1 text-sm text-violet-700 hover:text-violet-900 mb-4"
+        >
+          <ArrowLeft className="w-4 h-4" /> {isId ? "Kembali" : "Back"}
+        </button>
+
+        <div className="rounded-2xl bg-violet-100 border border-violet-200 p-6 sm:p-8">
+          <div className="flex items-start gap-4 mb-5">
+            <div className="text-4xl">{scenario.emoji}</div>
+            <div className="flex-1 min-w-0">
+              <span className="inline-block text-[10px] font-bold uppercase tracking-wider bg-violet-900 text-white px-2 py-0.5 rounded-md mb-2">
+                {isId ? "Situasi" : "Situation"} · {scenario.level}
+              </span>
+              <h1 className="text-2xl font-bold text-violet-900 leading-tight">
+                {isId ? scenario.title_id : scenario.title_en}
+              </h1>
+              <p className="text-sm text-violet-900/80 mt-1">
+                {isId ? scenario.role_id : scenario.role_en}
+              </p>
+            </div>
+          </div>
+
+          <p className="text-sm text-violet-900/90 leading-relaxed mb-6">
+            {isId ? scenario.description_id : scenario.description_en}
+          </p>
+
+          <div className="mb-6">
+            <p className="text-[11px] uppercase font-bold tracking-wider text-violet-900/70 mb-2">
+              {isId ? "Kalimat starter yang bisa kamu pakai" : "Starter phrases you can use"}
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {hints.map((h, i) => (
+                <span
+                  key={i}
+                  className="inline-flex flex-col items-start rounded-xl bg-white border border-violet-200 px-3 py-2 text-sm"
+                  style={{ fontFamily: '"Noto Sans JP", sans-serif' }}
+                >
+                  <span className="text-violet-900">{h.jp}</span>
+                  <span className="text-[10px] italic text-muted-foreground mt-0.5">{h.ro}</span>
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <button
+            onClick={() => setPhase("chat")}
+            className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-lime-500 hover:bg-lime-400 px-5 py-3 text-sm font-bold text-violet-900 transition"
+          >
+            {isId ? "Mulai interview" : "Start interview"} <ChevronRight className="w-4 h-4" />
+          </button>
+
+          {isGuestDemo && (
+            <p className="mt-3 text-center text-xs text-violet-900/70">
+              {isId
+                ? "Demo gratis — 3 pertanyaan pertama bisa dijawab tanpa login."
+                : "Free demo — answer your first 3 questions without signing in."}
+            </p>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // ===== Chat screen =====
   return (
     <div className="mx-auto max-w-2xl px-4 py-4 sm:py-6 flex flex-col h-[calc(100vh-6rem)]">
       <header className="flex items-center gap-3 pb-3 border-b border-border">
@@ -290,26 +359,20 @@ function InterviewPlay() {
         </button>
         <div className="text-2xl">{scenario.emoji}</div>
         <div className="flex-1 min-w-0">
-          <h1 className="font-bold text-sm truncate">
+          <h1 className="font-bold text-sm truncate text-violet-900">
             {isId ? scenario.title_id : scenario.title_en}
           </h1>
           <p className="text-xs text-muted-foreground truncate">
             {isId ? scenario.role_id : scenario.role_en} · {scenario.level}
           </p>
         </div>
-        <button
-          onClick={finishInterview}
-          disabled={evaluating}
-          className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1.5 text-xs font-bold text-primary-foreground hover:opacity-90 transition disabled:opacity-50"
-        >
-          {evaluating ? (
-            <Loader2 className="w-3.5 h-3.5 animate-spin" />
-          ) : (
-            <Sparkles className="w-3.5 h-3.5" />
-          )}
-          {isId ? "Selesai & Evaluasi" : "Finish & Evaluate"}
-        </button>
+        {isGuestDemo && (
+          <span className="text-[10px] font-bold uppercase tracking-wider bg-lime-500 text-violet-900 px-2 py-1 rounded-full">
+            {isId ? `Demo ${userTurnCount}/3` : `Demo ${userTurnCount}/3`}
+          </span>
+        )}
       </header>
+
 
       <div ref={scrollRef} className="flex-1 overflow-y-auto py-4 space-y-3">
         {messages.map((m) => (
