@@ -40,6 +40,7 @@ import { Route as ApiNamaJepangRouteImport } from './routes/api/nama-jepang'
 import { Route as ApiInterviewRouteImport } from './routes/api/interview'
 import { Route as ApiHanashiteRouteImport } from './routes/api/hanashite'
 import { Route as ApiActivateProRouteImport } from './routes/api/activate-pro'
+import { Route as BelajarLevelLevelIdRouteImport } from './routes/belajar.level.$levelId'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicPaymentsReconcileRouteImport } from './routes/api/public/payments/reconcile'
 import { Route as ApiPublicHooksDailyStreakPushRouteImport } from './routes/api/public/hooks/daily-streak-push'
@@ -199,6 +200,11 @@ const ApiActivateProRoute = ApiActivateProRouteImport.update({
   path: '/api/activate-pro',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BelajarLevelLevelIdRoute = BelajarLevelLevelIdRouteImport.update({
+  id: '/belajar/level/$levelId',
+  path: '/belajar/level/$levelId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicPaymentsWebhookRoute =
   ApiPublicPaymentsWebhookRouteImport.update({
     id: '/api/public/payments/webhook',
@@ -250,6 +256,7 @@ export interface FileRoutesByFullPath {
   '/kamus-slang/$slug': typeof KamusSlangSlugRoute
   '/interview/': typeof InterviewIndexRoute
   '/kamus-slang/': typeof KamusSlangIndexRoute
+  '/belajar/level/$levelId': typeof BelajarLevelLevelIdRoute
   '/api/public/hooks/daily-streak-push': typeof ApiPublicHooksDailyStreakPushRoute
   '/api/public/payments/reconcile': typeof ApiPublicPaymentsReconcileRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -286,6 +293,7 @@ export interface FileRoutesByTo {
   '/kamus-slang/$slug': typeof KamusSlangSlugRoute
   '/interview': typeof InterviewIndexRoute
   '/kamus-slang': typeof KamusSlangIndexRoute
+  '/belajar/level/$levelId': typeof BelajarLevelLevelIdRoute
   '/api/public/hooks/daily-streak-push': typeof ApiPublicHooksDailyStreakPushRoute
   '/api/public/payments/reconcile': typeof ApiPublicPaymentsReconcileRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -323,6 +331,7 @@ export interface FileRoutesById {
   '/kamus-slang/$slug': typeof KamusSlangSlugRoute
   '/interview/': typeof InterviewIndexRoute
   '/kamus-slang/': typeof KamusSlangIndexRoute
+  '/belajar/level/$levelId': typeof BelajarLevelLevelIdRoute
   '/api/public/hooks/daily-streak-push': typeof ApiPublicHooksDailyStreakPushRoute
   '/api/public/payments/reconcile': typeof ApiPublicPaymentsReconcileRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -361,6 +370,7 @@ export interface FileRouteTypes {
     | '/kamus-slang/$slug'
     | '/interview/'
     | '/kamus-slang/'
+    | '/belajar/level/$levelId'
     | '/api/public/hooks/daily-streak-push'
     | '/api/public/payments/reconcile'
     | '/api/public/payments/webhook'
@@ -397,6 +407,7 @@ export interface FileRouteTypes {
     | '/kamus-slang/$slug'
     | '/interview'
     | '/kamus-slang'
+    | '/belajar/level/$levelId'
     | '/api/public/hooks/daily-streak-push'
     | '/api/public/payments/reconcile'
     | '/api/public/payments/webhook'
@@ -433,6 +444,7 @@ export interface FileRouteTypes {
     | '/kamus-slang/$slug'
     | '/interview/'
     | '/kamus-slang/'
+    | '/belajar/level/$levelId'
     | '/api/public/hooks/daily-streak-push'
     | '/api/public/payments/reconcile'
     | '/api/public/payments/webhook'
@@ -470,6 +482,7 @@ export interface RootRouteChildren {
   KamusSlangSlugRoute: typeof KamusSlangSlugRoute
   InterviewIndexRoute: typeof InterviewIndexRoute
   KamusSlangIndexRoute: typeof KamusSlangIndexRoute
+  BelajarLevelLevelIdRoute: typeof BelajarLevelLevelIdRoute
   ApiPublicHooksDailyStreakPushRoute: typeof ApiPublicHooksDailyStreakPushRoute
   ApiPublicPaymentsReconcileRoute: typeof ApiPublicPaymentsReconcileRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
@@ -694,6 +707,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiActivateProRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/belajar/level/$levelId': {
+      id: '/belajar/level/$levelId'
+      path: '/belajar/level/$levelId'
+      fullPath: '/belajar/level/$levelId'
+      preLoaderRoute: typeof BelajarLevelLevelIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/payments/webhook': {
       id: '/api/public/payments/webhook'
       path: '/api/public/payments/webhook'
@@ -750,6 +770,7 @@ const rootRouteChildren: RootRouteChildren = {
   KamusSlangSlugRoute: KamusSlangSlugRoute,
   InterviewIndexRoute: InterviewIndexRoute,
   KamusSlangIndexRoute: KamusSlangIndexRoute,
+  BelajarLevelLevelIdRoute: BelajarLevelLevelIdRoute,
   ApiPublicHooksDailyStreakPushRoute: ApiPublicHooksDailyStreakPushRoute,
   ApiPublicPaymentsReconcileRoute: ApiPublicPaymentsReconcileRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
