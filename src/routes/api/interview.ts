@@ -61,25 +61,37 @@ export const Route = createFileRoute("/api/interview")({
           m.content = s.value;
         }
 
-        // Auth required
+        // Auth — usually required, but allow guest demo for iv_kaigo (chat mode, max 3 user turns)
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const authHeader = request.headers.get("authorization") ?? "";
         const token = authHeader.toLowerCase().startsWith("bearer ")
           ? authHeader.slice(7).trim()
           : "";
-        if (!token) return jsonResponse({ error: "AUTH_REQUIRED" }, 401, allowedOrigin);
-        const { data: udata } = await supabaseAdmin.auth.getUser(token);
-        if (!udata?.user) return jsonResponse({ error: "AUTH_REQUIRED" }, 401, allowedOrigin);
-        const userId = udata.user.id;
-        const { data: prof } = await supabaseAdmin
-          .from("profiles")
-          .select("is_pro")
-          .eq("id", userId)
-          .maybeSingle();
-        const isPro = !!prof?.is_pro;
+        const userTurnCount = messages.filter((m) => m.role === "user").length;
+        const isGuestDemo =
+          !token &&
+          scenarioId === "iv_kaigo" &&
+          mode === "chat" &&
+          userTurnCount > 0 &&
+          userTurnCount <= 3;
+
+        let userId: string | null = null;
+        let isPro = false;
+        if (!isGuestDemo) {
+          if (!token) return jsonResponse({ error: "AUTH_REQUIRED" }, 401, allowedOrigin);
+          const { data: udata } = await supabaseAdmin.auth.getUser(token);
+          if (!udata?.user) return jsonResponse({ error: "AUTH_REQUIRED" }, 401, allowedOrigin);
+          userId = udata.user.id;
+          const { data: prof } = await supabaseAdmin
+            .from("profiles")
+            .select("is_pro")
+            .eq("id", userId)
+            .maybeSingle();
+          isPro = !!prof?.is_pro;
+        }
 
         // Daily session cap for free users — counted by feedback events (= completed sessions).
-        if (!isPro && mode === "feedback") {
+        if (userId && !isPro && mode === "feedback") {
           const dayAgo = hoursAgoIso(24);
           const used = await countEventsForUser(userId, ["interview_feedback"], dayAgo);
           if (used >= FREE_DAY_SESSIONS) {
@@ -91,6 +103,7 @@ export const Route = createFileRoute("/api/interview")({
             );
           }
         }
+
 
         const apiKey = process.env.LOVABLE_API_KEY;
         if (!apiKey) return jsonResponse({ error: "SERVER_MISCONFIGURED" }, 500, allowedOrigin);
@@ -158,10 +171,12 @@ CRITICAL RULES:
           return jsonResponse({ reply }, 200, allowedOrigin);
         }
 
-        // mode === "feedback" — generate evaluation + save session
+        // mode === "feedback" — generate evaluation + save session (auth required, guarded above)
+        if (!userId) return jsonResponse({ error: "AUTH_REQUIRED" }, 401, allowedOrigin);
         if (messages.length === 0) {
           return jsonResponse({ error: "INVALID_INPUT" }, 400, allowedOrigin);
         }
+
         const transcript = messages
           .map((m) => `${m.role === "user" ? "Candidate" : "Interviewer"}: ${m.content}`)
           .join("\n");

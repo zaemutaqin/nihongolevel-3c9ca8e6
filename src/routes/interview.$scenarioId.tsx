@@ -11,14 +11,17 @@ import {
   AlertCircle,
   Trophy,
   CheckCircle2,
+  ChevronRight,
+  Lock,
 } from "lucide-react";
 import { toast } from "sonner";
-import { getInterviewScenario } from "@/lib/interview-scenarios";
+import { getInterviewScenario, getScenarioHints, type ScenarioHint } from "@/lib/interview-scenarios";
 import { useT } from "@/lib/i18n";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { gtagEvent } from "@/lib/gtag";
+
 
 type Msg = { role: "user" | "assistant"; content: string; id: string };
 type Suggestion = { point: string; detail: string };
@@ -80,9 +83,15 @@ function InterviewPlay() {
   const [error, setError] = useState<string | null>(null);
   const [evaluation, setEvaluation] = useState<Evaluation | null>(null);
   const [evaluating, setEvaluating] = useState(false);
+  const [phase, setPhase] = useState<"briefing" | "chat">("briefing");
 
   const recogRef = useRef<SR | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
+
+  const hints: ScenarioHint[] = scenario ? getScenarioHints(scenario.id) : [];
+  const isGuestDemo = !user && scenario?.id === "iv_kaigo";
+  const userTurnCount = messages.filter((m) => m.role === "user").length;
+  const guestLimitReached = isGuestDemo && userTurnCount >= 3;
 
   useEffect(() => {
     if (!scenario) return;
@@ -97,16 +106,18 @@ function InterviewPlay() {
 
   if (!scenario) return null;
 
-  if (!user) {
+  // Block non-Kaigo scenarios for guests
+  if (!user && scenario.id !== "iv_kaigo") {
     return (
       <div className="mx-auto max-w-md px-4 py-16 text-center">
-        <p className="mb-4">{isId ? "Masuk dulu untuk berlatih." : "Sign in to practice."}</p>
-        <Link to="/interview" className="text-primary underline">
+        <p className="mb-4">{isId ? "Masuk dulu untuk berlatih skenario ini." : "Sign in to practice this scenario."}</p>
+        <Link to="/interview" className="text-violet-700 underline">
           {isId ? "Kembali" : "Back"}
         </Link>
       </div>
     );
   }
+
 
   const speak = (text: string, id: string) => {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
@@ -269,6 +280,75 @@ function InterviewPlay() {
   };
 
 
+  // ===== Briefing screen =====
+  if (phase === "briefing") {
+    return (
+      <div className="mx-auto max-w-2xl px-4 py-6 sm:py-10">
+        <button
+          onClick={() => navigate({ to: "/interview" })}
+          className="inline-flex items-center gap-1 text-sm text-violet-700 hover:text-violet-900 mb-4"
+        >
+          <ArrowLeft className="w-4 h-4" /> {isId ? "Kembali" : "Back"}
+        </button>
+
+        <div className="rounded-2xl bg-violet-100 border border-violet-200 p-6 sm:p-8">
+          <div className="flex items-start gap-4 mb-5">
+            <div className="text-4xl">{scenario.emoji}</div>
+            <div className="flex-1 min-w-0">
+              <span className="inline-block text-[10px] font-bold uppercase tracking-wider bg-violet-900 text-white px-2 py-0.5 rounded-md mb-2">
+                {isId ? "Situasi" : "Situation"} · {scenario.level}
+              </span>
+              <h1 className="text-2xl font-bold text-violet-900 leading-tight">
+                {isId ? scenario.title_id : scenario.title_en}
+              </h1>
+              <p className="text-sm text-violet-900/80 mt-1">
+                {isId ? scenario.role_id : scenario.role_en}
+              </p>
+            </div>
+          </div>
+
+          <p className="text-sm text-violet-900/90 leading-relaxed mb-6">
+            {isId ? scenario.description_id : scenario.description_en}
+          </p>
+
+          <div className="mb-6">
+            <p className="text-[11px] uppercase font-bold tracking-wider text-violet-900/70 mb-2">
+              {isId ? "Kalimat starter yang bisa kamu pakai" : "Starter phrases you can use"}
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {hints.map((h, i) => (
+                <span
+                  key={i}
+                  className="inline-flex flex-col items-start rounded-xl bg-white border border-violet-200 px-3 py-2 text-sm"
+                  style={{ fontFamily: '"Noto Sans JP", sans-serif' }}
+                >
+                  <span className="text-violet-900">{h.jp}</span>
+                  <span className="text-[10px] italic text-muted-foreground mt-0.5">{h.ro}</span>
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <button
+            onClick={() => setPhase("chat")}
+            className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-lime-500 hover:bg-lime-400 px-5 py-3 text-sm font-bold text-violet-900 transition"
+          >
+            {isId ? "Mulai interview" : "Start interview"} <ChevronRight className="w-4 h-4" />
+          </button>
+
+          {isGuestDemo && (
+            <p className="mt-3 text-center text-xs text-violet-900/70">
+              {isId
+                ? "Demo gratis — 3 pertanyaan pertama bisa dijawab tanpa login."
+                : "Free demo — answer your first 3 questions without signing in."}
+            </p>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // ===== Chat screen =====
   return (
     <div className="mx-auto max-w-2xl px-4 py-4 sm:py-6 flex flex-col h-[calc(100vh-6rem)]">
       <header className="flex items-center gap-3 pb-3 border-b border-border">
@@ -281,26 +361,20 @@ function InterviewPlay() {
         </button>
         <div className="text-2xl">{scenario.emoji}</div>
         <div className="flex-1 min-w-0">
-          <h1 className="font-bold text-sm truncate">
+          <h1 className="font-bold text-sm truncate text-violet-900">
             {isId ? scenario.title_id : scenario.title_en}
           </h1>
           <p className="text-xs text-muted-foreground truncate">
             {isId ? scenario.role_id : scenario.role_en} · {scenario.level}
           </p>
         </div>
-        <button
-          onClick={finishInterview}
-          disabled={evaluating}
-          className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1.5 text-xs font-bold text-primary-foreground hover:opacity-90 transition disabled:opacity-50"
-        >
-          {evaluating ? (
-            <Loader2 className="w-3.5 h-3.5 animate-spin" />
-          ) : (
-            <Sparkles className="w-3.5 h-3.5" />
-          )}
-          {isId ? "Selesai & Evaluasi" : "Finish & Evaluate"}
-        </button>
+        {isGuestDemo && (
+          <span className="text-[10px] font-bold uppercase tracking-wider bg-lime-500 text-violet-900 px-2 py-1 rounded-full">
+            {isId ? `Demo ${userTurnCount}/3` : `Demo ${userTurnCount}/3`}
+          </span>
+        )}
       </header>
+
 
       <div ref={scrollRef} className="flex-1 overflow-y-auto py-4 space-y-3">
         {messages.map((m) => (
@@ -309,7 +383,7 @@ function InterviewPlay() {
             className={cn("flex gap-2", m.role === "user" ? "justify-end" : "justify-start")}
           >
             {m.role === "assistant" && (
-              <div className="w-8 h-8 rounded-full bg-primary/15 flex items-center justify-center text-sm flex-shrink-0">
+              <div className="w-8 h-8 rounded-full bg-violet-100 flex items-center justify-center text-sm flex-shrink-0">
                 {scenario.emoji}
               </div>
             )}
@@ -317,7 +391,7 @@ function InterviewPlay() {
               className={cn(
                 "max-w-[78%] rounded-2xl px-3.5 py-2.5 text-sm",
                 m.role === "user"
-                  ? "bg-primary text-primary-foreground rounded-br-sm"
+                  ? "bg-violet-600 text-white rounded-br-sm"
                   : "bg-card border border-border rounded-bl-sm",
               )}
               style={{ fontFamily: '"Noto Sans JP", sans-serif' }}
@@ -328,7 +402,7 @@ function InterviewPlay() {
                   onClick={() => speak(m.content, m.id)}
                   className={cn(
                     "mt-1.5 inline-flex items-center gap-1 text-[11px] text-muted-foreground hover:text-foreground transition",
-                    speaking === m.id && "text-primary",
+                    speaking === m.id && "text-violet-700",
                   )}
                 >
                   <Volume2 className="w-3 h-3" />
@@ -346,7 +420,7 @@ function InterviewPlay() {
         ))}
         {loading && (
           <div className="flex gap-2 justify-start">
-            <div className="w-8 h-8 rounded-full bg-primary/15 flex items-center justify-center text-sm flex-shrink-0">
+            <div className="w-8 h-8 rounded-full bg-violet-100 flex items-center justify-center text-sm flex-shrink-0">
               {scenario.emoji}
             </div>
             <div className="bg-card border border-border rounded-2xl rounded-bl-sm px-3.5 py-3">
@@ -371,7 +445,7 @@ function InterviewPlay() {
 
 
         {evaluation && (
-          <div className="mt-6 rounded-2xl border-2 border-primary/40 bg-primary/5 p-5 space-y-4">
+          <div className="mt-6 rounded-2xl border-2 border-violet-300 bg-violet-50 p-5 space-y-4">
             <div className="flex items-center gap-2">
               <Trophy className="w-5 h-5 text-primary" />
               <h3 className="font-bold">{isId ? "Hasil Evaluasi" : "Evaluation Result"}</h3>
@@ -444,52 +518,111 @@ function InterviewPlay() {
         )}
       </div>
 
-      <div className="border-t border-border pt-3 pb-2">
-        <div className="flex items-end gap-2">
-          <button
-            onClick={recording ? stopRecording : startRecording}
-            className={cn(
-              "p-2.5 rounded-full border transition flex-shrink-0",
-              recording
-                ? "bg-destructive text-destructive-foreground border-destructive animate-pulse"
-                : "bg-background border-border hover:bg-muted",
+      <div className="border-t border-border pt-3 pb-2 space-y-3">
+        {guestLimitReached && !evaluation ? (
+          <div className="rounded-2xl bg-violet-100 border border-violet-300 p-4 text-center">
+            <Lock className="w-5 h-5 mx-auto text-violet-700 mb-1" />
+            <p className="text-sm font-bold text-violet-900">
+              {isId ? "Daftar gratis untuk lanjutkan & simpan progresmu" : "Sign up free to continue & save your progress"}
+            </p>
+            <p className="text-xs text-violet-900/70 mt-1 mb-3">
+              {isId
+                ? "Kamu sudah menjawab 3 pertanyaan demo. Lanjutkan tanpa batas setelah daftar."
+                : "You've answered 3 demo questions. Continue without limits after signing up."}
+            </p>
+            <Link
+              to="/auth"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-lime-500 hover:bg-lime-400 px-4 py-2 text-sm font-bold text-violet-900 transition"
+            >
+              {isId ? "Daftar gratis" : "Sign up free"} <ChevronRight className="w-4 h-4" />
+            </Link>
+          </div>
+        ) : (
+          <>
+            {/* Hint chips */}
+            {hints.length > 0 && !evaluation && (
+              <div className="flex gap-1.5 overflow-x-auto -mx-1 px-1 pb-1">
+                {hints.map((h, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => setInput((p) => (p ? p + " " + h.jp : h.jp))}
+                    className="flex-shrink-0 inline-flex items-center gap-1 rounded-full bg-violet-50 border border-violet-200 hover:bg-violet-100 px-3 py-1.5 text-xs transition"
+                    style={{ fontFamily: '"Noto Sans JP", sans-serif' }}
+                    title={h.ro}
+                  >
+                    <span className="text-violet-900">{h.jp}</span>
+                  </button>
+                ))}
+              </div>
             )}
-            aria-label={recording ? "Stop" : "Record"}
-          >
-            {recording ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
-          </button>
-          <textarea
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                send();
-              }
-            }}
-            placeholder={
-              recording
-                ? isId
-                  ? "🎙️ Mendengarkan..."
-                  : "🎙️ Listening..."
-                : isId
-                  ? "Jawab dalam bahasa Jepang..."
-                  : "Answer in Japanese..."
-            }
-            rows={1}
-            className="flex-1 resize-none rounded-2xl border border-input bg-background px-4 py-2.5 text-sm outline-none focus:border-ring focus:ring-2 focus:ring-ring/30 max-h-32"
-            style={{ fontFamily: '"Noto Sans JP", sans-serif' }}
-          />
-          <button
-            onClick={send}
-            disabled={!input.trim() || loading}
-            className="p-2.5 rounded-full bg-primary text-primary-foreground hover:opacity-90 disabled:opacity-40 transition flex-shrink-0"
-            aria-label="Send"
-          >
-            <Send className="w-5 h-5" />
-          </button>
-        </div>
+
+            <div className="flex items-end gap-2">
+              <button
+                onClick={recording ? stopRecording : startRecording}
+                className={cn(
+                  "p-2.5 rounded-full border transition flex-shrink-0",
+                  recording
+                    ? "bg-destructive text-destructive-foreground border-destructive animate-pulse"
+                    : "bg-background border-border hover:bg-muted",
+                )}
+                aria-label={recording ? "Stop" : "Record"}
+              >
+                {recording ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+              </button>
+              <textarea
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    send();
+                  }
+                }}
+                placeholder={
+                  recording
+                    ? isId
+                      ? "🎙️ Mendengarkan..."
+                      : "🎙️ Listening..."
+                    : isId
+                      ? "Jawab dalam bahasa Jepang..."
+                      : "Answer in Japanese..."
+                }
+                rows={1}
+                className="flex-1 resize-none rounded-2xl border border-input bg-background px-4 py-2.5 text-sm outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-300 max-h-32"
+                style={{ fontFamily: '"Noto Sans JP", sans-serif' }}
+              />
+              <button
+                onClick={send}
+                disabled={!input.trim() || loading}
+                className="p-3 rounded-full bg-violet-600 text-white hover:bg-violet-700 disabled:opacity-40 transition flex-shrink-0"
+                aria-label="Send"
+              >
+                <Send className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Finish button — small, below input */}
+            {user && !evaluation && (
+              <div className="flex justify-center pt-1">
+                <button
+                  onClick={finishInterview}
+                  disabled={evaluating}
+                  className="inline-flex items-center gap-1.5 text-xs font-medium text-violet-700 hover:text-violet-900 underline underline-offset-2 disabled:opacity-50"
+                >
+                  {evaluating ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  ) : (
+                    <Sparkles className="w-3.5 h-3.5" />
+                  )}
+                  {isId ? "Akhiri sesi & lihat evaluasi" : "End session & view evaluation"}
+                </button>
+              </div>
+            )}
+          </>
+        )}
       </div>
+
     </div>
   );
 }
