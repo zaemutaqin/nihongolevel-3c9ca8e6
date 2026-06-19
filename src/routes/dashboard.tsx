@@ -2,14 +2,23 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Flame, Star, ArrowRight, RotateCw, X, Briefcase, MessageSquare } from "lucide-react";
+import {
+  Flame,
+  ArrowRight,
+  RotateCw,
+  X,
+  Briefcase,
+  CheckCircle2,
+  Lock,
+  BookOpen,
+  RefreshCw,
+  Trophy,
+} from "lucide-react";
 import {
   getHistory,
   getFavorites,
   getStreakDays,
-  getSearchesThisWeek,
   getIntentCounts,
-  getFavoritesNeedsReview7d,
   getOldestReviewedFavorites,
   rateReview,
   useLocalCollection,
@@ -21,11 +30,10 @@ import { SpeakerButton } from "@/components/SpeakerButton";
 import { useT } from "@/lib/i18n";
 import type { IntentType } from "@/lib/translate.functions";
 import { useAuth } from "@/lib/auth";
-import { LockedFeature } from "@/components/LockedFeature";
 import { SignInButton } from "@/components/SignInButton";
 import { getMyInterviewSessions, type InterviewSessionSummary } from "@/lib/interview-history.functions";
 import { getDueReviews } from "@/lib/review.functions";
-
+import { getCurriculumOverview, type LevelNode } from "@/lib/curriculum.functions";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
@@ -34,10 +42,10 @@ export const Route = createFileRoute("/dashboard")({
       {
         name: "description",
         content:
-          "Pantau streak harian, riwayat pencarian mingguan, dan ekspresi favorit yang perlu diulang dalam dashboard belajar bahasa Jepang kamu.",
+          "Pantau progress kurikulum, streak harian, dan item yang perlu diulang dalam dashboard belajar bahasa Jepang kamu.",
       },
       { property: "og:title", content: "Levelku — NihongoLevel" },
-      { property: "og:description", content: "Streak harian, statistik mingguan, dan favorit yang perlu diulang." },
+      { property: "og:description", content: "Progress kurikulum, streak, dan review harian." },
       { property: "og:url", content: "/dashboard" },
     ],
     links: [{ rel: "canonical", href: "/dashboard" }],
@@ -46,16 +54,16 @@ export const Route = createFileRoute("/dashboard")({
 });
 
 
+
+
 function DashboardPage() {
   const { t } = useT();
   const { profile, user } = useAuth();
   const [history] = useLocalCollection<HistoryEntry>(getHistory);
   const [favs] = useLocalCollection<FavoriteEntry>(getFavorites);
-  const [needsReview] = useLocalCollection<FavoriteEntry>(getFavoritesNeedsReview7d);
   const [oldest] = useLocalCollection(getOldestReviewedFavorites);
   const navigate = useNavigate();
 
-  // Interview progress section — visible to any signed-in user
   const fetchSessions = useServerFn(getMyInterviewSessions);
   const interviewQuery = useQuery({
     queryKey: ["interview-sessions"],
@@ -64,7 +72,6 @@ function DashboardPage() {
     staleTime: 30_000,
   });
 
-  // Spaced-repetition: items due for review today
   const fetchDue = useServerFn(getDueReviews);
   const dueQuery = useQuery({
     queryKey: ["due-reviews", user?.id],
@@ -74,18 +81,23 @@ function DashboardPage() {
   });
   const dueItems = dueQuery.data ?? [];
 
+  const fetchOverview = useServerFn(getCurriculumOverview);
+  const overviewQuery = useQuery({
+    queryKey: ["curriculum-overview", user?.id],
+    queryFn: () => fetchOverview(),
+    enabled: !!user,
+    staleTime: 30_000,
+  });
+  const overview = overviewQuery.data;
+
   if (!user) {
     return (
       <div className="mx-auto max-w-md px-6 py-16 text-center">
         <div className="mx-auto mb-5 inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 text-3xl">
           📊
         </div>
-        <h2 className="text-xl font-bold">
-          {t("dash.signin.title")}
-        </h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          {t("dash.signin.desc")}
-        </p>
+        <h2 className="text-xl font-bold">{t("dash.signin.title")}</h2>
+        <p className="mt-2 text-sm text-muted-foreground">{t("dash.signin.desc")}</p>
         <div className="mt-6 flex justify-center">
           <SignInButton />
         </div>
@@ -93,9 +105,7 @@ function DashboardPage() {
     );
   }
 
-
-  const streak = useMemo(() => getStreakDays(), [history]);
-  const week = useMemo(() => getSearchesThisWeek(), [history]);
+  const streak = getStreakDays();
   const intentCounts = useMemo(() => getIntentCounts(), [history]);
 
   const SUGGESTIONS: Record<IntentType, string> = {
@@ -136,8 +146,6 @@ function DashboardPage() {
     navigate({ to: "/translate" });
   };
 
-
-  const isPro = !!profile?.is_pro;
   const sessions = interviewQuery.data ?? [];
   const completed = sessions.filter((s) => s.completed);
   const avg = (key: "grammar_score" | "naturalness_score" | "confidence_score") => {
@@ -149,26 +157,134 @@ function DashboardPage() {
   const avgNatural = avg("naturalness_score");
   const avgConfidence = avg("confidence_score");
 
+  const greetingName =
+    overview?.full_name?.split(" ")[0] ||
+    profile?.full_name?.split(" ")[0] ||
+    user.email?.split("@")[0] ||
+    "kamu";
+
+  const currentLevel = overview?.levels.find((l) => l.status === "current");
+
   return (
     <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="text-2xl font-bold mb-1">{t("dash.title")}</h1>
-      <p className="text-sm text-muted-foreground mb-6">{t("dash.subtitle")}</p>
+      {/* 1. Greeting */}
+      <h1 className="text-2xl sm:text-3xl font-bold text-violet-900">
+        Selamat datang kembali, {greetingName} 👋
+      </h1>
+      <p className="text-sm text-muted-foreground mb-6">
+        {overview?.last_session
+          ? `Lanjutkan dari ${overview.last_session.level_name} · ${overview.last_session.unit_name}`
+          : overview?.next_session
+            ? `Mulai dari ${overview.next_session.level_name} · ${overview.next_session.unit_name}`
+            : "Siap mulai perjalananmu?"}
+      </p>
 
-      {/* SECTION INTERVIEW — Progress (semua user login) */}
+      {/* 2. Streak banner */}
+      <div className="rounded-2xl bg-violet-900 text-white p-5 mb-5 flex items-center gap-4">
+        <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-lime-500 text-violet-900 flex-shrink-0">
+          <Flame className="w-6 h-6" strokeWidth={2.5} />
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-2xl font-bold leading-none">
+            {streak} <span className="text-base font-normal text-white/70">hari streak</span>
+          </p>
+          <p className="text-xs text-white/60 mt-1">
+            {dueItems.length > 0 ? `${dueItems.length} item siap diulang` : "Pertahankan momentum belajarmu"}
+          </p>
+        </div>
+        {dueItems.length > 0 ? (
+          <Link
+            to="/belajar/review"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-lime-500 hover:bg-lime-400 px-4 py-2.5 text-sm font-bold text-violet-900 transition flex-shrink-0"
+          >
+            Review hari ini <ArrowRight className="w-4 h-4" />
+          </Link>
+        ) : (
+          <span className="inline-flex items-center gap-1.5 rounded-xl bg-white/10 px-4 py-2.5 text-sm font-semibold text-white/80 flex-shrink-0">
+            ✓ Semua review selesai!
+          </span>
+        )}
+      </div>
+
+      {/* 3. Continue card */}
+      {overview?.next_session ? (
+        <div className="rounded-2xl bg-violet-600 text-white p-6 mb-6">
+          <p className="text-xs uppercase tracking-wide font-semibold text-violet-100/80">
+            {overview.next_session.level_name} · {overview.next_session.unit_name}
+          </p>
+          <h2 className="text-xl sm:text-2xl font-bold mt-1 mb-4">
+            {overview.next_session.session_title}
+          </h2>
+          <div className="h-2 rounded-full bg-violet-900/40 overflow-hidden mb-4">
+            <div
+              className="h-full bg-lime-500 transition-all"
+              style={{ width: `${overview.next_session.unit_progress_pct}%` }}
+            />
+          </div>
+          <Link
+            to="/belajar/$sessionId"
+            params={{ sessionId: overview.next_session.session_id }}
+            className="inline-flex items-center gap-2 rounded-xl bg-lime-500 hover:bg-lime-400 px-5 py-3 text-sm font-bold text-violet-900 transition"
+          >
+            Lanjutkan sesi <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+      ) : overviewQuery.isLoading ? (
+        <div className="rounded-2xl bg-violet-100 p-6 mb-6 animate-pulse h-32" />
+      ) : (
+        <div className="rounded-2xl bg-lime-100 border border-lime-300 p-6 mb-6 text-center">
+          <Trophy className="w-8 h-8 text-lime-700 mx-auto mb-2" />
+          <p className="font-bold text-violet-900">Semua sesi tersedia sudah selesai!</p>
+          <p className="text-sm text-violet-900/70 mt-1">Level baru akan dibuka segera.</p>
+        </div>
+      )}
+
+      {/* 4. Mini stats */}
+      <div className="grid grid-cols-3 gap-3 mb-8">
+        <MiniStat
+          icon={<BookOpen className="w-4 h-4" />}
+          label="Kalimat dipelajari"
+          value={overview?.items_learned ?? 0}
+        />
+        <MiniStat
+          icon={<RefreshCw className="w-4 h-4" />}
+          label="Perlu diulang"
+          value={dueItems.length}
+        />
+        <MiniStat
+          icon={<Trophy className="w-4 h-4" />}
+          label="Level saat ini"
+          value={currentLevel ? `L${currentLevel.order_index}` : "—"}
+        />
+      </div>
+
+      {/* 5. Jalur belajar */}
+      <Section title="Jalur belajar">
+        {overviewQuery.isLoading ? (
+          <p className="text-sm text-muted-foreground">Memuat…</p>
+        ) : (
+          <div className="space-y-3">
+            {(overview?.levels ?? []).map((lvl) => (
+              <LevelRow key={lvl.id} level={lvl} />
+            ))}
+          </div>
+        )}
+      </Section>
+
+      {/* === Bagian lama: pindah ke bawah === */}
+
+      {/* Interview progress */}
       <Section title={t("dash.iv.title")}>
         <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
           <div className="flex items-center gap-2 mb-4">
             <Briefcase className="w-4 h-4 text-primary" />
             <p className="text-sm font-semibold">{t("dash.iv.label")}</p>
           </div>
-
           {interviewQuery.isLoading ? (
             <p className="text-sm text-muted-foreground">{t("dash.iv.loading")}</p>
           ) : sessions.length === 0 ? (
             <div className="text-center py-6">
-              <p className="text-sm text-muted-foreground mb-3">
-                {t("dash.iv.empty")}
-              </p>
+              <p className="text-sm text-muted-foreground mb-3">{t("dash.iv.empty")}</p>
               <Link
                 to="/interview"
                 className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:opacity-90 transition"
@@ -202,111 +318,7 @@ function DashboardPage() {
         </div>
       </Section>
 
-      {/* SECTION REVIEW — Items due today (spaced repetition) */}
-      <Section title="Perlu diulang hari ini">
-        <div className="rounded-2xl border border-violet-100 bg-violet-50 p-5">
-          {dueQuery.isLoading ? (
-            <p className="text-sm text-violet-900/70">Memuat…</p>
-          ) : dueItems.length === 0 ? (
-            <p className="text-sm text-violet-900/80">
-              🎉 Tidak ada item yang perlu diulang hari ini. Kerja bagus!
-            </p>
-          ) : (
-            <>
-              <div className="flex items-start justify-between gap-3 mb-3">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wide text-violet-900/70">
-                    Item siap diulang
-                  </p>
-                  <p className="text-3xl font-bold mt-0.5 text-violet-900">
-                    {dueItems.length}
-                    <span className="text-sm font-normal text-violet-900/70 ml-2">item</span>
-                  </p>
-                </div>
-                <span className="inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-full bg-lime-500 text-violet-900">
-                  SRS
-                </span>
-              </div>
-              <div className="rounded-xl border border-violet-100 bg-white p-3 mb-3">
-                <p className="text-[11px] uppercase font-semibold text-violet-900/60 mb-1">
-                  Contoh
-                </p>
-                <p className="font-jp text-2xl text-violet-900">{dueItems[0].content_jp}</p>
-                {dueItems[0].content_romaji && (
-                  <p className="text-xs text-violet-900/70 italic">{dueItems[0].content_romaji}</p>
-                )}
-              </div>
-              <Link
-                to="/belajar/review"
-                className="inline-flex items-center gap-2 rounded-lg bg-lime-500 hover:bg-lime-600 px-4 py-2 text-sm font-bold text-violet-900 transition"
-              >
-                Mulai Latihan <ArrowRight className="w-4 h-4" />
-              </Link>
-            </>
-          )}
-        </div>
-      </Section>
-
-      {!isPro && (
-        <Section title={t("dash.pro.title")}>
-          <LockedFeature />
-        </Section>
-      )}
-
-      {isPro && <>
-
-
-
-      {/* SECTION A — Today */}
-      <Section title={t("dash.today")}>
-        <div className="rounded-2xl border border-foreground/10 bg-[#E8D5F2] p-5">
-          <div className="flex items-start justify-between gap-3 mb-3">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-wide text-foreground/70">
-                {t("dash.needReview")}
-              </p>
-              <p className="text-2xl font-bold mt-0.5 text-foreground">
-                {needsReview.length}{" "}
-                <span className="text-sm font-normal text-foreground/70">
-                  {t("dash.expressions")}
-                </span>
-              </p>
-            </div>
-            <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-[#D9F26B] text-foreground border border-foreground/15">
-              <Flame className="w-3.5 h-3.5" /> {streak} {t("dash.streak")}
-            </span>
-          </div>
-
-          {needsReview.length === 0 ? (
-            <p className="text-sm text-foreground/80">{t("dash.allReviewed")}</p>
-          ) : (
-            <>
-              <div className="rounded-xl border border-border bg-background/70 p-4 mt-1">
-                <p className="text-[11px] uppercase font-semibold text-muted-foreground mb-1">
-                  {t("dash.startFrom")}
-                </p>
-                <div className="flex items-start gap-2">
-                  <p className="font-jp text-2xl leading-snug flex-1 break-words">
-                    {cleanJapanese(needsReview[0].japanese)}
-                  </p>
-                  <SpeakerButton text={cleanJapanese(needsReview[0].japanese)} size="sm" />
-                </div>
-                <p className="mt-1 italic text-sm text-muted-foreground">
-                  {needsReview[0].romaji}
-                </p>
-              </div>
-              <Link
-                to="/review"
-                className="mt-4 inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:opacity-90 transition"
-              >
-                {t("dash.startPractice")} <ArrowRight className="w-4 h-4" />
-              </Link>
-            </>
-          )}
-        </div>
-      </Section>
-
-      {/* SECTION B — Untried */}
+      {/* Situasi yang belum kamu coba */}
       <Section title={t("dash.untried")}>
         {untried.length === 0 ? (
           <p className="text-sm text-muted-foreground">{t("dash.allTried")}</p>
@@ -327,7 +339,7 @@ function DashboardPage() {
         )}
       </Section>
 
-      {/* SECTION C — Patterns */}
+      {/* Pola belajarmu */}
       <Section title={t("dash.patterns")}>
         <div className="grid sm:grid-cols-2 gap-3">
           <PatternCard title={t("dash.topIntent")}>
@@ -355,25 +367,13 @@ function DashboardPage() {
               <p className="text-sm text-muted-foreground">{t("dash.styleHint")}</p>
             )}
           </PatternCard>
-
-          <PatternCard title={t("dash.totalLearned")}>
-            <p className="text-3xl font-bold">{history.length}</p>
-            <p className="text-xs text-muted-foreground mt-0.5">{t("dash.allTime")}</p>
-          </PatternCard>
-
-          <PatternCard title={t("dash.thisWeek")}>
-            <p className="text-3xl font-bold">{week}</p>
-            <p className="text-xs text-muted-foreground mt-0.5">{t("dash.searches7d")}</p>
-          </PatternCard>
         </div>
-      </Section>
 
-      {/* SECTION D — Almost forgotten */}
-      <Section title={t("dash.almostForgot")}>
-        {oldest.length === 0 ? (
-          <p className="text-sm text-muted-foreground">{t("dash.noFavYet")}</p>
-        ) : (
-          <div className="grid gap-3">
+        {oldest.length > 0 && (
+          <div className="grid gap-3 mt-3">
+            <p className="text-[11px] uppercase font-semibold tracking-wide text-muted-foreground">
+              {t("dash.almostForgot")}
+            </p>
             {oldest.slice(0, 3).map(({ fav, lastReviewed }) => (
               <div key={fav.id} className="rounded-xl border border-border bg-card p-4">
                 <div className="flex items-start gap-2">
@@ -399,9 +399,87 @@ function DashboardPage() {
           </div>
         )}
       </Section>
-      </>}
 
       {modalFav && <QuickReviewModal fav={modalFav} onClose={() => setModalFav(null)} />}
+    </div>
+  );
+}
+
+function LevelRow({ level }: { level: LevelNode }) {
+  const locked = level.status === "locked";
+  const completed = level.status === "completed";
+  const current = level.status === "current";
+
+  const inner = (
+    <div
+      className={`flex items-center gap-4 rounded-2xl border p-4 transition ${
+        locked
+          ? "bg-muted/40 border-border opacity-60 cursor-not-allowed"
+          : "bg-white border-violet-100 hover:border-violet-300 hover:bg-violet-50"
+      }`}
+    >
+      <div
+        className={`flex items-center justify-center w-12 h-12 rounded-xl font-bold flex-shrink-0 ${
+          completed
+            ? "bg-lime-500 text-violet-900"
+            : current
+              ? "bg-violet-600 text-white"
+              : "bg-muted text-muted-foreground"
+        }`}
+      >
+        {completed ? (
+          <CheckCircle2 className="w-6 h-6" />
+        ) : locked ? (
+          <Lock className="w-5 h-5" />
+        ) : (
+          <span>{level.order_index}</span>
+        )}
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className={`font-semibold ${locked ? "text-muted-foreground" : "text-violet-900"}`}>
+          {level.name}
+        </p>
+        <div className="mt-1.5 h-1.5 rounded-full bg-violet-100 overflow-hidden">
+          <div
+            className={`h-full ${completed ? "bg-lime-500" : "bg-violet-600"}`}
+            style={{ width: `${level.progress_pct}%` }}
+          />
+        </div>
+        <p className="text-[11px] text-muted-foreground mt-1">
+          {completed
+            ? "Lulus"
+            : locked
+              ? "Terkunci"
+              : `${level.progress_pct}% selesai`}
+        </p>
+      </div>
+    </div>
+  );
+
+  if (locked) return <div>{inner}</div>;
+  return (
+    <Link to="/belajar/level/$levelId" params={{ levelId: level.id }} className="block">
+      {inner}
+    </Link>
+  );
+}
+
+function MiniStat({
+  icon,
+  label,
+  value,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: React.ReactNode;
+}) {
+  return (
+    <div className="rounded-2xl border border-violet-100 bg-white p-4">
+      <div className="flex items-center gap-1.5 text-violet-700 mb-1.5">
+        {icon}
+        <p className="text-[10px] uppercase font-semibold tracking-wide">{label}</p>
+      </div>
+      <p className="text-2xl font-bold text-violet-900">{value}</p>
     </div>
   );
 }
@@ -451,8 +529,6 @@ function IntentCountRow({ type, count }: { type: IntentType; count: number }) {
     </li>
   );
 }
-
-
 
 function PatternCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -589,4 +665,3 @@ function SessionRow({ s }: { s: InterviewSessionSummary }) {
     </Link>
   );
 }
-
