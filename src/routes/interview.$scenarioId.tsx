@@ -13,12 +13,13 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { toast } from "sonner";
-import { getInterviewScenario } from "@/lib/interview-scenarios";
+import { getInterviewScenario, getScenarioHints, type ScenarioHint } from "@/lib/interview-scenarios";
 import { useT } from "@/lib/i18n";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { gtagEvent } from "@/lib/gtag";
+
 
 type Msg = { role: "user" | "assistant"; content: string; id: string };
 type Suggestion = { point: string; detail: string };
