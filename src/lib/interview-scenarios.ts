@@ -389,3 +389,44 @@ export const SCENARIO_CATEGORIES: {
 export function getInterviewScenario(id: string): InterviewScenario | undefined {
   return INTERVIEW_SCENARIOS.find((s) => s.id === id);
 }
+
+// === Hint chips: starter phrases to help learners begin answering ===
+export type ScenarioHint = { jp: string; ro: string };
+
+const DEFAULT_HINTS: ScenarioHint[] = [
+  { jp: "はじめまして。", ro: "hajimemashite" },
+  { jp: "インドネシアから来ました。", ro: "indoneshia kara kimashita" },
+  { jp: "よろしくお願いします。", ro: "yoroshiku onegaishimasu" },
+];
+
+const SCENARIO_HINTS: Record<string, ScenarioHint[]> = {
+  iv_kaigo: [
+    { jp: "はじめまして。", ro: "hajimemashite" },
+    { jp: "インドネシアから来ました。", ro: "indoneshia kara kimashita" },
+    { jp: "よろしくお願いします。", ro: "yoroshiku onegaishimasu" },
+  ],
+};
+
+export function getScenarioHints(id: string): ScenarioHint[] {
+  return SCENARIO_HINTS[id] ?? DEFAULT_HINTS;
+}
+
+// === Recommendations based on user level ===
+export function getRecommendedScenarios(currentLevelOrder: number | null): InterviewScenario[] {
+  // Always feature the demo Kaigo scenario first
+  const kaigo = INTERVIEW_SCENARIOS.find((s) => s.id === "iv_kaigo");
+  const targetLevel: InterviewScenario["level"] =
+    currentLevelOrder == null || currentLevelOrder <= 1
+      ? "N5"
+      : currentLevelOrder >= 4
+        ? "N3"
+        : "N4";
+  const others = INTERVIEW_SCENARIOS.filter(
+    (s) => s.id !== "iv_kaigo" && s.level === targetLevel,
+  );
+  const second = others[0] ?? INTERVIEW_SCENARIOS.find((s) => s.id !== "iv_kaigo");
+  const out: InterviewScenario[] = [];
+  if (kaigo) out.push(kaigo);
+  if (second) out.push(second);
+  return out;
+}
