@@ -416,7 +416,7 @@ function OnboardingModal({
             </div>
 
             <Button
-              onClick={() => onFinish(level)}
+              onClick={() => onFinish(location!, level)}
               className="mt-6 w-full h-12 rounded-full text-base font-bold bg-lime-500 text-violet-900 hover:bg-lime-600 shadow-md"
             >
               {isId ? "Mulai sesi pertama sekarang" : "Start your first session now"}
