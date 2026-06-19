@@ -24,6 +24,7 @@ import { useAuth } from "@/lib/auth";
 import { LockedFeature } from "@/components/LockedFeature";
 import { SignInButton } from "@/components/SignInButton";
 import { getMyInterviewSessions, type InterviewSessionSummary } from "@/lib/interview-history.functions";
+import { getDueReviews } from "@/lib/review.functions";
 
 
 export const Route = createFileRoute("/dashboard")({
@@ -62,6 +63,16 @@ function DashboardPage() {
     enabled: !!user,
     staleTime: 30_000,
   });
+
+  // Spaced-repetition: items due for review today
+  const fetchDue = useServerFn(getDueReviews);
+  const dueQuery = useQuery({
+    queryKey: ["due-reviews", user?.id],
+    queryFn: () => fetchDue(),
+    enabled: !!user,
+    staleTime: 60_000,
+  });
+  const dueItems = dueQuery.data ?? [];
 
   if (!user) {
     return (
@@ -185,6 +196,51 @@ function DashboardPage() {
                 className="mt-4 inline-flex items-center gap-2 text-xs font-semibold text-primary hover:underline"
               >
                 {t("dash.iv.newSession")} <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </>
+          )}
+        </div>
+      </Section>
+
+      {/* SECTION REVIEW — Items due today (spaced repetition) */}
+      <Section title="Perlu diulang hari ini">
+        <div className="rounded-2xl border border-violet-100 bg-violet-50 p-5">
+          {dueQuery.isLoading ? (
+            <p className="text-sm text-violet-900/70">Memuat…</p>
+          ) : dueItems.length === 0 ? (
+            <p className="text-sm text-violet-900/80">
+              🎉 Tidak ada item yang perlu diulang hari ini. Kerja bagus!
+            </p>
+          ) : (
+            <>
+              <div className="flex items-start justify-between gap-3 mb-3">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-violet-900/70">
+                    Item siap diulang
+                  </p>
+                  <p className="text-3xl font-bold mt-0.5 text-violet-900">
+                    {dueItems.length}
+                    <span className="text-sm font-normal text-violet-900/70 ml-2">item</span>
+                  </p>
+                </div>
+                <span className="inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-full bg-lime-500 text-violet-900">
+                  SRS
+                </span>
+              </div>
+              <div className="rounded-xl border border-violet-100 bg-white p-3 mb-3">
+                <p className="text-[11px] uppercase font-semibold text-violet-900/60 mb-1">
+                  Contoh
+                </p>
+                <p className="font-jp text-2xl text-violet-900">{dueItems[0].content_jp}</p>
+                {dueItems[0].content_romaji && (
+                  <p className="text-xs text-violet-900/70 italic">{dueItems[0].content_romaji}</p>
+                )}
+              </div>
+              <Link
+                to="/belajar/review"
+                className="inline-flex items-center gap-2 rounded-lg bg-lime-500 hover:bg-lime-600 px-4 py-2 text-sm font-bold text-violet-900 transition"
+              >
+                Mulai Latihan <ArrowRight className="w-4 h-4" />
               </Link>
             </>
           )}

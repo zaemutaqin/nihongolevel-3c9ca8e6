@@ -33,6 +33,7 @@ import { Route as InterviewIndexRouteImport } from './routes/interview.index'
 import { Route as KamusSlangSlugRouteImport } from './routes/kamus-slang.$slug'
 import { Route as InterviewScenarioIdRouteImport } from './routes/interview.$scenarioId'
 import { Route as HanashiteScenarioIdRouteImport } from './routes/hanashite.$scenarioId'
+import { Route as BelajarReviewRouteImport } from './routes/belajar.review'
 import { Route as BelajarSessionIdRouteImport } from './routes/belajar.$sessionId'
 import { Route as ApiTranslateRouteImport } from './routes/api/translate'
 import { Route as ApiNamaJepangRouteImport } from './routes/api/nama-jepang'
@@ -163,6 +164,11 @@ const HanashiteScenarioIdRoute = HanashiteScenarioIdRouteImport.update({
   path: '/hanashite/$scenarioId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BelajarReviewRoute = BelajarReviewRouteImport.update({
+  id: '/belajar/review',
+  path: '/belajar/review',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BelajarSessionIdRoute = BelajarSessionIdRouteImport.update({
   id: '/belajar/$sessionId',
   path: '/belajar/$sessionId',
@@ -238,6 +244,7 @@ export interface FileRoutesByFullPath {
   '/api/nama-jepang': typeof ApiNamaJepangRoute
   '/api/translate': typeof ApiTranslateRoute
   '/belajar/$sessionId': typeof BelajarSessionIdRoute
+  '/belajar/review': typeof BelajarReviewRoute
   '/hanashite/$scenarioId': typeof HanashiteScenarioIdRoute
   '/interview/$scenarioId': typeof InterviewScenarioIdRoute
   '/kamus-slang/$slug': typeof KamusSlangSlugRoute
@@ -273,6 +280,7 @@ export interface FileRoutesByTo {
   '/api/nama-jepang': typeof ApiNamaJepangRoute
   '/api/translate': typeof ApiTranslateRoute
   '/belajar/$sessionId': typeof BelajarSessionIdRoute
+  '/belajar/review': typeof BelajarReviewRoute
   '/hanashite/$scenarioId': typeof HanashiteScenarioIdRoute
   '/interview/$scenarioId': typeof InterviewScenarioIdRoute
   '/kamus-slang/$slug': typeof KamusSlangSlugRoute
@@ -309,6 +317,7 @@ export interface FileRoutesById {
   '/api/nama-jepang': typeof ApiNamaJepangRoute
   '/api/translate': typeof ApiTranslateRoute
   '/belajar/$sessionId': typeof BelajarSessionIdRoute
+  '/belajar/review': typeof BelajarReviewRoute
   '/hanashite/$scenarioId': typeof HanashiteScenarioIdRoute
   '/interview/$scenarioId': typeof InterviewScenarioIdRoute
   '/kamus-slang/$slug': typeof KamusSlangSlugRoute
@@ -346,6 +355,7 @@ export interface FileRouteTypes {
     | '/api/nama-jepang'
     | '/api/translate'
     | '/belajar/$sessionId'
+    | '/belajar/review'
     | '/hanashite/$scenarioId'
     | '/interview/$scenarioId'
     | '/kamus-slang/$slug'
@@ -381,6 +391,7 @@ export interface FileRouteTypes {
     | '/api/nama-jepang'
     | '/api/translate'
     | '/belajar/$sessionId'
+    | '/belajar/review'
     | '/hanashite/$scenarioId'
     | '/interview/$scenarioId'
     | '/kamus-slang/$slug'
@@ -416,6 +427,7 @@ export interface FileRouteTypes {
     | '/api/nama-jepang'
     | '/api/translate'
     | '/belajar/$sessionId'
+    | '/belajar/review'
     | '/hanashite/$scenarioId'
     | '/interview/$scenarioId'
     | '/kamus-slang/$slug'
@@ -452,6 +464,7 @@ export interface RootRouteChildren {
   ApiNamaJepangRoute: typeof ApiNamaJepangRoute
   ApiTranslateRoute: typeof ApiTranslateRoute
   BelajarSessionIdRoute: typeof BelajarSessionIdRoute
+  BelajarReviewRoute: typeof BelajarReviewRoute
   HanashiteScenarioIdRoute: typeof HanashiteScenarioIdRoute
   InterviewScenarioIdRoute: typeof InterviewScenarioIdRoute
   KamusSlangSlugRoute: typeof KamusSlangSlugRoute
@@ -632,6 +645,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HanashiteScenarioIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/belajar/review': {
+      id: '/belajar/review'
+      path: '/belajar/review'
+      fullPath: '/belajar/review'
+      preLoaderRoute: typeof BelajarReviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/belajar/$sessionId': {
       id: '/belajar/$sessionId'
       path: '/belajar/$sessionId'
@@ -724,6 +744,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiNamaJepangRoute: ApiNamaJepangRoute,
   ApiTranslateRoute: ApiTranslateRoute,
   BelajarSessionIdRoute: BelajarSessionIdRoute,
+  BelajarReviewRoute: BelajarReviewRoute,
   HanashiteScenarioIdRoute: HanashiteScenarioIdRoute,
   InterviewScenarioIdRoute: InterviewScenarioIdRoute,
   KamusSlangSlugRoute: KamusSlangSlugRoute,
