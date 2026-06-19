@@ -22,6 +22,9 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/lib/auth";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const searchSchema = z.object({
   onboarding: fallback(z.coerce.number().int().min(0).max(1), 0).default(0),
