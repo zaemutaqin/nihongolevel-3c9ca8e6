@@ -238,7 +238,7 @@ function OnboardingModal({
   open: boolean;
   onOpenChange: (v: boolean) => void;
   isId: boolean;
-  onFinish: (level: Level) => void;
+  onFinish: (location: Location, level: Level) => void;
 }) {
   const [step, setStep] = useState(0); // 0, 1, 2 (result)
   const [location, setLocation] = useState<Location | null>(null);
