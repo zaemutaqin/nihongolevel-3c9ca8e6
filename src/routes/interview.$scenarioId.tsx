@@ -11,6 +11,8 @@ import {
   AlertCircle,
   Trophy,
   CheckCircle2,
+  ChevronRight,
+  Lock,
 } from "lucide-react";
 import { toast } from "sonner";
 import { getInterviewScenario, getScenarioHints, type ScenarioHint } from "@/lib/interview-scenarios";
