@@ -64,6 +64,16 @@ function DashboardPage() {
     staleTime: 30_000,
   });
 
+  // Spaced-repetition: items due for review today
+  const fetchDue = useServerFn(getDueReviews);
+  const dueQuery = useQuery({
+    queryKey: ["due-reviews", user?.id],
+    queryFn: () => fetchDue(),
+    enabled: !!user,
+    staleTime: 60_000,
+  });
+  const dueItems = dueQuery.data ?? [];
+
   if (!user) {
     return (
       <div className="mx-auto max-w-md px-6 py-16 text-center">
