@@ -518,52 +518,111 @@ function InterviewPlay() {
         )}
       </div>
 
-      <div className="border-t border-border pt-3 pb-2">
-        <div className="flex items-end gap-2">
-          <button
-            onClick={recording ? stopRecording : startRecording}
-            className={cn(
-              "p-2.5 rounded-full border transition flex-shrink-0",
-              recording
-                ? "bg-destructive text-destructive-foreground border-destructive animate-pulse"
-                : "bg-background border-border hover:bg-muted",
+      <div className="border-t border-border pt-3 pb-2 space-y-3">
+        {guestLimitReached && !evaluation ? (
+          <div className="rounded-2xl bg-violet-100 border border-violet-300 p-4 text-center">
+            <Lock className="w-5 h-5 mx-auto text-violet-700 mb-1" />
+            <p className="text-sm font-bold text-violet-900">
+              {isId ? "Daftar gratis untuk lanjutkan & simpan progresmu" : "Sign up free to continue & save your progress"}
+            </p>
+            <p className="text-xs text-violet-900/70 mt-1 mb-3">
+              {isId
+                ? "Kamu sudah menjawab 3 pertanyaan demo. Lanjutkan tanpa batas setelah daftar."
+                : "You've answered 3 demo questions. Continue without limits after signing up."}
+            </p>
+            <Link
+              to="/auth"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-lime-500 hover:bg-lime-400 px-4 py-2 text-sm font-bold text-violet-900 transition"
+            >
+              {isId ? "Daftar gratis" : "Sign up free"} <ChevronRight className="w-4 h-4" />
+            </Link>
+          </div>
+        ) : (
+          <>
+            {/* Hint chips */}
+            {hints.length > 0 && !evaluation && (
+              <div className="flex gap-1.5 overflow-x-auto -mx-1 px-1 pb-1">
+                {hints.map((h, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => setInput((p) => (p ? p + " " + h.jp : h.jp))}
+                    className="flex-shrink-0 inline-flex items-center gap-1 rounded-full bg-violet-50 border border-violet-200 hover:bg-violet-100 px-3 py-1.5 text-xs transition"
+                    style={{ fontFamily: '"Noto Sans JP", sans-serif' }}
+                    title={h.ro}
+                  >
+                    <span className="text-violet-900">{h.jp}</span>
+                  </button>
+                ))}
+              </div>
             )}
-            aria-label={recording ? "Stop" : "Record"}
-          >
-            {recording ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
-          </button>
-          <textarea
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                send();
-              }
-            }}
-            placeholder={
-              recording
-                ? isId
-                  ? "🎙️ Mendengarkan..."
-                  : "🎙️ Listening..."
-                : isId
-                  ? "Jawab dalam bahasa Jepang..."
-                  : "Answer in Japanese..."
-            }
-            rows={1}
-            className="flex-1 resize-none rounded-2xl border border-input bg-background px-4 py-2.5 text-sm outline-none focus:border-ring focus:ring-2 focus:ring-ring/30 max-h-32"
-            style={{ fontFamily: '"Noto Sans JP", sans-serif' }}
-          />
-          <button
-            onClick={send}
-            disabled={!input.trim() || loading}
-            className="p-2.5 rounded-full bg-primary text-primary-foreground hover:opacity-90 disabled:opacity-40 transition flex-shrink-0"
-            aria-label="Send"
-          >
-            <Send className="w-5 h-5" />
-          </button>
-        </div>
+
+            <div className="flex items-end gap-2">
+              <button
+                onClick={recording ? stopRecording : startRecording}
+                className={cn(
+                  "p-2.5 rounded-full border transition flex-shrink-0",
+                  recording
+                    ? "bg-destructive text-destructive-foreground border-destructive animate-pulse"
+                    : "bg-background border-border hover:bg-muted",
+                )}
+                aria-label={recording ? "Stop" : "Record"}
+              >
+                {recording ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+              </button>
+              <textarea
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    send();
+                  }
+                }}
+                placeholder={
+                  recording
+                    ? isId
+                      ? "🎙️ Mendengarkan..."
+                      : "🎙️ Listening..."
+                    : isId
+                      ? "Jawab dalam bahasa Jepang..."
+                      : "Answer in Japanese..."
+                }
+                rows={1}
+                className="flex-1 resize-none rounded-2xl border border-input bg-background px-4 py-2.5 text-sm outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-300 max-h-32"
+                style={{ fontFamily: '"Noto Sans JP", sans-serif' }}
+              />
+              <button
+                onClick={send}
+                disabled={!input.trim() || loading}
+                className="p-3 rounded-full bg-violet-600 text-white hover:bg-violet-700 disabled:opacity-40 transition flex-shrink-0"
+                aria-label="Send"
+              >
+                <Send className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Finish button — small, below input */}
+            {user && !evaluation && (
+              <div className="flex justify-center pt-1">
+                <button
+                  onClick={finishInterview}
+                  disabled={evaluating}
+                  className="inline-flex items-center gap-1.5 text-xs font-medium text-violet-700 hover:text-violet-900 underline underline-offset-2 disabled:opacity-50"
+                >
+                  {evaluating ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  ) : (
+                    <Sparkles className="w-3.5 h-3.5" />
+                  )}
+                  {isId ? "Akhiri sesi & lihat evaluasi" : "End session & view evaluation"}
+                </button>
+              </div>
+            )}
+          </>
+        )}
       </div>
+
     </div>
   );
 }
