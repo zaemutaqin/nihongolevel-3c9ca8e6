@@ -17,6 +17,7 @@ import {
 import {
   getHistory,
   getFavorites,
+  getStreakDays,
   getIntentCounts,
   getOldestReviewedFavorites,
   rateReview,
