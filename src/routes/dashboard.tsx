@@ -248,6 +248,10 @@ function DashboardPage() {
       </Section>
 
       {!isPro && (
+        <Section title={t("dash.pro.title")}>
+          <LockedFeature />
+        </Section>
+      )}
 
       {isPro && <>
 
