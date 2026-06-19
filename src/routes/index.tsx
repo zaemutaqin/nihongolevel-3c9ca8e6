@@ -22,6 +22,8 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const searchSchema = z.object({
   onboarding: fallback(z.coerce.number().int().min(0).max(1), 0).default(0),
@@ -192,10 +194,32 @@ function HomeIndex() {
         open={open}
         onOpenChange={setOpen}
         isId={isId}
-        onFinish={(level) => {
-          const target =
-            level === "none" ? "/belajar/level-0" : level === "some" ? "/belajar/level-1" : "/belajar/level-2";
-          // close modal, then navigate
+        onFinish={async (loc, level) => {
+          const levelId =
+            level === "none" ? "level-0" : level === "some" ? "level-1" : "level-2";
+          const target = `/belajar/${levelId}`;
+
+          // Persist onboarding if signed in (best-effort)
+          try {
+            const { data: sess } = await supabase.auth.getSession();
+            const uid = sess.session?.user?.id;
+            if (uid) {
+              const { error } = await supabase
+                .from("profiles")
+                .update({
+                  onboarding_location: loc === "id" ? "indonesia" : "japan",
+                  onboarding_level:
+                    level === "none" ? "zero" : level === "some" ? "basic" : "n4n3",
+                  current_level_id: levelId,
+                })
+                .eq("id", uid);
+              if (error) throw error;
+            }
+          } catch (e) {
+            console.warn("[onboarding] save failed", e);
+            toast.error(isId ? "Gagal menyimpan, tetap dilanjutkan." : "Save failed, continuing.");
+          }
+
           navigate({ search: { onboarding: 0 } });
           router.navigate({ to: target });
         }}
@@ -213,7 +237,7 @@ function OnboardingModal({
   open: boolean;
   onOpenChange: (v: boolean) => void;
   isId: boolean;
-  onFinish: (level: Level) => void;
+  onFinish: (location: Location, level: Level) => void;
 }) {
   const [step, setStep] = useState(0); // 0, 1, 2 (result)
   const [location, setLocation] = useState<Location | null>(null);
@@ -391,7 +415,7 @@ function OnboardingModal({
             </div>
 
             <Button
-              onClick={() => onFinish(level)}
+              onClick={() => onFinish(location!, level)}
               className="mt-6 w-full h-12 rounded-full text-base font-bold bg-lime-500 text-violet-900 hover:bg-lime-600 shadow-md"
             >
               {isId ? "Mulai sesi pertama sekarang" : "Start your first session now"}

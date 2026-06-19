@@ -122,6 +122,121 @@ export type Database = {
         }
         Relationships: []
       }
+      item_progress: {
+        Row: {
+          correct_streak: number
+          created_at: string
+          ease_factor: number
+          id: string
+          item_id: string
+          last_seen_at: string | null
+          next_review_at: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          correct_streak?: number
+          created_at?: string
+          ease_factor?: number
+          id?: string
+          item_id: string
+          last_seen_at?: string | null
+          next_review_at?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          correct_streak?: number
+          created_at?: string
+          ease_factor?: number
+          id?: string
+          item_id?: string
+          last_seen_at?: string | null
+          next_review_at?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "item_progress_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "learning_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      learning_items: {
+        Row: {
+          audio_url: string | null
+          content_jp: string
+          content_meaning: string | null
+          content_romaji: string | null
+          created_at: string
+          id: string
+          session_id: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          audio_url?: string | null
+          content_jp: string
+          content_meaning?: string | null
+          content_romaji?: string | null
+          created_at?: string
+          id: string
+          session_id: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          audio_url?: string | null
+          content_jp?: string
+          content_meaning?: string | null
+          content_romaji?: string | null
+          created_at?: string
+          id?: string
+          session_id?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "learning_items_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      levels: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          order_index: number
+          unlock_threshold_pct: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id: string
+          name: string
+          order_index?: number
+          unlock_threshold_pct?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          order_index?: number
+          unlock_threshold_pct?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       nihongo_data: {
         Row: {
           data: Json
@@ -150,34 +265,51 @@ export type Database = {
         Row: {
           avatar_url: string | null
           created_at: string
+          current_level_id: string | null
           email: string | null
           full_name: string | null
           id: string
           is_pro: boolean
+          onboarding_level: string | null
+          onboarding_location: string | null
           pro_activated_at: string | null
           updated_at: string
         }
         Insert: {
           avatar_url?: string | null
           created_at?: string
+          current_level_id?: string | null
           email?: string | null
           full_name?: string | null
           id: string
           is_pro?: boolean
+          onboarding_level?: string | null
+          onboarding_location?: string | null
           pro_activated_at?: string | null
           updated_at?: string
         }
         Update: {
           avatar_url?: string | null
           created_at?: string
+          current_level_id?: string | null
           email?: string | null
           full_name?: string | null
           id?: string
           is_pro?: boolean
+          onboarding_level?: string | null
+          onboarding_location?: string | null
           pro_activated_at?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_current_level_id_fkey"
+            columns: ["current_level_id"]
+            isOneToOne: false
+            referencedRelation: "levels"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       push_subscriptions: {
         Row: {
@@ -211,6 +343,79 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      session_attempts: {
+        Row: {
+          completed_at: string
+          created_at: string
+          duration_sec: number
+          id: string
+          score_pct: number
+          session_id: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string
+          created_at?: string
+          duration_sec?: number
+          id?: string
+          score_pct: number
+          session_id: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string
+          created_at?: string
+          duration_sec?: number
+          id?: string
+          score_pct?: number
+          session_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "session_attempts_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sessions: {
+        Row: {
+          created_at: string
+          id: string
+          order_index: number
+          title: string
+          unit_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id: string
+          order_index?: number
+          title: string
+          unit_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          order_index?: number
+          title?: string
+          unit_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sessions_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "units"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       subscriptions: {
         Row: {
@@ -259,6 +464,82 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      unit_completions: {
+        Row: {
+          best_score_pct: number
+          completed_at: string
+          created_at: string
+          id: string
+          passed: boolean
+          unit_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          best_score_pct?: number
+          completed_at?: string
+          created_at?: string
+          id?: string
+          passed?: boolean
+          unit_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          best_score_pct?: number
+          completed_at?: string
+          created_at?: string
+          id?: string
+          passed?: boolean
+          unit_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "unit_completions_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      units: {
+        Row: {
+          created_at: string
+          id: string
+          level_id: string
+          name: string
+          order_index: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id: string
+          level_id: string
+          name: string
+          order_index?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          level_id?: string
+          name?: string
+          order_index?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "units_level_id_fkey"
+            columns: ["level_id"]
+            isOneToOne: false
+            referencedRelation: "levels"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
