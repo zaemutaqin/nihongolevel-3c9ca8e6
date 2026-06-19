@@ -105,7 +105,7 @@ function DashboardPage() {
     );
   }
 
-  const streak = getStreakDaysSafe(history);
+  const streak = getStreakDays();
   const intentCounts = useMemo(() => getIntentCounts(), [history]);
 
   const SUGGESTIONS: Record<IntentType, string> = {
