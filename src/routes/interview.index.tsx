@@ -57,7 +57,6 @@ function InterviewIndex() {
   const [history, setHistory] = useState<SessionRow[]>([]);
   const [loading, setLoading] = useState(false);
   const [activeCat, setActiveCat] = useState<ScenarioCategory | "all">("all");
-  const [showAll, setShowAll] = useState(false);
 
   const fetchOverview = useServerFn(getCurriculumOverview);
   const overviewQ = useQuery({
