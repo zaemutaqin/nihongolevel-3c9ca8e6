@@ -116,19 +116,79 @@ export const Route = createFileRoute("/api/interview")({
 
         const explLang = lang === "en" ? "English" : "Indonesian";
 
-        if (mode === "chat") {
-          const systemPrompt = `You are an AI roleplaying as a Japanese interviewer.
+        if (mode === "chat" || mode === "options_only") {
+          const wantRomaji = langMode === "romaji" || mode === "options_only";
+          const wantTranslation = langMode === "translate";
+          const wantOptions = answerMode === "mcq" || mode === "options_only";
+
+          // Build the JSON schema-style template inside the prompt.
+          const extras: string[] = [`"japanese": "<Japanese question, hiragana/katakana/kanji only>"`];
+          if (wantRomaji) extras.push(`"romaji": "<Hepburn romaji of japanese, lowercase>"`);
+          if (wantTranslation) extras.push(`"translation": "<${explLang} translation of japanese>"`);
+          if (wantOptions) {
+            extras.push(
+              `"options": [{"text":"<Japanese candidate answer #1 (the MOST natural / correct one)>","romaji":"<romaji>","feedback":"<short ${explLang} note on why this answer fits>"}, {"text":"...","romaji":"...","feedback":"..."}, {"text":"...","romaji":"...","feedback":"..."}, {"text":"...","romaji":"...","feedback":"..."}]`,
+              `"correct_index": 0`,
+            );
+          }
+          const jsonTemplate = `{\n  ${extras.join(",\n  ")}\n}`;
+
+          let systemPrompt: string;
+          let modelMessages: { role: string; content: string }[];
+
+          if (mode === "options_only") {
+            if (!questionJp) {
+              return jsonResponse({ error: "INVALID_INPUT" }, 400, allowedOrigin);
+            }
+            systemPrompt = `You generate 4 candidate Japanese reply options for a learner who is being interviewed in the scenario below.
+
+Scenario: ${scenario.title_en}
+Role: ${scenario.role_en}
+Persona context: ${scenario.persona}
+
+The interviewer just asked the candidate:
+「${questionJp}」
+
+Return ONLY raw JSON (no markdown) matching this exact shape:
+${jsonTemplate}
+
+Rules:
+- All 4 option "text" fields must be in Japanese (hiragana / katakana / kanji). No romaji, no English.
+- Option index 0 MUST be the most natural / appropriate answer. The other 3 are plausible but each has a small problem (too casual, wrong particle, off-topic, etc.).
+- "feedback" is a short ${explLang} note explaining why that specific option is/isn't ideal (max 20 words).
+- "correct_index" must always be 0.
+- Keep each option to ONE short sentence (under 60 Japanese characters).`;
+            modelMessages = [{ role: "user", content: systemPrompt }];
+          } else {
+            systemPrompt = `You are an AI roleplaying as a Japanese interviewer.
 
 Scenario: ${scenario.title_en}
 Role: ${scenario.role_en}
 Persona: ${scenario.persona}
 
 CRITICAL RULES:
-- Reply ONLY in Japanese (hiragana / katakana / kanji). Never translate.
-- Stay in character throughout.
-- Keep replies short (1-3 sentences).
-- Ask one question at a time.
-- If the user types in romaji or another language, ask them politely in Japanese to answer in Japanese.`;
+- The "japanese" field must contain ONLY Japanese (hiragana / katakana / kanji). Never romaji or English in that field.
+- Stay in character throughout. Keep the japanese question to 1-3 short sentences. Ask one question at a time.
+- If the user types in romaji or another language, in your japanese question politely ask them in Japanese to answer in Japanese (「日本語でお願いします」 style).
+
+OUTPUT FORMAT:
+Return ONLY raw JSON (no markdown, no commentary) matching this exact shape:
+${jsonTemplate}
+
+${
+  wantOptions
+    ? `Rules for "options":
+- 4 candidate Japanese replies a learner could give to YOUR japanese question.
+- Index 0 MUST be the most natural / appropriate answer. The other 3 are plausible but each has a small problem.
+- "feedback" is a short ${explLang} note (max 20 words). "correct_index" must always be 0.
+- One short Japanese sentence per option (under 60 chars).`
+    : ""
+}`;
+            modelMessages = [
+              { role: "system", content: systemPrompt },
+              ...messages,
+            ];
+          }
 
           const upstream = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
             method: "POST",
@@ -138,12 +198,10 @@ CRITICAL RULES:
             },
             body: JSON.stringify({
               model: "google/gemini-2.5-flash",
-              messages: [
-                { role: "system", content: systemPrompt },
-                ...messages,
-              ],
-              temperature: 0.8,
-              max_tokens: 220,
+              messages: modelMessages,
+              temperature: mode === "options_only" ? 0.6 : 0.8,
+              max_tokens: wantOptions ? 700 : 320,
+              response_format: { type: "json_object" },
             }),
           });
 
@@ -164,18 +222,56 @@ CRITICAL RULES:
             return jsonResponse({ error: code }, upstream.status, allowedOrigin);
           }
           const data = await upstream.json();
-          const reply = data?.choices?.[0]?.message?.content?.trim() ?? "";
-          if (!reply) return jsonResponse({ error: "INVALID_RESPONSE" }, 502, allowedOrigin);
+          const raw = data?.choices?.[0]?.message?.content?.trim() ?? "";
+          const cleaned = raw
+            .replace(/^```(?:json)?\s*/i, "")
+            .replace(/\s*```$/i, "")
+            .trim();
+
+          let parsedReply: {
+            japanese?: string;
+            romaji?: string;
+            translation?: string;
+            options?: { text: string; romaji?: string; feedback?: string }[];
+            correct_index?: number;
+          };
+          try {
+            parsedReply = JSON.parse(cleaned);
+          } catch {
+            // Fallback: treat the raw output as the japanese question.
+            parsedReply = { japanese: raw };
+          }
+          const japanese = (parsedReply.japanese ?? "").trim();
+          if (!japanese && mode !== "options_only") {
+            return jsonResponse({ error: "INVALID_RESPONSE" }, 502, allowedOrigin);
+          }
 
           await audit({
             event_type: "interview_message",
             ip_address: ip,
             user_id: userId,
             success: true,
-            metadata: { scenarioId, turn: messages.length },
+            metadata: { scenarioId, turn: messages.length, mode, answerMode },
           });
-          return jsonResponse({ reply }, 200, allowedOrigin);
+
+          return jsonResponse(
+            {
+              // Back-compat: top-level `reply` is the japanese string.
+              reply: japanese,
+              structured: {
+                japanese,
+                romaji: parsedReply.romaji ?? null,
+                translation: parsedReply.translation ?? null,
+                options: Array.isArray(parsedReply.options) ? parsedReply.options.slice(0, 4) : null,
+                correct_index:
+                  typeof parsedReply.correct_index === "number" ? parsedReply.correct_index : 0,
+              },
+            },
+            200,
+            allowedOrigin,
+          );
         }
+
 
         // mode === "feedback" — generate evaluation + save session (auth required, guarded above)
         if (!userId) return jsonResponse({ error: "AUTH_REQUIRED" }, 401, allowedOrigin);
