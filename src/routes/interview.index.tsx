@@ -2,11 +2,12 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Loader2, ChevronRight, ChevronDown, Clock, Trophy, Sparkles } from "lucide-react";
+import { Loader2, ChevronRight, Clock, Trophy, Sparkles } from "lucide-react";
 import {
   INTERVIEW_SCENARIOS,
   SCENARIO_CATEGORIES,
   getRecommendedScenarios,
+  getInterviewScenario,
   type InterviewScenario,
   type ScenarioCategory,
 } from "@/lib/interview-scenarios";
