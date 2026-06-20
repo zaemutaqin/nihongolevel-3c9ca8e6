@@ -71,11 +71,15 @@ function InterviewIndex() {
     return lv?.order_index ?? null;
   }, [overviewQ.data]);
 
-  const recommended = useMemo(
-    () => getRecommendedScenarios(currentLevelOrder),
-    [currentLevelOrder],
-  );
-  const recommendedIds = new Set(recommended.map((s) => s.id));
+  const recommended = useMemo(() => {
+    if (currentLevelOrder == null) {
+      // No level data yet → fall back to the most universal scenario.
+      const fallback = getInterviewScenario("iv_tokutei_ginou");
+      return fallback ? [fallback] : [];
+    }
+    return getRecommendedScenarios(currentLevelOrder);
+  }, [currentLevelOrder]);
+  const recommendedIds = useMemo(() => new Set(recommended.map((s) => s.id)), [recommended]);
 
   const visible = useMemo(() => {
     const base = INTERVIEW_SCENARIOS.filter((s) => !recommendedIds.has(s.id));
