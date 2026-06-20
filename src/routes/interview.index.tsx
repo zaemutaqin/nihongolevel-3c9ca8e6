@@ -153,72 +153,58 @@ function InterviewIndex() {
         </div>
       </section>
 
-      {/* All scenarios — collapsible */}
+      {/* All scenarios — always-visible filter chips + grid */}
       <section className="mb-12">
-        <button
-          onClick={() => setShowAll((v) => !v)}
-          className="w-full flex items-center justify-between gap-3 rounded-xl border border-violet-200 bg-white hover:bg-violet-50 px-5 py-4 transition mb-5"
-        >
-          <div className="text-left">
-            <p className="font-bold text-violet-900">
-              {isId ? "Lihat semua 20 bidang" : "See all 20 scenarios"}
-            </p>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              {isId
-                ? "Tokutei Ginou, manufaktur, infrastruktur, profesional & lainnya"
-                : "Tokutei Ginou, manufacturing, infrastructure, professional & more"}
-            </p>
+        <div className="mb-4">
+          <h2 className="text-xl sm:text-2xl font-bold text-violet-900">
+            {isId ? "Semua skenario" : "All scenarios"}
+          </h2>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            {isId
+              ? "Tokutei Ginou, manufaktur, infrastruktur, profesional & lainnya"
+              : "Tokutei Ginou, manufacturing, infrastructure, professional & more"}
+          </p>
+        </div>
+
+        {/* Category chips */}
+        <div className="-mx-4 mb-6 overflow-x-auto px-4 pb-3 border-b border-foreground/10">
+          <div className="flex min-w-max items-center gap-2">
+            {(
+              [
+                { id: "all" as const, label_id: "Semua", label_en: "All", emoji: "✦" },
+                ...SCENARIO_CATEGORIES,
+              ]
+            ).map((c) => {
+              const active = activeCat === c.id;
+              return (
+                <button
+                  key={c.id}
+                  onClick={() => setActiveCat(c.id as typeof activeCat)}
+                  className={cn(
+                    "inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-4 py-2 text-[11px] uppercase tracking-[0.18em] font-bold transition border",
+                    active
+                      ? "bg-violet-600 text-white border-violet-600"
+                      : "bg-white text-foreground/70 border-foreground/15 hover:border-foreground/40",
+                  )}
+                >
+                  <span className="text-sm">{c.emoji}</span>
+                  {isId ? c.label_id : c.label_en}
+                </button>
+              );
+            })}
           </div>
-          <ChevronDown
-            className={cn(
-              "w-5 h-5 text-violet-700 transition-transform flex-shrink-0",
-              showAll && "rotate-180",
-            )}
-          />
-        </button>
+        </div>
 
-        {showAll && (
-          <>
-            {/* Category tabs */}
-            <div className="-mx-4 mb-6 overflow-x-auto px-4 pb-3 border-b border-foreground/10">
-              <div className="flex min-w-max items-center gap-2">
-                {(
-                  [
-                    { id: "all" as const, label_id: "Semua", label_en: "All", emoji: "✦" },
-                    ...SCENARIO_CATEGORIES,
-                  ]
-                ).map((c) => {
-                  const active = activeCat === c.id;
-                  return (
-                    <button
-                      key={c.id}
-                      onClick={() => setActiveCat(c.id as typeof activeCat)}
-                      className={cn(
-                        "inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-4 py-2 text-[11px] uppercase tracking-[0.18em] font-bold transition border",
-                        active
-                          ? "bg-violet-600 text-white border-violet-600"
-                          : "bg-white text-foreground/70 border-foreground/15 hover:border-foreground/40",
-                      )}
-                    >
-                      <span className="text-sm">{c.emoji}</span>
-                      {isId ? c.label_id : c.label_en}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div
-              key={activeCat}
-              className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 animate-in fade-in slide-in-from-bottom-1 duration-300"
-            >
-              {visible.map((s, i) => (
-                <ScenarioCard key={s.id} s={s} isId={isId} altBg={i % 2 === 1} />
-              ))}
-            </div>
-          </>
-        )}
+        <div
+          key={activeCat}
+          className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 animate-in fade-in slide-in-from-bottom-1 duration-300"
+        >
+          {visible.map((s, i) => (
+            <ScenarioCard key={s.id} s={s} isId={isId} altBg={i % 2 === 1} />
+          ))}
+        </div>
       </section>
+
 
       {user && (
         <section>
