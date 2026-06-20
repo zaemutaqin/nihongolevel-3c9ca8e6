@@ -24,8 +24,14 @@ const MessageSchema = z.object({
 const InputSchema = z.object({
   scenarioId: z.string().trim().min(1).max(40),
   messages: z.array(MessageSchema).min(0).max(60),
-  mode: z.enum(["chat", "feedback"]).default("chat"),
+  mode: z.enum(["chat", "feedback", "options_only"]).default("chat"),
   lang: z.enum(["id", "en"]).optional().default("id"),
+  // langMode controls what extras (romaji / translation) the API computes for the next question.
+  langMode: z.enum(["translate", "romaji", "fullJp"]).optional().default("translate"),
+  // answerMode === "mcq" → API also generates 4 candidate options + correct_index for the new question.
+  answerMode: z.enum(["mcq", "mic", "type"]).optional().default("type"),
+  // For mode === "options_only": question to generate options for.
+  questionJp: z.string().trim().max(800).optional(),
   sessionId: z.string().uuid().optional(),
 });
 
