@@ -54,7 +54,7 @@ export const Route = createFileRoute("/api/interview")({
         const parsed = InputSchema.safeParse(body);
         if (!parsed.success) return jsonResponse({ error: "INVALID_INPUT" }, 400, allowedOrigin);
 
-        const { scenarioId, messages, mode, lang, sessionId } = parsed.data;
+        const { scenarioId, messages, mode, lang, langMode, answerMode, questionJp, sessionId } = parsed.data;
         const scenario = getInterviewScenario(scenarioId);
         if (!scenario) return jsonResponse({ error: "INVALID_INPUT" }, 400, allowedOrigin);
 
