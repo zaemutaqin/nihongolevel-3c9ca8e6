@@ -77,9 +77,9 @@ export const Route = createFileRoute("/api/interview")({
         const isGuestDemo =
           !token &&
           scenarioId === "iv_kaigo" &&
-          mode === "chat" &&
-          userTurnCount > 0 &&
-          userTurnCount <= 3;
+          (mode === "chat" || mode === "options_only") &&
+          ((mode === "options_only" && userTurnCount <= 3) ||
+            (mode === "chat" && userTurnCount > 0 && userTurnCount <= 3));
 
         let userId: string | null = null;
         let isPro = false;
