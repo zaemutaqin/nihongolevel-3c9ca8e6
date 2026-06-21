@@ -66,7 +66,7 @@ const CURRICULUM_DATA: LevelOverview[] = [
     order_index: 0,
     progress_pct: 0,
     unlock_threshold_pct: 80,
-    status: "available",
+    status: "current",
     units: [
       {
         id: "level-0-unit-1",
