@@ -40,8 +40,12 @@ function LevelDetailPage() {
         <ArrowLeft className="w-4 h-4" /> Kembali ke Levelku
       </Link>
 
-      {q.isLoading || !level ? (
+      {q.isLoading ? (
         <p className="text-sm text-muted-foreground">Memuat…</p>
+      ) : !level ? (
+        <div className="rounded-2xl border border-border bg-muted p-6 text-center">
+          <p className="text-sm">Level tidak ditemukan.</p>
+        </div>
       ) : locked ? (
         <div className="rounded-2xl border border-border bg-muted p-6 text-center">
           <Lock className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
