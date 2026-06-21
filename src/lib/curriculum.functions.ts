@@ -34,12 +34,27 @@ export interface LevelOverview {
   order_index: number;
   progress_pct: number;
   unlock_threshold_pct: number;
-  status: "available" | "locked" | "completed";
+  status: "available" | "locked" | "completed" | "current";
   units: UnitOverview[];
+}
+
+// Alias yang dipakai komponen dashboard
+export type LevelNode = LevelOverview;
+
+export interface SessionRef {
+  session_id: string;
+  session_title: string;
+  unit_name: string;
+  level_name: string;
+  unit_progress_pct: number;
 }
 
 export interface CurriculumOverview {
   levels: LevelOverview[];
+  full_name?: string | null;
+  next_session?: SessionRef | null;
+  last_session?: SessionRef | null;
+  items_learned?: number;
 }
 
 // ─── Data kurikulum hardcoded (tidak butuh Supabase) ─────────────────────────
