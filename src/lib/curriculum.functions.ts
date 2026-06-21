@@ -378,8 +378,22 @@ const SESSION_ITEMS: Record<string, SessionDetail> = {
 
 // Server function untuk ambil detail satu sesi
 export const getSessionDetail = createServerFn({ method: "GET" })
-  .validator((sessionId: string) => sessionId)
+  .inputValidator((sessionId: string) => sessionId)
   .handler(async (ctx): Promise<SessionDetail | null> => {
     const sessionId = ctx.data;
     return SESSION_ITEMS[sessionId] ?? null;
   });
+
+// Helper: cari sessionId berikutnya di unit yang sama
+export function findNextSessionId(sessionId: string): string | null {
+  for (const level of CURRICULUM_DATA) {
+    for (const unit of level.units) {
+      const idx = unit.sessions.findIndex((s) => s.id === sessionId);
+      if (idx >= 0) {
+        const next = unit.sessions[idx + 1];
+        return next?.id ?? null;
+      }
+    }
+  }
+  return null;
+}
