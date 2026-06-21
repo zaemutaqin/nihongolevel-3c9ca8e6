@@ -212,7 +212,15 @@ function HomeIndex() {
         onFinish={async (loc, level) => {
           const levelId =
             level === "none" ? "level-0" : level === "some" ? "level-1" : "level-2";
-          const target = `/belajar/${levelId}`;
+          const target = `/belajar/level/${levelId}` as const;
+
+          // Persist locally FIRST so onboarding never re-opens
+          try {
+            window.localStorage.setItem(ONBOARDING_DONE_KEY, "true");
+            window.localStorage.setItem(STARTING_LEVEL_KEY, levelId);
+          } catch {
+            /* ignore quota errors */
+          }
 
           // Persist onboarding if signed in (best-effort)
           try {
