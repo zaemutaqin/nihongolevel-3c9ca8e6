@@ -34,12 +34,27 @@ export interface LevelOverview {
   order_index: number;
   progress_pct: number;
   unlock_threshold_pct: number;
-  status: "available" | "locked" | "completed";
+  status: "available" | "locked" | "completed" | "current";
   units: UnitOverview[];
+}
+
+// Alias yang dipakai komponen dashboard
+export type LevelNode = LevelOverview;
+
+export interface SessionRef {
+  session_id: string;
+  session_title: string;
+  unit_name: string;
+  level_name: string;
+  unit_progress_pct: number;
 }
 
 export interface CurriculumOverview {
   levels: LevelOverview[];
+  full_name?: string | null;
+  next_session?: SessionRef | null;
+  last_session?: SessionRef | null;
+  items_learned?: number;
 }
 
 // ─── Data kurikulum hardcoded (tidak butuh Supabase) ─────────────────────────
@@ -51,7 +66,7 @@ const CURRICULUM_DATA: LevelOverview[] = [
     order_index: 0,
     progress_pct: 0,
     unlock_threshold_pct: 80,
-    status: "available",
+    status: "current",
     units: [
       {
         id: "level-0-unit-1",
@@ -142,20 +157,36 @@ const CURRICULUM_DATA: LevelOverview[] = [
 
 export const getCurriculumOverview = createServerFn({ method: "GET" }).handler(
   async (): Promise<CurriculumOverview> => {
-    // TODO: Setelah Supabase terhubung, uncomment kode berikut
-    // untuk mengambil progress nyata pengguna:
-    //
-    // const { createClient } = await import("@/integrations/supabase/server");
-    // const supabase = createClient();
-    // const { data: attempts } = await supabase
-    //   .from("session_attempts")
-    //   .select("session_id, score_pct")
-    //   .order("score_pct", { ascending: false });
-    //
-    // Lalu merge attempts ke CURRICULUM_DATA untuk update
-    // completed dan best_score per sesi.
+    // Data hardcoded adalah sumber kebenaran saat ini.
+    // Progress dari Supabase bisa di-merge nanti ketika tabel session_attempts terisi.
+    const levels = CURRICULUM_DATA;
 
-    return { levels: CURRICULUM_DATA };
+    // Cari sesi pertama yang belum selesai pada level "current"
+    let nextSession: SessionRef | null = null;
+    const currentLevel = levels.find((l) => l.status === "current") ?? levels[0];
+    if (currentLevel) {
+      outer: for (const unit of currentLevel.units) {
+        for (const s of unit.sessions) {
+          if (!s.completed) {
+            nextSession = {
+              session_id: s.id,
+              session_title: s.title,
+              unit_name: unit.name,
+              level_name: currentLevel.name,
+              unit_progress_pct: 0,
+            };
+            break outer;
+          }
+        }
+      }
+    }
+
+    return {
+      levels,
+      next_session: nextSession,
+      last_session: null,
+      items_learned: 0,
+    };
   }
 );
 
@@ -378,8 +409,22 @@ const SESSION_ITEMS: Record<string, SessionDetail> = {
 
 // Server function untuk ambil detail satu sesi
 export const getSessionDetail = createServerFn({ method: "GET" })
-  .validator((sessionId: string) => sessionId)
+  .inputValidator((sessionId: string) => sessionId)
   .handler(async (ctx): Promise<SessionDetail | null> => {
     const sessionId = ctx.data;
     return SESSION_ITEMS[sessionId] ?? null;
   });
+
+// Helper: cari sessionId berikutnya di unit yang sama
+export function findNextSessionId(sessionId: string): string | null {
+  for (const level of CURRICULUM_DATA) {
+    for (const unit of level.units) {
+      const idx = unit.sessions.findIndex((s) => s.id === sessionId);
+      if (idx >= 0) {
+        const next = unit.sessions[idx + 1];
+        return next?.id ?? null;
+      }
+    }
+  }
+  return null;
+}

@@ -16,6 +16,7 @@ import {
   type LearnItem,
 } from "@/components/learn-stages";
 import { reviewItem } from "@/lib/review.functions";
+import { getSessionDetail, findNextSessionId } from "@/lib/curriculum.functions";
 
 export const Route = createFileRoute("/belajar/$sessionId")({
   ssr: false,
@@ -36,38 +37,35 @@ function BelajarPage() {
   const { user } = useAuth();
   const [startedAt] = useState(() => Date.now());
 
-  const { data, isLoading, error } = useQuery({
+  const fetchSession = useServerFn(getSessionDetail);
+  const { data, isLoading } = useQuery({
     queryKey: ["belajar-session", sessionId],
     queryFn: async () => {
-      const [{ data: session, error: sErr }, { data: items, error: iErr }] = await Promise.all([
-        supabase.from("sessions").select("id, unit_id, order_index, title").eq("id", sessionId).maybeSingle(),
-        supabase
-          .from("learning_items")
-          .select("id, type, content_jp, content_romaji, content_meaning")
-          .eq("session_id", sessionId),
-      ]);
-      if (sErr) throw sErr;
-      if (iErr) throw iErr;
-      if (!session) throw new Error("Sesi tidak ditemukan");
-      const { data: siblings } = await supabase
-        .from("sessions")
-        .select("id, order_index")
-        .eq("unit_id", session.unit_id)
-        .order("order_index", { ascending: true });
-      const idx = siblings?.findIndex((s) => s.id === session.id) ?? -1;
-      const nextSession = idx >= 0 && siblings ? siblings[idx + 1] : undefined;
-      return { session, items: (items ?? []) as LearnItem[], nextSessionId: nextSession?.id ?? null };
+      const detail = await fetchSession({ data: sessionId });
+      if (!detail) return null;
+      const items: LearnItem[] = detail.items.map((it) => ({
+        id: it.id,
+        type: it.type,
+        content_jp: it.content_jp,
+        content_romaji: it.content_romaji,
+        content_meaning: it.content_meaning,
+      }));
+      return {
+        session: { id: detail.id, title: detail.title, unit_id: detail.unit_id },
+        items,
+        nextSessionId: findNextSessionId(sessionId),
+      };
     },
   });
 
   if (isLoading) {
     return <div className="min-h-screen grid place-items-center text-violet-900">Memuat sesi…</div>;
   }
-  if (error || !data || data.items.length === 0) {
+  if (!data || data.items.length === 0) {
     return (
       <div className="min-h-screen grid place-items-center px-6 text-center">
         <div>
-          <p className="mb-4 text-violet-900">Sesi belum tersedia.</p>
+          <p className="mb-4 text-violet-900">Konten sedang disiapkan untuk sesi ini.</p>
           <Link to="/dashboard" className="text-violet-700 underline">
             Kembali ke dashboard
           </Link>
