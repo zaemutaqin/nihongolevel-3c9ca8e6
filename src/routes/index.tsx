@@ -55,6 +55,9 @@ export const Route = createFileRoute("/")({
 type Location = "id" | "jp";
 type Level = "none" | "some" | "basic";
 
+const ONBOARDING_DONE_KEY = "nihongolevel_onboarding_done";
+const STARTING_LEVEL_KEY = "nihongolevel_starting_level";
+
 function HomeIndex() {
   const { lang } = useT();
   const isId = lang === "id";
@@ -62,9 +65,21 @@ function HomeIndex() {
   const navigate = useNavigate({ from: "/" });
   const router = useRouter();
 
-  const open = search.onboarding === 1;
+  const onboardingDone =
+    typeof window !== "undefined" &&
+    window.localStorage.getItem(ONBOARDING_DONE_KEY) === "true";
+
+  const open = search.onboarding === 1 && !onboardingDone;
 
   const setOpen = (v: boolean) => {
+    if (v && onboardingDone) {
+      const stored =
+        (typeof window !== "undefined" &&
+          window.localStorage.getItem(STARTING_LEVEL_KEY)) ||
+        "level-0";
+      router.navigate({ to: "/belajar/level/$levelId", params: { levelId: stored } });
+      return;
+    }
     if (v) navigate({ search: { onboarding: 1 } });
     else navigate({ search: { onboarding: 0 } });
   };
@@ -197,7 +212,15 @@ function HomeIndex() {
         onFinish={async (loc, level) => {
           const levelId =
             level === "none" ? "level-0" : level === "some" ? "level-1" : "level-2";
-          const target = `/belajar/${levelId}`;
+          // Navigate to the level page (not the session route)
+
+          // Persist locally FIRST so onboarding never re-opens
+          try {
+            window.localStorage.setItem(ONBOARDING_DONE_KEY, "true");
+            window.localStorage.setItem(STARTING_LEVEL_KEY, levelId);
+          } catch {
+            /* ignore quota errors */
+          }
 
           // Persist onboarding if signed in (best-effort)
           try {
@@ -221,7 +244,7 @@ function HomeIndex() {
           }
 
           navigate({ search: { onboarding: 0 } });
-          router.navigate({ to: target });
+          router.navigate({ to: "/belajar/level/$levelId", params: { levelId } });
         }}
       />
     </div>
