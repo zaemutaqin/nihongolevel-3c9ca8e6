@@ -19,9 +19,9 @@ function LevelDetailPage() {
   const navigate = useNavigate();
   const fetchOverview = useServerFn(getCurriculumOverview);
   const q = useQuery({
-    queryKey: ["curriculum-overview", user?.id],
+    queryKey: ["curriculum-overview", user?.id ?? "anon"],
     queryFn: () => fetchOverview(),
-    enabled: !!user,
+    staleTime: 30_000,
   });
 
   useEffect(() => {
