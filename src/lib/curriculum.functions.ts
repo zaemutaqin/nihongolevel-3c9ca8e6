@@ -157,20 +157,36 @@ const CURRICULUM_DATA: LevelOverview[] = [
 
 export const getCurriculumOverview = createServerFn({ method: "GET" }).handler(
   async (): Promise<CurriculumOverview> => {
-    // TODO: Setelah Supabase terhubung, uncomment kode berikut
-    // untuk mengambil progress nyata pengguna:
-    //
-    // const { createClient } = await import("@/integrations/supabase/server");
-    // const supabase = createClient();
-    // const { data: attempts } = await supabase
-    //   .from("session_attempts")
-    //   .select("session_id, score_pct")
-    //   .order("score_pct", { ascending: false });
-    //
-    // Lalu merge attempts ke CURRICULUM_DATA untuk update
-    // completed dan best_score per sesi.
+    // Data hardcoded adalah sumber kebenaran saat ini.
+    // Progress dari Supabase bisa di-merge nanti ketika tabel session_attempts terisi.
+    const levels = CURRICULUM_DATA;
 
-    return { levels: CURRICULUM_DATA };
+    // Cari sesi pertama yang belum selesai pada level "current"
+    let nextSession: SessionRef | null = null;
+    const currentLevel = levels.find((l) => l.status === "current") ?? levels[0];
+    if (currentLevel) {
+      outer: for (const unit of currentLevel.units) {
+        for (const s of unit.sessions) {
+          if (!s.completed) {
+            nextSession = {
+              session_id: s.id,
+              session_title: s.title,
+              unit_name: unit.name,
+              level_name: currentLevel.name,
+              unit_progress_pct: 0,
+            };
+            break outer;
+          }
+        }
+      }
+    }
+
+    return {
+      levels,
+      next_session: nextSession,
+      last_session: null,
+      items_learned: 0,
+    };
   }
 );
 
