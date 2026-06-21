@@ -62,11 +62,19 @@ function BelajarPage() {
     return <div className="min-h-screen grid place-items-center text-violet-900">Memuat sesi…</div>;
   }
   if (!data || data.items.length === 0) {
+    const isLevel1 = sessionId.startsWith("level-1-");
     return (
       <div className="min-h-screen grid place-items-center px-6 text-center">
-        <div>
-          <p className="mb-4 text-violet-900">Konten sedang disiapkan untuk sesi ini.</p>
-          <Link to="/dashboard" className="text-violet-700 underline">
+        <div className="max-w-sm">
+          <p className="mb-4 text-violet-900 font-semibold">
+            {isLevel1
+              ? "Konten Level 1 akan segera tersedia. Selesaikan Level 0 dulu."
+              : "Konten sedang disiapkan untuk sesi ini."}
+          </p>
+          <Link
+            to="/dashboard"
+            className="inline-block rounded-xl bg-violet-700 hover:bg-violet-800 text-white font-semibold px-5 py-3"
+          >
             Kembali ke dashboard
           </Link>
         </div>
