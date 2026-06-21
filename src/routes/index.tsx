@@ -212,7 +212,7 @@ function HomeIndex() {
         onFinish={async (loc, level) => {
           const levelId =
             level === "none" ? "level-0" : level === "some" ? "level-1" : "level-2";
-          const target = `/belajar/level/${levelId}` as const;
+          // Navigate to the level page (not the session route)
 
           // Persist locally FIRST so onboarding never re-opens
           try {
