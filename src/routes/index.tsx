@@ -244,7 +244,7 @@ function HomeIndex() {
           }
 
           navigate({ search: { onboarding: 0 } });
-          router.navigate({ to: target });
+          router.navigate({ to: "/belajar/level/$levelId", params: { levelId } });
         }}
       />
     </div>
