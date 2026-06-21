@@ -55,6 +55,9 @@ export const Route = createFileRoute("/")({
 type Location = "id" | "jp";
 type Level = "none" | "some" | "basic";
 
+const ONBOARDING_DONE_KEY = "nihongolevel_onboarding_done";
+const STARTING_LEVEL_KEY = "nihongolevel_starting_level";
+
 function HomeIndex() {
   const { lang } = useT();
   const isId = lang === "id";
@@ -62,9 +65,21 @@ function HomeIndex() {
   const navigate = useNavigate({ from: "/" });
   const router = useRouter();
 
-  const open = search.onboarding === 1;
+  const onboardingDone =
+    typeof window !== "undefined" &&
+    window.localStorage.getItem(ONBOARDING_DONE_KEY) === "true";
+
+  const open = search.onboarding === 1 && !onboardingDone;
 
   const setOpen = (v: boolean) => {
+    if (v && onboardingDone) {
+      const stored =
+        (typeof window !== "undefined" &&
+          window.localStorage.getItem(STARTING_LEVEL_KEY)) ||
+        "level-0";
+      router.navigate({ to: "/belajar/level/$levelId", params: { levelId: stored } });
+      return;
+    }
     if (v) navigate({ search: { onboarding: 1 } });
     else navigate({ search: { onboarding: 0 } });
   };
