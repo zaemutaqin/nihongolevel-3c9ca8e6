@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
-import { interviewScenarios } from "@/lib/interview-scenarios";
-import { hanashiteScenarios } from "@/lib/hanashite-scenarios";
+import { INTERVIEW_SCENARIOS } from "@/lib/interview-scenarios";
+import { SCENARIOS as HANASHITE_SCENARIOS } from "@/lib/hanashite-scenarios";
 
 const BASE_URL = "https://www.nihongo.live";
 
