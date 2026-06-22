@@ -4,6 +4,10 @@ export async function action({ request }: { request: Request }) {
     const { text, targetLanguage } = await request.json();
     // Mengambil API Key dari context environment server Lovable
 const apiKey = (context as any)?.env?.GEMINI_API_KEY || (globalThis as any).process?.env?.GEMINI_API_KEY;
+    if (!apiKey) {
+  console.error("DEBUG: GEMINI_API_KEY kosong atau tidak terbaca oleh server.");
+}
+
 
 
     if (!apiKey) {
