@@ -1,6 +1,6 @@
 export async function action({ request, context }: { request: Request; context: any }) {
   try {
-    const { text, targetLanguage } = await request.json();
+    const { message } = await request.json();
     
     // Trik mutakhir membaca secret di berbagai runtime server Lovable
     const apiKey = 
@@ -9,23 +9,24 @@ export async function action({ request, context }: { request: Request; context: 
       (typeof process !== 'undefined' ? process.env?.GEMINI_API_KEY : null);
 
     if (!apiKey) {
-      return new Response(JSON.stringify({ error: "Sistem gagal memuat kredensial AI. Periksa pengaturan Secret Lovable." }), { 
+      return new Response(JSON.stringify({ error: "Sistem gagal memuat kredensial AI." }), { 
         status: 500,
         headers: { "Content-Type": "application/json" }
       });
     }
 
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    const systemInstruction = "Kamu adalah Pewawancara kerja (Kanshuu) atau Guru Bahasa Jepang asli dalam sesi interview interaktif di aplikasi Nihongolevel. Jawab pengguna menggunakan bahasa Jepang yang natural (sopan/bisnis), sertakan Romaji dan arti bahasa Indonesia di bawahnya dengan rapi. Ajukan tepat 1 pertanyaan baru di akhir kalimat untuk melanjutkan interview.";
 
     const response = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        contents: [{
-          parts: [{
-            text: `Kamu adalah fitur translator profesional di aplikasi Nihongolevel. Terjemahkan teks berikut ke ${targetLanguage || 'Bahasa Jepang/Indonesia'}. Berikan juga cara baca Romaji, huruf Kana/Kanji yang tepat, beserta penjelasan tata bahasa singkat jika diperlukan. Teks: "${text}"`
-          }]
-        }]
+        contents: [
+          { role: "user", parts: [{ text: systemInstruction }] },
+          { role: "model", parts: [{ text: "Baik, saya siap menjadi pewawancara simulasi bahasa Jepang." }] },
+          { role: "user", parts: [{ text: message }] }
+        ]
       })
     });
 
@@ -38,9 +39,10 @@ export async function action({ request, context }: { request: Request; context: 
       });
     }
 
-    const translatedText = data.candidates[0].content.parts[0].text;
+    const aiReply = data.candidates[0].content.parts[0].text;
 
-    return new Response(JSON.stringify({ text: translatedText }), {
+    // Menyesuaikan struktur return agar cocok dengan state frontend 'reply'
+    return new Response(JSON.stringify({ reply: aiReply }), {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error: any) {
