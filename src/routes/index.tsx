@@ -66,12 +66,26 @@ function HomeIndex() {
   const search = Route.useSearch();
   const navigate = useNavigate({ from: "/" });
   const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
 
-  const onboardingDone =
-    typeof window !== "undefined" &&
-    window.localStorage.getItem(ONBOARDING_DONE_KEY) === "true";
+  // Client-only read to avoid SSR hydration mismatch
+  const [mounted, setMounted] = useState(false);
+  const [onboardingDone, setOnboardingDone] = useState(false);
+  useEffect(() => {
+    setOnboardingDone(
+      window.localStorage.getItem(ONBOARDING_DONE_KEY) === "true",
+    );
+    setMounted(true);
+  }, []);
 
-  const open = search.onboarding === 1 && !onboardingDone;
+  // Condition 2: onboarded + logged in → go to dashboard
+  useEffect(() => {
+    if (mounted && !authLoading && onboardingDone && user) {
+      router.navigate({ to: "/dashboard" });
+    }
+  }, [mounted, authLoading, onboardingDone, user, router]);
+
+  const open = search.onboarding === 1 && mounted && !onboardingDone;
 
   const setOpen = (v: boolean) => {
     if (v && onboardingDone) {
@@ -85,6 +99,31 @@ function HomeIndex() {
     if (v) navigate({ search: { onboarding: 1 } });
     else navigate({ search: { onboarding: 0 } });
   };
+
+  // While we don't yet know auth/localStorage state, show a quiet spinner to
+  // avoid flashing the wrong view.
+  if (!mounted || authLoading) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <Loader2 className="w-6 h-6 animate-spin text-violet-600" />
+      </div>
+    );
+  }
+
+  // Condition 2: redirect in progress
+  if (onboardingDone && user) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <Loader2 className="w-6 h-6 animate-spin text-violet-600" />
+      </div>
+    );
+  }
+
+  // Condition 3: onboarded but not logged in → compact welcome-back CTA
+  if (onboardingDone && !user) {
+    return <WelcomeBack isId={isId} />;
+  }
+
 
   const pillars = [
     {
