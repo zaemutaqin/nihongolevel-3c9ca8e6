@@ -148,9 +148,7 @@ function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <head>
-        <HeadContent />
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-H4TYKCR0X9"></script>
-        {/* Google Tag Manager */}
+         {/* Google Tag Manager */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -163,6 +161,9 @@ function RootShell({ children }: { children: ReactNode }) {
           }}
         />
         {/* End Google Tag Manager */}
+        <HeadContent />
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-H4TYKCR0X9"></script>
+       
         <script
           dangerouslySetInnerHTML={{
             __html: `window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-H4TYKCR0X9');`,
@@ -170,6 +171,16 @@ function RootShell({ children }: { children: ReactNode }) {
         />
       </head>
       <body>
+        {/* Google Tag Manager (noscript) */}
+        <noscript>
+          <iframe
+            src="https://www.googletagmanager.com/ns.html?id=GTM-M563BQKS"
+            height="0"
+            width="0"
+            style={{ display: "none", visibility: "hidden" }}
+          ></iframe>
+        </noscript>
+        {/* End Google Tag Manager (noscript) */}
         {children}
         <Scripts />
       </body>
