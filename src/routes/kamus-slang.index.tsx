@@ -12,7 +12,7 @@ export const Route = createFileRoute("/kamus-slang/")({
       {
         name: "description",
         content:
-          "Kumpulan arti kata gaul Jepang yang sering muncul di anime, dorama, dan manga — yabai, sugoi, kawaii, baka, tsundere, dan puluhan lainnya. Lengkap dengan contoh kalimat.",
+          "Arti kata gaul Jepang dari anime, dorama, dan manga — yabai, sugoi, kawaii, tsundere, dan puluhan lainnya, dengan contoh kalimat.",
       },
       { property: "og:title", content: "Kamus Slang Jepang — Arti Kata Gaul Anime & Dorama" },
       {
