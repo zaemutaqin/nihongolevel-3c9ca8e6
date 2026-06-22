@@ -148,8 +148,7 @@ function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <head>
-        <meta name="google-adsense-account" content="ca-pub-3683629915373595">
-         {/* Google Tag Manager */}
+       
         <script
           dangerouslySetInnerHTML={{
             __html: `
