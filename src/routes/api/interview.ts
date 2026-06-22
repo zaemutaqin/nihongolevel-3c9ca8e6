@@ -1,7 +1,7 @@
 export async function action({ request }: { request: Request }) {
   try {
     const { message, history } = await request.json();
-    const apiKey = process.env.VITE_GEMINI_API_KEY;
+    const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
       return new Response(JSON.stringify({ error: "API Key tidak ditemukan" }), { status: 500 });
