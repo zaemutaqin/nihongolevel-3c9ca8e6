@@ -1,5 +1,5 @@
-import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
-import { useState, useMemo } from "react";
+import { createFileRoute, useNavigate, useRouter, Link } from "@tanstack/react-router";
+import { useState, useMemo, useEffect } from "react";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import {
@@ -11,6 +11,7 @@ import {
   PlayCircle,
   Check,
   CheckCircle2,
+  Loader2,
 } from "lucide-react";
 import { useT } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
@@ -23,6 +24,7 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/lib/auth";
 import { toast } from "sonner";
 
 const searchSchema = z.object({
