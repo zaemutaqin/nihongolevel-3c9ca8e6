@@ -8,7 +8,14 @@ import { useAuth } from "@/lib/auth";
 
 export const Route = createFileRoute("/belajar/level/$levelId")({
   head: () => ({
-    meta: [{ title: "Daftar Unit — NihongoLevel" }],
+    meta: [
+      { title: "Daftar Unit — NihongoLevel" },
+      {
+        name: "description",
+        content:
+          "Jelajahi unit-unit pembelajaran bahasa Jepang per level — dari hiragana dasar hingga percakapan kerja, lengkap dengan progres tiap sesi.",
+      },
+    ],
   }),
   component: LevelDetailPage,
 });

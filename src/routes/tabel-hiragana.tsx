@@ -7,7 +7,7 @@ import { useLang } from "@/lib/i18n";
 export const Route = createFileRoute("/tabel-hiragana")({
   head: () => ({
     meta: [
-      { title: "Tabel Huruf Hiragana Lengkap dan Cara Membacanya — NihongoLevel" },
+      { title: "Tabel Hiragana Lengkap & Cara Baca — NihongoLevel" },
       {
         name: "description",
         content:
