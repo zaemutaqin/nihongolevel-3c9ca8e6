@@ -531,3 +531,58 @@ function ChoiceCard({
     </button>
   );
 }
+
+function WelcomeBack({ isId }: { isId: boolean }) {
+  const handleReset = () => {
+    try {
+      window.localStorage.removeItem("nihongolevel_onboarding_done");
+      window.localStorage.removeItem("nihongolevel_starting_level");
+    } catch {
+      /* ignore */
+    }
+    window.location.reload();
+  };
+
+  return (
+    <div className="min-h-[80vh] flex items-center justify-center px-4 py-16 bg-violet-50">
+      <div className="w-full max-w-md text-center">
+        <div className="inline-flex items-center gap-2 mb-8">
+          <span className="w-9 h-9 rounded-xl bg-violet-600 text-white flex items-center justify-center font-black">
+            日
+          </span>
+          <span className="text-xl font-black tracking-tight text-violet-900">
+            NihongoLevel
+          </span>
+        </div>
+
+        <h1 className="text-3xl sm:text-4xl font-black text-violet-900 mb-3 tracking-tight">
+          {isId ? "Selamat datang kembali" : "Welcome back"}
+        </h1>
+        <p className="text-base text-mutedink mb-8">
+          {isId
+            ? "Masuk untuk melanjutkan progres belajarmu."
+            : "Sign in to continue your learning progress."}
+        </p>
+
+        <Button
+          asChild
+          size="lg"
+          className="w-full h-12 rounded-full text-base font-bold shadow-md"
+        >
+          <Link to="/auth">
+            {isId ? "Masuk dengan Google" : "Sign in with Google"}
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+        </Button>
+
+        <button
+          type="button"
+          onClick={handleReset}
+          className="mt-6 text-sm text-violet-700 hover:text-violet-900 underline underline-offset-4"
+        >
+          {isId ? "Mulai dari awal" : "Start over"}
+        </button>
+      </div>
+    </div>
+  );
+}
