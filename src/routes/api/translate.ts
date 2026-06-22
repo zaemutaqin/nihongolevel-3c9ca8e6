@@ -1,26 +1,25 @@
-// Jalur integrasi langsung ke Google Gemini API secara gratis
-export async function action({ request }: { request: Request }) {
+export async function action({ request, context }: { request: Request; context: any }) {
   try {
     const { text, targetLanguage } = await request.json();
-    // Mengambil API Key dari context environment server Lovable
-const apiKey = (context as any)?.env?.GEMINI_API_KEY || (globalThis as any).process?.env?.GEMINI_API_KEY;
+    
+    // Trik mutakhir membaca secret di berbagai runtime server Lovable
+    const apiKey = 
+      context?.env?.GEMINI_API_KEY || 
+      (globalThis as any).process?.env?.GEMINI_API_KEY ||
+      (typeof process !== 'undefined' ? process.env?.GEMINI_API_KEY : null);
+
     if (!apiKey) {
-  console.error("DEBUG: GEMINI_API_KEY kosong atau tidak terbaca oleh server.");
-}
-
-
-
-    if (!apiKey) {
-      return new Response(JSON.stringify({ error: "API Key Gemini belum terkonfigurasi di .env" }), { status: 500 });
+      return new Response(JSON.stringify({ error: "Sistem gagal memuat kredensial AI. Periksa pengaturan Secret Lovable." }), { 
+        status: 500,
+        headers: { "Content-Type": "application/json" }
+      });
     }
 
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
     const response = await fetch(url, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         contents: [{
           parts: [{
@@ -31,12 +30,23 @@ const apiKey = (context as any)?.env?.GEMINI_API_KEY || (globalThis as any).proc
     });
 
     const data = await response.json();
+    
+    if (data.error) {
+      return new Response(JSON.stringify({ error: data.error.message }), { 
+        status: 400,
+        headers: { "Content-Type": "application/json" }
+      });
+    }
+
     const translatedText = data.candidates[0].content.parts[0].text;
 
     return new Response(JSON.stringify({ text: translatedText }), {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error: any) {
-    return new Response(JSON.stringify({ error: error.message }), { status: 500 });
+    return new Response(JSON.stringify({ error: error.message }), { 
+      status: 500,
+      headers: { "Content-Type": "application/json" }
+    });
   }
 }
