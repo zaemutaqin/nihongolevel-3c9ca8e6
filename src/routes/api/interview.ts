@@ -1,7 +1,8 @@
 export async function action({ request }: { request: Request }) {
   try {
     const { message, history } = await request.json();
-    const apiKey = process.env.GEMINI_API_KEY;
+   const apiKey = (context as any)?.env?.GEMINI_API_KEY || (globalThis as any).process?.env?.GEMINI_API_KEY;
+
 
     if (!apiKey) {
       return new Response(JSON.stringify({ error: "API Key tidak ditemukan" }), { status: 500 });
