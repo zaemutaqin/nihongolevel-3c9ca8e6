@@ -1,5 +1,5 @@
-import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
-import { useState, useMemo } from "react";
+import { createFileRoute, useNavigate, useRouter, Link } from "@tanstack/react-router";
+import { useState, useMemo, useEffect } from "react";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import {
@@ -11,6 +11,7 @@ import {
   PlayCircle,
   Check,
   CheckCircle2,
+  Loader2,
 } from "lucide-react";
 import { useT } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
@@ -23,6 +24,7 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/lib/auth";
 import { toast } from "sonner";
 
 const searchSchema = z.object({
@@ -64,12 +66,26 @@ function HomeIndex() {
   const search = Route.useSearch();
   const navigate = useNavigate({ from: "/" });
   const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
 
-  const onboardingDone =
-    typeof window !== "undefined" &&
-    window.localStorage.getItem(ONBOARDING_DONE_KEY) === "true";
+  // Client-only read to avoid SSR hydration mismatch
+  const [mounted, setMounted] = useState(false);
+  const [onboardingDone, setOnboardingDone] = useState(false);
+  useEffect(() => {
+    setOnboardingDone(
+      window.localStorage.getItem(ONBOARDING_DONE_KEY) === "true",
+    );
+    setMounted(true);
+  }, []);
 
-  const open = search.onboarding === 1 && !onboardingDone;
+  // Condition 2: onboarded + logged in → go to dashboard
+  useEffect(() => {
+    if (mounted && !authLoading && onboardingDone && user) {
+      router.navigate({ to: "/dashboard" });
+    }
+  }, [mounted, authLoading, onboardingDone, user, router]);
+
+  const open = search.onboarding === 1 && mounted && !onboardingDone;
 
   const setOpen = (v: boolean) => {
     if (v && onboardingDone) {
@@ -83,6 +99,31 @@ function HomeIndex() {
     if (v) navigate({ search: { onboarding: 1 } });
     else navigate({ search: { onboarding: 0 } });
   };
+
+  // While we don't yet know auth/localStorage state, show a quiet spinner to
+  // avoid flashing the wrong view.
+  if (!mounted || authLoading) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <Loader2 className="w-6 h-6 animate-spin text-violet-600" />
+      </div>
+    );
+  }
+
+  // Condition 2: redirect in progress
+  if (onboardingDone && user) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <Loader2 className="w-6 h-6 animate-spin text-violet-600" />
+      </div>
+    );
+  }
+
+  // Condition 3: onboarded but not logged in → compact welcome-back CTA
+  if (onboardingDone && !user) {
+    return <WelcomeBack isId={isId} />;
+  }
+
 
   const pillars = [
     {
@@ -488,5 +529,60 @@ function ChoiceCard({
         <div className="text-xs text-mutedink mt-0.5">{sub}</div>
       </div>
     </button>
+  );
+}
+
+function WelcomeBack({ isId }: { isId: boolean }) {
+  const handleReset = () => {
+    try {
+      window.localStorage.removeItem("nihongolevel_onboarding_done");
+      window.localStorage.removeItem("nihongolevel_starting_level");
+    } catch {
+      /* ignore */
+    }
+    window.location.reload();
+  };
+
+  return (
+    <div className="min-h-[80vh] flex items-center justify-center px-4 py-16 bg-violet-50">
+      <div className="w-full max-w-md text-center">
+        <div className="inline-flex items-center gap-2 mb-8">
+          <span className="w-9 h-9 rounded-xl bg-violet-600 text-white flex items-center justify-center font-black">
+            日
+          </span>
+          <span className="text-xl font-black tracking-tight text-violet-900">
+            NihongoLevel
+          </span>
+        </div>
+
+        <h1 className="text-3xl sm:text-4xl font-black text-violet-900 mb-3 tracking-tight">
+          {isId ? "Selamat datang kembali" : "Welcome back"}
+        </h1>
+        <p className="text-base text-mutedink mb-8">
+          {isId
+            ? "Masuk untuk melanjutkan progres belajarmu."
+            : "Sign in to continue your learning progress."}
+        </p>
+
+        <Button
+          asChild
+          size="lg"
+          className="w-full h-12 rounded-full text-base font-bold shadow-md"
+        >
+          <Link to="/auth">
+            {isId ? "Masuk dengan Google" : "Sign in with Google"}
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+        </Button>
+
+        <button
+          type="button"
+          onClick={handleReset}
+          className="mt-6 text-sm text-violet-700 hover:text-violet-900 underline underline-offset-4"
+        >
+          {isId ? "Mulai dari awal" : "Start over"}
+        </button>
+      </div>
+    </div>
   );
 }
