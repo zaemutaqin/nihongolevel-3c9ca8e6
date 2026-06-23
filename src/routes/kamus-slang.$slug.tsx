@@ -3,7 +3,6 @@ import { ArrowLeft, Volume2, Mic } from "lucide-react";
 import { getSlang, SLANG } from "@/lib/slang-data";
 import { useT } from "@/lib/i18n";
 import { HanashiteTeaserBanner } from "@/components/HanashiteTeaserBanner";
-import { speakJapanese } from "@/lib/tts";
 
 export const Route = createFileRoute("/kamus-slang/$slug")({
   loader: ({ params }) => {
@@ -60,9 +59,13 @@ export const Route = createFileRoute("/kamus-slang/$slug")({
 });
 
 function speak(text: string) {
-  speakJapanese(text, { rate: 0.9 });
+  if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = "ja-JP";
+  u.rate = 0.9;
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(u);
 }
-
 
 function SlangDetail() {
   const { entry: e } = Route.useLoaderData();

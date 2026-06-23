@@ -1,7 +1,25 @@
 import { useEffect, useState } from "react";
 import { Volume2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { speakJapanese, isTtsAvailable, onVoiceReady, getJapaneseVoice } from "@/lib/tts";
+
+let cachedJaVoice: SpeechSynthesisVoice | null | undefined = undefined;
+
+function pickJaVoice(): SpeechSynthesisVoice | null {
+  if (typeof window === "undefined" || !("speechSynthesis" in window)) return null;
+  if (cachedJaVoice !== undefined) return cachedJaVoice;
+  const voices = window.speechSynthesis.getVoices();
+  const ja = voices.find((v) => v.lang?.toLowerCase().startsWith("ja")) ?? null;
+  if (voices.length > 0) cachedJaVoice = ja;
+  return ja;
+}
+
+if (typeof window !== "undefined" && "speechSynthesis" in window) {
+  // Voices load asynchronously in some browsers
+  window.speechSynthesis.onvoiceschanged = () => {
+    cachedJaVoice = undefined;
+    pickJaVoice();
+  };
+}
 
 export function SpeakerButton({
   text,
@@ -16,26 +34,31 @@ export function SpeakerButton({
   const [available, setAvailable] = useState(true);
 
   useEffect(() => {
-    if (!isTtsAvailable()) {
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) {
       setAvailable(false);
       return;
     }
-    // Trigger voice load — getJapaneseVoice() may be null on first paint.
-    if (!getJapaneseVoice()) {
-      const off = onVoiceReady(() => {
-        /* voice now cached */
-      });
-      return off;
-    }
+    // trigger voice loading
+    pickJaVoice();
   }, []);
 
   const handleClick = () => {
-    if (!text || speaking) return;
-    speakJapanese(text, {
-      onStart: () => setSpeaking(true),
-      onEnd: () => setSpeaking(false),
-      onError: () => setSpeaking(false),
-    });
+    if (!text || !("speechSynthesis" in window) || speaking) return;
+    try {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = "ja-JP";
+      utterance.rate = 0.9;
+      utterance.pitch = 1;
+      const ja = pickJaVoice();
+      if (ja) utterance.voice = ja;
+      utterance.onend = () => setSpeaking(false);
+      utterance.onerror = () => setSpeaking(false);
+      setSpeaking(true);
+      window.speechSynthesis.speak(utterance);
+    } catch {
+      setSpeaking(false);
+    }
   };
 
   const dims = size === "sm" ? "w-7 h-7" : "w-9 h-9";
