@@ -35,6 +35,7 @@ import { Route as InterviewScenarioIdRouteImport } from './routes/interview.$sce
 import { Route as HanashiteScenarioIdRouteImport } from './routes/hanashite.$scenarioId'
 import { Route as BelajarReviewRouteImport } from './routes/belajar.review'
 import { Route as BelajarSessionIdRouteImport } from './routes/belajar.$sessionId'
+import { Route as ApiTranslateRouteImport } from './routes/api/translate'
 import { Route as ApiNamaJepangRouteImport } from './routes/api/nama-jepang'
 import { Route as ApiInterviewRouteImport } from './routes/api/interview'
 import { Route as ApiHanashiteRouteImport } from './routes/api/hanashite'
@@ -174,6 +175,11 @@ const BelajarSessionIdRoute = BelajarSessionIdRouteImport.update({
   path: '/belajar/$sessionId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiTranslateRoute = ApiTranslateRouteImport.update({
+  id: '/api/translate',
+  path: '/api/translate',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiNamaJepangRoute = ApiNamaJepangRouteImport.update({
   id: '/api/nama-jepang',
   path: '/api/nama-jepang',
@@ -242,6 +248,7 @@ export interface FileRoutesByFullPath {
   '/api/hanashite': typeof ApiHanashiteRoute
   '/api/interview': typeof ApiInterviewRoute
   '/api/nama-jepang': typeof ApiNamaJepangRoute
+  '/api/translate': typeof ApiTranslateRoute
   '/belajar/$sessionId': typeof BelajarSessionIdRoute
   '/belajar/review': typeof BelajarReviewRoute
   '/hanashite/$scenarioId': typeof HanashiteScenarioIdRoute
@@ -278,6 +285,7 @@ export interface FileRoutesByTo {
   '/api/hanashite': typeof ApiHanashiteRoute
   '/api/interview': typeof ApiInterviewRoute
   '/api/nama-jepang': typeof ApiNamaJepangRoute
+  '/api/translate': typeof ApiTranslateRoute
   '/belajar/$sessionId': typeof BelajarSessionIdRoute
   '/belajar/review': typeof BelajarReviewRoute
   '/hanashite/$scenarioId': typeof HanashiteScenarioIdRoute
@@ -315,6 +323,7 @@ export interface FileRoutesById {
   '/api/hanashite': typeof ApiHanashiteRoute
   '/api/interview': typeof ApiInterviewRoute
   '/api/nama-jepang': typeof ApiNamaJepangRoute
+  '/api/translate': typeof ApiTranslateRoute
   '/belajar/$sessionId': typeof BelajarSessionIdRoute
   '/belajar/review': typeof BelajarReviewRoute
   '/hanashite/$scenarioId': typeof HanashiteScenarioIdRoute
@@ -353,6 +362,7 @@ export interface FileRouteTypes {
     | '/api/hanashite'
     | '/api/interview'
     | '/api/nama-jepang'
+    | '/api/translate'
     | '/belajar/$sessionId'
     | '/belajar/review'
     | '/hanashite/$scenarioId'
@@ -389,6 +399,7 @@ export interface FileRouteTypes {
     | '/api/hanashite'
     | '/api/interview'
     | '/api/nama-jepang'
+    | '/api/translate'
     | '/belajar/$sessionId'
     | '/belajar/review'
     | '/hanashite/$scenarioId'
@@ -425,6 +436,7 @@ export interface FileRouteTypes {
     | '/api/hanashite'
     | '/api/interview'
     | '/api/nama-jepang'
+    | '/api/translate'
     | '/belajar/$sessionId'
     | '/belajar/review'
     | '/hanashite/$scenarioId'
@@ -462,6 +474,7 @@ export interface RootRouteChildren {
   ApiHanashiteRoute: typeof ApiHanashiteRoute
   ApiInterviewRoute: typeof ApiInterviewRoute
   ApiNamaJepangRoute: typeof ApiNamaJepangRoute
+  ApiTranslateRoute: typeof ApiTranslateRoute
   BelajarSessionIdRoute: typeof BelajarSessionIdRoute
   BelajarReviewRoute: typeof BelajarReviewRoute
   HanashiteScenarioIdRoute: typeof HanashiteScenarioIdRoute
@@ -659,6 +672,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BelajarSessionIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/translate': {
+      id: '/api/translate'
+      path: '/api/translate'
+      fullPath: '/api/translate'
+      preLoaderRoute: typeof ApiTranslateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/nama-jepang': {
       id: '/api/nama-jepang'
       path: '/api/nama-jepang'
@@ -742,6 +762,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiHanashiteRoute: ApiHanashiteRoute,
   ApiInterviewRoute: ApiInterviewRoute,
   ApiNamaJepangRoute: ApiNamaJepangRoute,
+  ApiTranslateRoute: ApiTranslateRoute,
   BelajarSessionIdRoute: BelajarSessionIdRoute,
   BelajarReviewRoute: BelajarReviewRoute,
   HanashiteScenarioIdRoute: HanashiteScenarioIdRoute,
