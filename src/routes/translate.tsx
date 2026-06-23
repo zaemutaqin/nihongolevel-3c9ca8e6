@@ -242,6 +242,7 @@ function Index() {
           listener: listener || undefined,
           mood: mood || undefined,
           lang,
+          guestFingerprint: getGuestFingerprint(),
         }),
         signal: ctrl.signal,
       });
