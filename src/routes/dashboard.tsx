@@ -34,6 +34,7 @@ import { SignInButton } from "@/components/SignInButton";
 import { getMyInterviewSessions, type InterviewSessionSummary } from "@/lib/interview-history.functions";
 import { getDueReviews } from "@/lib/review.functions";
 import { getCurriculumOverview, type LevelNode } from "@/lib/curriculum.functions";
+import { getLastSessionId, loadSessionProgress } from "@/lib/session-progress";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
