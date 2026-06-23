@@ -329,7 +329,7 @@ function InterviewPlay() {
     const res = await fetch("/api/interview", {
       method: "POST",
       headers,
-      body: JSON.stringify(body),
+      body: JSON.stringify({ ...body, guestFingerprint: getGuestFingerprint() }),
     });
     if (!res.ok) {
       const j = await res.json().catch(() => ({}));
