@@ -16,6 +16,7 @@ import { gtagEvent } from "@/lib/gtag";
 import { useAuth } from "@/lib/auth";
 import { SignInButton } from "@/components/SignInButton";
 import { UsageMeter } from "@/components/UsageMeter";
+import { getGuestFingerprint } from "@/lib/guest-fingerprint";
 
 
 
