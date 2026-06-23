@@ -228,23 +228,23 @@ function DashboardPage() {
       </div>
 
       {/* 3. Continue card */}
-      {overview?.next_session ? (
+      {resumeTarget ? (
         <div className="rounded-2xl bg-violet-600 text-white p-6 mb-6">
           <p className="text-xs uppercase tracking-wide font-semibold text-violet-100/80">
-            {overview.next_session.level_name} · {overview.next_session.unit_name}
+            {resumeTarget.level_name} · {resumeTarget.unit_name}
           </p>
           <h2 className="text-xl sm:text-2xl font-bold mt-1 mb-4">
-            {overview.next_session.session_title}
+            {resumeTarget.session_title}
           </h2>
           <div className="h-2 rounded-full bg-violet-900/40 overflow-hidden mb-4">
             <div
               className="h-full bg-lime-500 transition-all"
-              style={{ width: `${overview.next_session.unit_progress_pct}%` }}
+              style={{ width: `${resumeTarget.unit_progress_pct}%` }}
             />
           </div>
           <Link
             to="/belajar/$sessionId"
-            params={{ sessionId: overview.next_session.session_id }}
+            params={{ sessionId: resumeTarget.session_id }}
             className="inline-flex items-center gap-2 rounded-xl bg-lime-500 hover:bg-lime-400 px-5 py-3 text-sm font-bold text-violet-900 transition"
           >
             Lanjutkan sesi <ArrowRight className="w-4 h-4" />
