@@ -124,12 +124,32 @@ function SessionRunner({
   onClose: () => void;
 }) {
   const review = useServerFn(reviewItem);
-  const [phase, setPhase] = useState<Phase>("learn");
-  const [learnIdx, setLearnIdx] = useState(0);
+  // Resume from saved position if any (excluding "done" — start fresh after completion).
+  const resumed = useMemo(() => {
+    const p = loadSessionProgress(sessionId);
+    if (p && p.phase !== "done") return p;
+    return null;
+  }, [sessionId]);
+  const [phase, setPhase] = useState<Phase>(resumed?.phase ?? "learn");
+  const [learnIdx, setLearnIdx] = useState(resumed?.learnIdx ?? 0);
   const [lives, setLives] = useState(5);
   const [correctIds, setCorrectIds] = useState<Set<string>>(new Set());
   const [wrongIds, setWrongIds] = useState<Set<string>>(new Set());
   const [saved, setSaved] = useState(false);
+
+  // Persist current position whenever phase or learn index changes.
+  useEffect(() => {
+    if (phase === "done") {
+      clearSessionProgress(sessionId);
+      return;
+    }
+    saveSessionProgress({
+      sessionId,
+      phase: phase as SessionPhase,
+      learnIdx,
+      updatedAt: Date.now(),
+    });
+  }, [phase, learnIdx, sessionId]);
 
   const listenItems = useMemo(() => shuffle(items).slice(0, Math.min(items.length, 6)), [items]);
   const quizItems = useMemo(() => shuffle(items).slice(0, Math.min(items.length, 6)), [items]);
