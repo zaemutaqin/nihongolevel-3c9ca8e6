@@ -3,6 +3,7 @@ import { ArrowLeft, Volume2, Mic } from "lucide-react";
 import { getSlang, SLANG } from "@/lib/slang-data";
 import { useT } from "@/lib/i18n";
 import { HanashiteTeaserBanner } from "@/components/HanashiteTeaserBanner";
+import { speakJapanese } from "@/lib/tts";
 
 export const Route = createFileRoute("/kamus-slang/$slug")({
   loader: ({ params }) => {
