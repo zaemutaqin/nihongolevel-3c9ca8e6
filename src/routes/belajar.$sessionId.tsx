@@ -17,6 +17,12 @@ import {
 } from "@/components/learn-stages";
 import { reviewItem } from "@/lib/review.functions";
 import { getSessionDetail, findNextSessionId } from "@/lib/curriculum.functions";
+import {
+  loadSessionProgress,
+  saveSessionProgress,
+  clearSessionProgress,
+  type SessionPhase,
+} from "@/lib/session-progress";
 
 export const Route = createFileRoute("/belajar/$sessionId")({
   ssr: false,
