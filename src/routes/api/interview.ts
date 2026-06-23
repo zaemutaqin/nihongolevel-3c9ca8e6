@@ -25,7 +25,7 @@ import {
   deriveGuestKey,
   incrementGuestLimit,
 } from "@/lib/guest-rate-limit.server";
-import { getScenario } from "@/lib/interview-scenarios";
+import { getInterviewScenario as getScenario } from "@/lib/interview-scenarios";
 import { FREE_INTERVIEW_CAP } from "@/lib/usage.functions";
 
 const MessageSchema = z.object({
