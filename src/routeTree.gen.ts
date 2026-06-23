@@ -36,6 +36,7 @@ import { Route as HanashiteScenarioIdRouteImport } from './routes/hanashite.$sce
 import { Route as BelajarReviewRouteImport } from './routes/belajar.review'
 import { Route as BelajarSessionIdRouteImport } from './routes/belajar.$sessionId'
 import { Route as ApiNamaJepangRouteImport } from './routes/api/nama-jepang'
+import { Route as ApiInterviewRouteImport } from './routes/api/interview'
 import { Route as ApiHanashiteRouteImport } from './routes/api/hanashite'
 import { Route as ApiActivateProRouteImport } from './routes/api/activate-pro'
 import { Route as BelajarLevelLevelIdRouteImport } from './routes/belajar.level.$levelId'
@@ -178,6 +179,11 @@ const ApiNamaJepangRoute = ApiNamaJepangRouteImport.update({
   path: '/api/nama-jepang',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiInterviewRoute = ApiInterviewRouteImport.update({
+  id: '/api/interview',
+  path: '/api/interview',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiHanashiteRoute = ApiHanashiteRouteImport.update({
   id: '/api/hanashite',
   path: '/api/hanashite',
@@ -234,6 +240,7 @@ export interface FileRoutesByFullPath {
   '/translate': typeof TranslateRoute
   '/api/activate-pro': typeof ApiActivateProRoute
   '/api/hanashite': typeof ApiHanashiteRoute
+  '/api/interview': typeof ApiInterviewRoute
   '/api/nama-jepang': typeof ApiNamaJepangRoute
   '/belajar/$sessionId': typeof BelajarSessionIdRoute
   '/belajar/review': typeof BelajarReviewRoute
@@ -269,6 +276,7 @@ export interface FileRoutesByTo {
   '/translate': typeof TranslateRoute
   '/api/activate-pro': typeof ApiActivateProRoute
   '/api/hanashite': typeof ApiHanashiteRoute
+  '/api/interview': typeof ApiInterviewRoute
   '/api/nama-jepang': typeof ApiNamaJepangRoute
   '/belajar/$sessionId': typeof BelajarSessionIdRoute
   '/belajar/review': typeof BelajarReviewRoute
@@ -305,6 +313,7 @@ export interface FileRoutesById {
   '/translate': typeof TranslateRoute
   '/api/activate-pro': typeof ApiActivateProRoute
   '/api/hanashite': typeof ApiHanashiteRoute
+  '/api/interview': typeof ApiInterviewRoute
   '/api/nama-jepang': typeof ApiNamaJepangRoute
   '/belajar/$sessionId': typeof BelajarSessionIdRoute
   '/belajar/review': typeof BelajarReviewRoute
@@ -342,6 +351,7 @@ export interface FileRouteTypes {
     | '/translate'
     | '/api/activate-pro'
     | '/api/hanashite'
+    | '/api/interview'
     | '/api/nama-jepang'
     | '/belajar/$sessionId'
     | '/belajar/review'
@@ -377,6 +387,7 @@ export interface FileRouteTypes {
     | '/translate'
     | '/api/activate-pro'
     | '/api/hanashite'
+    | '/api/interview'
     | '/api/nama-jepang'
     | '/belajar/$sessionId'
     | '/belajar/review'
@@ -412,6 +423,7 @@ export interface FileRouteTypes {
     | '/translate'
     | '/api/activate-pro'
     | '/api/hanashite'
+    | '/api/interview'
     | '/api/nama-jepang'
     | '/belajar/$sessionId'
     | '/belajar/review'
@@ -448,6 +460,7 @@ export interface RootRouteChildren {
   TranslateRoute: typeof TranslateRoute
   ApiActivateProRoute: typeof ApiActivateProRoute
   ApiHanashiteRoute: typeof ApiHanashiteRoute
+  ApiInterviewRoute: typeof ApiInterviewRoute
   ApiNamaJepangRoute: typeof ApiNamaJepangRoute
   BelajarSessionIdRoute: typeof BelajarSessionIdRoute
   BelajarReviewRoute: typeof BelajarReviewRoute
@@ -653,6 +666,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiNamaJepangRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/interview': {
+      id: '/api/interview'
+      path: '/api/interview'
+      fullPath: '/api/interview'
+      preLoaderRoute: typeof ApiInterviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/hanashite': {
       id: '/api/hanashite'
       path: '/api/hanashite'
@@ -720,6 +740,7 @@ const rootRouteChildren: RootRouteChildren = {
   TranslateRoute: TranslateRoute,
   ApiActivateProRoute: ApiActivateProRoute,
   ApiHanashiteRoute: ApiHanashiteRoute,
+  ApiInterviewRoute: ApiInterviewRoute,
   ApiNamaJepangRoute: ApiNamaJepangRoute,
   BelajarSessionIdRoute: BelajarSessionIdRoute,
   BelajarReviewRoute: BelajarReviewRoute,
