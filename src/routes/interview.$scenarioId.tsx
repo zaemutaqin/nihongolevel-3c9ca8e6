@@ -34,6 +34,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { gtagEvent } from "@/lib/gtag";
 import { getCurriculumOverview } from "@/lib/curriculum.functions";
+import { speakJapanese } from "@/lib/tts";
+import { getGuestFingerprint } from "@/lib/guest-fingerprint";
 
 // ===== Types =====
 type LangMode = "translate" | "romaji" | "fullJp";
@@ -248,19 +250,14 @@ function InterviewPlay() {
 
   // ===== Audio =====
   const speak = (text: string, id: string) => {
-    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
-    window.speechSynthesis.cancel();
-    const utter = new SpeechSynthesisUtterance(text);
-    utter.lang = "ja-JP";
-    utter.rate = 0.95;
-    const voices = window.speechSynthesis.getVoices();
-    const ja = voices.find((v) => v.lang.startsWith("ja"));
-    if (ja) utter.voice = ja;
-    utter.onstart = () => setSpeaking(id);
-    utter.onend = () => setSpeaking(null);
-    utter.onerror = () => setSpeaking(null);
-    window.speechSynthesis.speak(utter);
+    speakJapanese(text, {
+      rate: 0.95,
+      onStart: () => setSpeaking(id),
+      onEnd: () => setSpeaking(null),
+      onError: () => setSpeaking(null),
+    });
   };
+
 
   // ===== Web Speech recognition =====
   const startRecording = () => {
@@ -332,7 +329,7 @@ function InterviewPlay() {
     const res = await fetch("/api/interview", {
       method: "POST",
       headers,
-      body: JSON.stringify(body),
+      body: JSON.stringify({ ...body, guestFingerprint: getGuestFingerprint() }),
     });
     if (!res.ok) {
       const j = await res.json().catch(() => ({}));

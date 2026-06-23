@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { getScenario } from "@/lib/hanashite-scenarios";
+import { speakJapanese } from "@/lib/tts";
 import { useT } from "@/lib/i18n";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
@@ -131,24 +132,17 @@ function HanashitePlay() {
   }
 
   const speak = (text: string, id: string) => {
-    if (typeof window === "undefined" || !("speechSynthesis" in window)) {
-      toast.error(isId ? "Browsermu tidak support suara." : "Your browser does not support speech.");
-      return;
-    }
-    window.speechSynthesis.cancel();
-    const utter = new SpeechSynthesisUtterance(text);
-    utter.lang = "ja-JP";
-    utter.rate = 0.9;
-    utter.pitch = 1.0;
-    // Try a Japanese voice
-    const voices = window.speechSynthesis.getVoices();
-    const jaVoice = voices.find((v) => v.lang.startsWith("ja"));
-    if (jaVoice) utter.voice = jaVoice;
-    utter.onstart = () => setSpeaking(id);
-    utter.onend = () => setSpeaking(null);
-    utter.onerror = () => setSpeaking(null);
-    window.speechSynthesis.speak(utter);
+    speakJapanese(text, {
+      rate: 0.95,
+      onStart: () => setSpeaking(id),
+      onEnd: () => setSpeaking(null),
+      onError: () => {
+        setSpeaking(null);
+        toast.error(isId ? "Browsermu tidak support suara." : "Your browser does not support speech.");
+      },
+    });
   };
+
 
   const startRecording = () => {
     if (typeof window === "undefined") return;

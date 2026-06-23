@@ -34,6 +34,7 @@ import { SignInButton } from "@/components/SignInButton";
 import { getMyInterviewSessions, type InterviewSessionSummary } from "@/lib/interview-history.functions";
 import { getDueReviews } from "@/lib/review.functions";
 import { getCurriculumOverview, type LevelNode } from "@/lib/curriculum.functions";
+import { getLastSessionId, loadSessionProgress } from "@/lib/session-progress";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
@@ -165,6 +166,26 @@ function DashboardPage() {
 
   const currentLevel = overview?.levels.find((l) => l.status === "current");
 
+  // Resume target: prefer locally-saved in-progress session (Lanjutkan dari
+  // titik terakhir), fall back to the server-computed next_session.
+  const resumeTarget = useMemo(() => {
+    if (typeof window === "undefined") return overview?.next_session ?? null;
+    const lastId = getLastSessionId();
+    if (lastId) {
+      const p = loadSessionProgress(lastId);
+      if (p && p.phase !== "done") {
+        return {
+          session_id: lastId,
+          session_title: overview?.next_session?.session_title ?? "Lanjutkan sesi terakhirmu",
+          unit_name: overview?.next_session?.unit_name ?? "",
+          level_name: overview?.next_session?.level_name ?? "",
+          unit_progress_pct: overview?.next_session?.unit_progress_pct ?? 0,
+        };
+      }
+    }
+    return overview?.next_session ?? null;
+  }, [overview]);
+
   return (
     <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-8">
       {/* 1. Greeting */}
@@ -207,23 +228,23 @@ function DashboardPage() {
       </div>
 
       {/* 3. Continue card */}
-      {overview?.next_session ? (
+      {resumeTarget ? (
         <div className="rounded-2xl bg-violet-600 text-white p-6 mb-6">
           <p className="text-xs uppercase tracking-wide font-semibold text-violet-100/80">
-            {overview.next_session.level_name} · {overview.next_session.unit_name}
+            {resumeTarget.level_name} · {resumeTarget.unit_name}
           </p>
           <h2 className="text-xl sm:text-2xl font-bold mt-1 mb-4">
-            {overview.next_session.session_title}
+            {resumeTarget.session_title}
           </h2>
           <div className="h-2 rounded-full bg-violet-900/40 overflow-hidden mb-4">
             <div
               className="h-full bg-lime-500 transition-all"
-              style={{ width: `${overview.next_session.unit_progress_pct}%` }}
+              style={{ width: `${resumeTarget.unit_progress_pct}%` }}
             />
           </div>
           <Link
             to="/belajar/$sessionId"
-            params={{ sessionId: overview.next_session.session_id }}
+            params={{ sessionId: resumeTarget.session_id }}
             className="inline-flex items-center gap-2 rounded-xl bg-lime-500 hover:bg-lime-400 px-5 py-3 text-sm font-bold text-violet-900 transition"
           >
             Lanjutkan sesi <ArrowRight className="w-4 h-4" />

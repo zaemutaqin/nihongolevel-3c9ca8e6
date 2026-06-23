@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Volume2, Check, ArrowRight, RotateCw, Trophy } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { speakJapanese } from "@/lib/tts";
 
 export type LearnItem = {
   id: string;
@@ -21,17 +22,9 @@ export function shuffle<T>(arr: T[]): T[] {
 }
 
 export function speak(text: string) {
-  if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
-  try {
-    window.speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = "ja-JP";
-    u.rate = 0.85;
-    window.speechSynthesis.speak(u);
-  } catch {
-    /* noop */
-  }
+  speakJapanese(text, { rate: 0.9 });
 }
+
 
 export function pickChoices(
   items: LearnItem[],
