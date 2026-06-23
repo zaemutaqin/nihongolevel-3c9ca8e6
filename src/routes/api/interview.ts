@@ -3,55 +3,42 @@ import { createAPIFileRoute } from '@tanstack/start/api';
 
 export const Route = createAPIFileRoute('/api/interview')({
   POST: async ({ request }) => {
-    const responseHeaders = new Headers({
-      "Content-Type": "application/json"
-    });
-
     try {
-      const body = await request.json();
+      const body = await request.json() as { message?: string };
       
-      if (!body || typeof body.message !== "string" || body.message.trim() === "") {
-        return new Response(JSON.stringify({ error: "Pesan tidak valid." }), { status: 400, headers: responseHeaders });
+      if (!body || !body.message) {
+        return new Response(JSON.stringify({ error: "Pesan kosong" }), { status: 400 });
       }
 
-      const sanitizedMessage = body.message.replace(/[<>:"']/g, "").substring(0, 500);
-
-      const apiKey = (globalThis as any).process?.env?.GEMINI_API_KEY;
+      const apiKey = (globalThis as any).process?.env?.GEMINI_API_KEY || (process?.env?.GEMINI_API_KEY);
       if (!apiKey) {
-        return new Response(JSON.stringify({ error: "Kredensial AI tidak ditemukan." }), { status: 500, headers: responseHeaders });
+        return new Response(JSON.stringify({ error: "API Key belum terkonfigurasi" }), { status: 500 });
       }
 
       const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
-      const systemInstruction = "Kamu adalah Pewawancara kerja atau Guru Bahasa Jepang asli dalam sesi interview interaktif di aplikasi Nihongolevel. Jawab pengguna menggunakan bahasa Jepang yang natural (sopan/bisnis), sertakan Romaji dan arti bahasa Indonesia di bawahnya dengan rapi. Ajukan tepat 1 pertanyaan baru di akhir kalimat.";
-
-      const geminiResponse = await fetch(url, {
+      const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           contents: [
-            { role: "user", parts: [{ text: systemInstruction }] },
-            { role: "model", parts: [{ text: "Baik, saya siap menjadi pewawancara simulasi bahasa Jepang." }] },
-            { role: "user", parts: [{ text: sanitizedMessage }] }
+            { role: "user", parts: [{ text: "Jawab dengan bahasa Jepang sopan, beri romaji dan arti Indonesia harian. Beri 1 pertanyaan baru di akhir." }] },
+            { role: "model", parts: [{ text: "Hai, wakarimashita." }] },
+            { role: "user", parts: [{ text: body.message }] }
           ]
         })
       });
 
-      const data = await geminiResponse.json();
-      if (data.error) {
-        return new Response(JSON.stringify({ error: data.error.message }), { status: 400, headers: responseHeaders });
-      }
-
-      const aiReply = data.candidates[0].content.parts[0].text;
+      const data = await response.json() as any;
+      const aiReply = data?.candidates?.[0]?.content?.parts?.[0]?.text || "Maaf, coba lagi.";
 
       return new Response(JSON.stringify({ 
         reply: aiReply,
         response: aiReply,
-        message: aiReply,
-        text: aiReply
-      }), { headers: responseHeaders });
+        message: aiReply
+      }), { headers: { "Content-Type": "application/json" } });
 
-    } catch (error: any) {
-      return new Response(JSON.stringify({ error: "Internal Server Error" }), { status: 500, headers: responseHeaders });
+    } catch (e: any) {
+      return new Response(JSON.stringify({ error: "Server Error" }), { status: 500 });
     }
   }
 });
