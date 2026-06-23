@@ -266,7 +266,7 @@ export const Route = createFileRoute("/api/translate")({
           const limit = await checkGuestLimit("tr", key, 5);
           if (!limit.ok) {
             return jsonResponse(
-              { error: "GUEST_LIMIT_REACHED", used: limit.used, cap: limit.cap },
+              { error: "RATE_LIMITED", used: limit.used, cap: limit.cap },
               429,
               allowedOrigin,
             );
