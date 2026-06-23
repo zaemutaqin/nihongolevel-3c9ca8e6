@@ -34,6 +34,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { gtagEvent } from "@/lib/gtag";
 import { getCurriculumOverview } from "@/lib/curriculum.functions";
+import { speakJapanese } from "@/lib/tts";
+import { getGuestFingerprint } from "@/lib/guest-fingerprint";
 
 // ===== Types =====
 type LangMode = "translate" | "romaji" | "fullJp";
