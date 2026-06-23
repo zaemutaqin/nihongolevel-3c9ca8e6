@@ -166,6 +166,26 @@ function DashboardPage() {
 
   const currentLevel = overview?.levels.find((l) => l.status === "current");
 
+  // Resume target: prefer locally-saved in-progress session (Lanjutkan dari
+  // titik terakhir), fall back to the server-computed next_session.
+  const resumeTarget = useMemo(() => {
+    if (typeof window === "undefined") return overview?.next_session ?? null;
+    const lastId = getLastSessionId();
+    if (lastId) {
+      const p = loadSessionProgress(lastId);
+      if (p && p.phase !== "done") {
+        return {
+          session_id: lastId,
+          session_title: overview?.next_session?.session_title ?? "Lanjutkan sesi terakhirmu",
+          unit_name: overview?.next_session?.unit_name ?? "",
+          level_name: overview?.next_session?.level_name ?? "",
+          unit_progress_pct: overview?.next_session?.unit_progress_pct ?? 0,
+        };
+      }
+    }
+    return overview?.next_session ?? null;
+  }, [overview]);
+
   return (
     <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-8">
       {/* 1. Greeting */}
