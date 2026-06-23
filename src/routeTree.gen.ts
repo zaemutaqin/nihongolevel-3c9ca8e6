@@ -35,9 +35,7 @@ import { Route as InterviewScenarioIdRouteImport } from './routes/interview.$sce
 import { Route as HanashiteScenarioIdRouteImport } from './routes/hanashite.$scenarioId'
 import { Route as BelajarReviewRouteImport } from './routes/belajar.review'
 import { Route as BelajarSessionIdRouteImport } from './routes/belajar.$sessionId'
-import { Route as ApiTranslateRouteImport } from './routes/api/translate'
 import { Route as ApiNamaJepangRouteImport } from './routes/api/nama-jepang'
-import { Route as ApiInterviewRouteImport } from './routes/api/interview'
 import { Route as ApiHanashiteRouteImport } from './routes/api/hanashite'
 import { Route as ApiActivateProRouteImport } from './routes/api/activate-pro'
 import { Route as BelajarLevelLevelIdRouteImport } from './routes/belajar.level.$levelId'
@@ -175,19 +173,9 @@ const BelajarSessionIdRoute = BelajarSessionIdRouteImport.update({
   path: '/belajar/$sessionId',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiTranslateRoute = ApiTranslateRouteImport.update({
-  id: '/api/translate',
-  path: '/api/translate',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ApiNamaJepangRoute = ApiNamaJepangRouteImport.update({
   id: '/api/nama-jepang',
   path: '/api/nama-jepang',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiInterviewRoute = ApiInterviewRouteImport.update({
-  id: '/api/interview',
-  path: '/api/interview',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiHanashiteRoute = ApiHanashiteRouteImport.update({
@@ -246,9 +234,7 @@ export interface FileRoutesByFullPath {
   '/translate': typeof TranslateRoute
   '/api/activate-pro': typeof ApiActivateProRoute
   '/api/hanashite': typeof ApiHanashiteRoute
-  '/api/interview': typeof ApiInterviewRoute
   '/api/nama-jepang': typeof ApiNamaJepangRoute
-  '/api/translate': typeof ApiTranslateRoute
   '/belajar/$sessionId': typeof BelajarSessionIdRoute
   '/belajar/review': typeof BelajarReviewRoute
   '/hanashite/$scenarioId': typeof HanashiteScenarioIdRoute
@@ -283,9 +269,7 @@ export interface FileRoutesByTo {
   '/translate': typeof TranslateRoute
   '/api/activate-pro': typeof ApiActivateProRoute
   '/api/hanashite': typeof ApiHanashiteRoute
-  '/api/interview': typeof ApiInterviewRoute
   '/api/nama-jepang': typeof ApiNamaJepangRoute
-  '/api/translate': typeof ApiTranslateRoute
   '/belajar/$sessionId': typeof BelajarSessionIdRoute
   '/belajar/review': typeof BelajarReviewRoute
   '/hanashite/$scenarioId': typeof HanashiteScenarioIdRoute
@@ -321,9 +305,7 @@ export interface FileRoutesById {
   '/translate': typeof TranslateRoute
   '/api/activate-pro': typeof ApiActivateProRoute
   '/api/hanashite': typeof ApiHanashiteRoute
-  '/api/interview': typeof ApiInterviewRoute
   '/api/nama-jepang': typeof ApiNamaJepangRoute
-  '/api/translate': typeof ApiTranslateRoute
   '/belajar/$sessionId': typeof BelajarSessionIdRoute
   '/belajar/review': typeof BelajarReviewRoute
   '/hanashite/$scenarioId': typeof HanashiteScenarioIdRoute
@@ -360,9 +342,7 @@ export interface FileRouteTypes {
     | '/translate'
     | '/api/activate-pro'
     | '/api/hanashite'
-    | '/api/interview'
     | '/api/nama-jepang'
-    | '/api/translate'
     | '/belajar/$sessionId'
     | '/belajar/review'
     | '/hanashite/$scenarioId'
@@ -397,9 +377,7 @@ export interface FileRouteTypes {
     | '/translate'
     | '/api/activate-pro'
     | '/api/hanashite'
-    | '/api/interview'
     | '/api/nama-jepang'
-    | '/api/translate'
     | '/belajar/$sessionId'
     | '/belajar/review'
     | '/hanashite/$scenarioId'
@@ -434,9 +412,7 @@ export interface FileRouteTypes {
     | '/translate'
     | '/api/activate-pro'
     | '/api/hanashite'
-    | '/api/interview'
     | '/api/nama-jepang'
-    | '/api/translate'
     | '/belajar/$sessionId'
     | '/belajar/review'
     | '/hanashite/$scenarioId'
@@ -472,9 +448,7 @@ export interface RootRouteChildren {
   TranslateRoute: typeof TranslateRoute
   ApiActivateProRoute: typeof ApiActivateProRoute
   ApiHanashiteRoute: typeof ApiHanashiteRoute
-  ApiInterviewRoute: typeof ApiInterviewRoute
   ApiNamaJepangRoute: typeof ApiNamaJepangRoute
-  ApiTranslateRoute: typeof ApiTranslateRoute
   BelajarSessionIdRoute: typeof BelajarSessionIdRoute
   BelajarReviewRoute: typeof BelajarReviewRoute
   HanashiteScenarioIdRoute: typeof HanashiteScenarioIdRoute
@@ -672,25 +646,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BelajarSessionIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/translate': {
-      id: '/api/translate'
-      path: '/api/translate'
-      fullPath: '/api/translate'
-      preLoaderRoute: typeof ApiTranslateRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/nama-jepang': {
       id: '/api/nama-jepang'
       path: '/api/nama-jepang'
       fullPath: '/api/nama-jepang'
       preLoaderRoute: typeof ApiNamaJepangRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/interview': {
-      id: '/api/interview'
-      path: '/api/interview'
-      fullPath: '/api/interview'
-      preLoaderRoute: typeof ApiInterviewRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/hanashite': {
@@ -760,9 +720,7 @@ const rootRouteChildren: RootRouteChildren = {
   TranslateRoute: TranslateRoute,
   ApiActivateProRoute: ApiActivateProRoute,
   ApiHanashiteRoute: ApiHanashiteRoute,
-  ApiInterviewRoute: ApiInterviewRoute,
   ApiNamaJepangRoute: ApiNamaJepangRoute,
-  ApiTranslateRoute: ApiTranslateRoute,
   BelajarSessionIdRoute: BelajarSessionIdRoute,
   BelajarReviewRoute: BelajarReviewRoute,
   HanashiteScenarioIdRoute: HanashiteScenarioIdRoute,
@@ -778,3 +736,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
