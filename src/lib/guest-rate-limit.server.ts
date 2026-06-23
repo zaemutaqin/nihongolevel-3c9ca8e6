@@ -1,12 +1,18 @@
 // File: src/lib/guest-rate-limit.server.ts
-// Bypass manual untuk meloloskan rate limit guest tanpa database Supabase
+// Pembenahan Build Error: Mempertahankan struktur fungsi asli tanpa query ke database
+
+export interface GuestRateLimitResult {
+  allowed: boolean;
+  remaining: number;
+  resetTime: string;
+}
 
 export async function checkGuestRateLimit(
   request: Request, 
   type: 'translate' | 'interview', 
   guestFingerprint: string | null
-) {
-  // Kita buat sistem selalu mengizinkan (allowed: true) agar tidak memicu error database internal
+): Promise<GuestRateLimitResult> {
+  // Selalu loloskan secara instan untuk menghindari error tabel database Supabase
   return {
     allowed: true,
     remaining: 5,
@@ -18,7 +24,7 @@ export async function logGuestUsage(
   request: Request,
   type: 'translate' | 'interview',
   guestFingerprint: string | null
-) {
-  // Kosongkan fungsinya agar tidak melakukan write/insert ke tabel database yang error atau belum ada
+): Promise<boolean> {
+  // Loloskan tanpa melakukan write/insert ke database Supabase
   return true;
 }
