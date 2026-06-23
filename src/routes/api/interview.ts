@@ -7,13 +7,11 @@ export const Route = createAPIFileRoute('/api/interview')({
     try {
       const body = await request.json() as { message?: string; fingerprint?: string };
       
-      // Mengatasi Celah 1: Batasi input chat interview
       if (!body || !body.message || typeof body.message !== 'string') {
         return new Response(JSON.stringify({ error: "Pesan tidak boleh kosong" }), { status: 400, headers: responseHeaders });
       }
       const cleanMessage = body.message.trim().substring(0, 500);
 
-      // Mengatasi Celah 2: Validasi kuota harian interview
       const fingerprint = body.fingerprint || null;
       const rateLimit = await checkGuestRateLimit(request, 'interview', fingerprint);
       if (!rateLimit.allowed) {
@@ -35,7 +33,7 @@ export const Route = createAPIFileRoute('/api/interview')({
               { role: "user", parts: [{ text: "Kamu adalah pewawancara kerja simulasi bahasa Jepang di Nihongolevel. Jawab sopan dengan arti Indonesia." }] },
               { role: "user", parts: [{ text: cleanMessage }] }
             ]
-          }
+          })
         }
       );
 
