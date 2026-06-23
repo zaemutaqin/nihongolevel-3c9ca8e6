@@ -9,11 +9,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import * as wanakana from "wanakana";
-import {
-  getInterviewScenario,
-  getScenarioHints,
-  type ScenarioHint,
-} from "@/lib/interview-scenarios";
+import { getInterviewScenario, getScenarioHints, type ScenarioHint } from "@/lib/interview-scenarios";
 import { useT } from "@/lib/i18n";
 import { useAuth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
@@ -22,7 +18,7 @@ import { getCurriculumOverview } from "@/lib/curriculum.functions";
 import { speakJapanese } from "@/lib/tts";
 import { getGuestFingerprint } from "@/lib/guest-fingerprint";
 
-// ===== Types (Tetap Sama) =====
+// ===== Types =====
 type LangMode = "translate" | "romaji" | "fullJp";
 type AnswerMode = "mcq" | "mic" | "type";
 type McqOption = { text: string; romaji?: string; feedback?: string };
@@ -34,37 +30,6 @@ type AssistantMsg = {
 };
 type UserMsg = { role: "user"; id: string; content: string };
 type Msg = AssistantMsg | UserMsg;
-
-type Suggestion = { point: string; detail: string };
-type Evaluation = {
-  grammar_score: number; naturalness_score: number; confidence_score: number;
-  vocabulary_level: string; summary: string; suggestions: Suggestion[];
-};
-
-type SR = {
-  lang: string; continuous: boolean; interimResults: boolean;
-  onresult: ((ev: any) => void) | null; onerror: ((ev: any) => void) | null;
-  onend: (() => void) | null; start: () => void; stop: () => void;
-};
-
-const LS_LANG_MODE = "nihongolevel_interview_lang_mode";
-const LS_ANSWER_MODE = "nihongolevel_interview_answer_mode";
-
-function loadLangModePref(): LangMode | null {
-  if (typeof window === "undefined") return null;
-  const v = window.localStorage.getItem(LS_LANG_MODE);
-  return v === "translate" || v === "romaji" || v === "fullJp" ? v : null;
-}
-function loadAnswerModePref(): AnswerMode | null {
-  if (typeof window === "undefined") return null;
-  const v = window.localStorage.getItem(LS_ANSWER_MODE);
-  return v === "mcq" || v === "mic" || v === "type" ? v : null;
-}
-function defaultLangModeForLevel(order: number | null): LangMode {
-  if (order == null || order <= 1) return "translate";
-  if (order <= 3) return "romaji";
-  return "fullJp";
-}
 
 export const Route = createFileRoute("/interview/$scenarioId")({
   component: InterviewPlay,
@@ -78,39 +43,16 @@ function InterviewPlay() {
   const isId = lang === "id";
   const navigate = useNavigate();
 
-  const fetchOverview = useServerFn(getCurriculumOverview);
-  const overviewQ = useQuery({
-    queryKey: ["curriculum-overview", user?.id ?? "anon"],
-    queryFn: () => fetchOverview(),
-    enabled: !!user,
-    staleTime: 60_000,
-  });
-  
-  const currentLevelOrder = useMemo(() => {
-    const lv = overviewQ.data?.levels.find((l) => l.status === "current");
-    return lv?.order_index ?? null;
-  }, [overviewQ.data]);
-
-  const [langMode, setLangModeRaw] = useState<LangMode>("translate");
-  const [answerMode, setAnswerModeRaw] = useState<AnswerMode>("type");
-  
-  // (State-state lainnya...)
-  const [messages, setMessages] = useState<Msg[]>([]);
-  const [input, setInput] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [speaking, setSpeaking] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  // ===== FIXED LOGIC: Direct Fetch ke Gemini =====
+  // ===== Direct Fetch ke Gemini (Ganti Backend) =====
   const callApi = async (body: any) => {
-    // Menggunakan fallback jika VITE_ tidak ada, gunakan variabel Lovable Secret
+    // Membaca API Key (prioritaskan VITE, fallback ke proses.env)
     const apiKey = import.meta.env.VITE_GEMINI_API_KEY || import.meta.env.GEMINI_API_KEY;
     if (!apiKey) throw new Error("AUTH_REQUIRED");
 
     const prompt = `Anda adalah pewawancara kerja bahasa Jepang.
       Scenario: ${scenario?.title_en}. 
-      History: ${JSON.stringify(body.messages)}. 
-      Respons JSON murni (tanpa markdown):
+      History: ${JSON.stringify(body.messages)}.
+      Berikan respons JSON murni (TANPA MARKDOWN):
       {
         "japanese": "...",
         "romaji": "...",
@@ -129,16 +71,21 @@ function InterviewPlay() {
     
     const data = await res.json();
     let text = data.candidates[0].content.parts[0].text;
-    text = text.replace(/```json/g, "").replace(/
-```/g, "").trim();
+    text = text.replace(/```json/g, "").replace(/```/g, "").trim();
     return { structured: JSON.parse(text) };
   };
+
+  const [messages, setMessages] = useState<Msg[]>([]);
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [langMode, setLangMode] = useState<LangMode>("translate");
+  const [error, setError] = useState<string | null>(null);
 
   const send = async (rawText: string) => {
     const text = rawText.trim();
     if (!text || loading) return;
     const userMsg: UserMsg = { id: crypto.randomUUID(), role: "user", content: text };
-    const next: Msg[] = [...messages, userMsg];
+    const next = [...messages, userMsg];
     setMessages(next);
     setInput("");
     setLoading(true);
@@ -147,17 +94,12 @@ function InterviewPlay() {
       const j = await callApi({ messages: next });
       const s = j.structured;
       const aiMsg: AssistantMsg = {
-        id: crypto.randomUUID(),
-        role: "assistant",
-        japanese: s.japanese,
-        romaji: s.romaji,
-        translation: s.translation,
-        options: s.options,
-        correctIndex: s.correct_index ?? 0,
-        displayMode: langMode,
+        id: crypto.randomUUID(), role: "assistant", japanese: s.japanese,
+        romaji: s.romaji, translation: s.translation, options: s.options,
+        correctIndex: s.correct_index ?? 0, displayMode: langMode,
       };
       setMessages((m) => [...m, aiMsg]);
-      speakJapanese(aiMsg.japanese, { onStart: () => setSpeaking(aiMsg.id), onEnd: () => setSpeaking(null) });
+      speakJapanese(aiMsg.japanese, {});
     } catch {
       setError("AI tidak tersedia.");
     } finally {
@@ -165,11 +107,31 @@ function InterviewPlay() {
     }
   };
 
-  // Pastikan render UI kamu di sini tetap sama dengan kode aslimu
   if (!scenario) return null;
-  
+
   return (
-     // Masukkan render UI kamu di sini
-     <div></div>
+    <div className="max-w-2xl mx-auto p-6 space-y-6">
+      <h1 className="text-2xl font-bold">{isId ? scenario.title_id : scenario.title_en}</h1>
+      <div className="space-y-4">
+        {messages.map((m) => (
+          <div key={m.id} className={m.role === "user" ? "text-right" : "text-left"}>
+            <div className={cn("p-4 rounded-xl", m.role === "user" ? "bg-violet-600 text-white" : "bg-gray-100")}>
+              {m.role === "assistant" ? m.japanese : m.content}
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="flex gap-2">
+        <input 
+          value={input} 
+          onChange={(e) => setInput(e.target.value)} 
+          className="border p-2 flex-1 rounded-xl"
+        />
+        <button onClick={() => send(input)} className="bg-violet-600 text-white px-6 py-2 rounded-xl">
+          {loading ? <Loader2 className="animate-spin" /> : "Kirim"}
+        </button>
+      </div>
+      {error && <p className="text-red-500 text-sm">{error}</p>}
+    </div>
   );
 }
