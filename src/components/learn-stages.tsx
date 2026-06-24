@@ -214,7 +214,6 @@ export function Stat({
   value: string | number;
   accent?: boolean;
 }) {
-  const { lang } = useT();
   return (
     <div
       className={cn(
@@ -249,6 +248,7 @@ export function DoneScreen({
   primaryLabel: string;
   onRetry: () => void;
 }) {
+  const { lang } = useT();
   return (
     <div className="w-full max-w-md flex flex-col items-center gap-6 text-center">
       <div className="h-24 w-24 rounded-full bg-lime-500 grid place-items-center shadow-lg">
