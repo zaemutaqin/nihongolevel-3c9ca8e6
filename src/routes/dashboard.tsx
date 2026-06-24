@@ -170,7 +170,7 @@ function DashboardPage() {
     overview?.full_name?.split(" ")[0] ||
     profile?.full_name?.split(" ")[0] ||
     user.email?.split("@")[0] ||
-    "kamu";
+    (lang === "en" ? "there" : "kamu");
 
   const currentLevel = overview?.levels.find((l) => l.status === "current");
 
@@ -178,20 +178,18 @@ function DashboardPage() {
     <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-8">
       {/* 1. Greeting */}
       <h1 className="text-2xl sm:text-3xl font-bold text-violet-900">
-        Selamat datang kembali, {greetingName} 👋
+        {t("dash.welcome").replace("{name}", greetingName)}
       </h1>
       <p className="text-sm text-muted-foreground mb-6">
         {overview?.last_session
-          ? lang === "en"
-            ? `Continue from ${overview.last_session.level_name} · ${overview.last_session.unit_name}`
-            : `Lanjutkan dari ${overview.last_session.level_name} · ${overview.last_session.unit_name}`
+          ? t("dash.continue_from")
+              .replace("{level}", overview.last_session.level_name)
+              .replace("{unit}", overview.last_session.unit_name)
           : overview?.next_session
-            ? lang === "en"
-              ? `Start from ${overview.next_session.level_name} · ${overview.next_session.unit_name}`
-              : `Mulai dari ${overview.next_session.level_name} · ${overview.next_session.unit_name}`
-            : lang === "en"
-              ? "Ready to start your journey?"
-              : "Siap mulai perjalananmu?"}
+            ? t("dash.start_from")
+                .replace("{level}", overview.next_session.level_name)
+                .replace("{unit}", overview.next_session.unit_name)
+            : t("dash.ready")}
       </p>
 
       {/* 2. Streak banner */}
@@ -201,10 +199,12 @@ function DashboardPage() {
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-2xl font-bold leading-none">
-            {streak} <span className="text-base font-normal text-white/70">hari streak</span>
+            {streak} <span className="text-base font-normal text-white/70">{t("dash.streak_label")}</span>
           </p>
           <p className="text-xs text-white/60 mt-1">
-            {dueItems.length > 0 ? `${dueItems.length} item siap diulang` : "Pertahankan momentum belajarmu"}
+            {dueItems.length > 0
+              ? t("dash.due_items").replace("{count}", String(dueItems.length))
+              : t("dash.keep_going")}
           </p>
         </div>
         {dueItems.length > 0 ? (
@@ -212,11 +212,11 @@ function DashboardPage() {
             to="/belajar/review"
             className="inline-flex items-center gap-1.5 rounded-xl bg-lime-500 hover:bg-lime-400 px-4 py-2.5 text-sm font-bold text-violet-900 transition flex-shrink-0"
           >
-            Review hari ini <ArrowRight className="w-4 h-4" />
+            {t("dash.review_today")} <ArrowRight className="w-4 h-4" />
           </Link>
         ) : (
           <span className="inline-flex items-center gap-1.5 rounded-xl bg-white/10 px-4 py-2.5 text-sm font-semibold text-white/80 flex-shrink-0">
-            ✓ Semua review selesai!
+            {t("dash.all_done")}
           </span>
         )}
       </div>
@@ -241,7 +241,7 @@ function DashboardPage() {
             params={{ sessionId: overview.next_session.session_id }}
             className="inline-flex items-center gap-2 rounded-xl bg-lime-500 hover:bg-lime-400 px-5 py-3 text-sm font-bold text-violet-900 transition"
           >
-            {lang === "en" ? "Continue session" : "Lanjutkan sesi"} <ArrowRight className="w-4 h-4" />
+            {t("dash.continue_session")} <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
       ) : overviewQuery.isLoading ? (
@@ -249,8 +249,8 @@ function DashboardPage() {
       ) : (
         <div className="rounded-2xl bg-lime-100 border border-lime-300 p-6 mb-6 text-center">
           <Trophy className="w-8 h-8 text-lime-700 mx-auto mb-2" />
-          <p className="font-bold text-violet-900">{lang === "en" ? "All available sessions are complete!" : "Semua sesi tersedia sudah selesai!"}</p>
-          <p className="text-sm text-violet-900/70 mt-1">{lang === "en" ? "New levels will open soon." : "Level baru akan dibuka segera."}</p>
+          <p className="font-bold text-violet-900">{t("dash.all_sessions_done")}</p>
+          <p className="text-sm text-violet-900/70 mt-1">{t("dash.new_levels_soon")}</p>
         </div>
       )}
 
@@ -258,35 +258,33 @@ function DashboardPage() {
       <div className="grid grid-cols-3 gap-3 mb-8">
         <MiniStat
           icon={<BookOpen className="w-4 h-4" />}
-          label={lang === "en" ? "Items learned" : "Kalimat dipelajari"}
+          label={t("dash.sentences_learned")}
           value={overview?.items_learned ?? 0}
         />
         <MiniStat
           icon={<RefreshCw className="w-4 h-4" />}
-          label={lang === "en" ? "Need review" : "Perlu diulang"}
+          label={t("dash.need_review")}
           value={dueItems.length}
         />
         <MiniStat
           icon={<Trophy className="w-4 h-4" />}
-          label={lang === "en" ? "Current level" : "Level saat ini"}
+          label={t("dash.current_level")}
           value={currentLevel ? `L${currentLevel.order_index}` : "—"}
         />
       </div>
 
-      {/* 5. Jalur belajar */}
-      <Section title={lang === "en" ? "Learning path" : "Jalur belajar"}>
+      {/* 5. Learning path */}
+      <Section title={t("dash.learning_path")}>
         {overviewQuery.isLoading ? (
-          <p className="text-sm text-muted-foreground">Memuat…</p>
+          <p className="text-sm text-muted-foreground">{t("dash.loading")}</p>
         ) : (
           <div className="space-y-3">
             {(overview?.levels ?? []).map((lvl) => (
-              <LevelRow key={lvl.id} level={lvl} lang={lang} />
+              <LevelRow key={lvl.id} level={lvl} />
             ))}
           </div>
         )}
       </Section>
-
-      {/* === Bagian lama: pindah ke bawah === */}
 
       {/* Interview progress */}
       <Section title={t("dash.iv.title")}>
@@ -333,7 +331,7 @@ function DashboardPage() {
         </div>
       </Section>
 
-      {/* Situasi yang belum kamu coba */}
+      {/* Untried situations */}
       <Section title={t("dash.untried")}>
         {untried.length === 0 ? (
           <p className="text-sm text-muted-foreground">{t("dash.allTried")}</p>
@@ -354,7 +352,7 @@ function DashboardPage() {
         )}
       </Section>
 
-      {/* Pola belajarmu */}
+      {/* Learning patterns */}
       <Section title={t("dash.patterns")}>
         <div className="grid sm:grid-cols-2 gap-3">
           <PatternCard title={t("dash.topIntent")}>
@@ -420,10 +418,11 @@ function DashboardPage() {
   );
 }
 
-function LevelRow({ level, lang }: { level: LevelNode; lang: "id" | "en" }) {
+function LevelRow({ level }: { level: LevelNode }) {
   const locked = level.status === "locked";
   const completed = level.status === "completed";
   const current = level.status === "current";
+  const { t } = useT();
 
   const inner = (
     <div
@@ -462,16 +461,10 @@ function LevelRow({ level, lang }: { level: LevelNode; lang: "id" | "en" }) {
         </div>
         <p className="text-[11px] text-muted-foreground mt-1">
           {completed
-            ? lang === "en"
-              ? "Completed"
-              : "Lulus"
+            ? t("dash.level_lulus")
             : locked
-              ? lang === "en"
-                ? "Locked"
-                : "Terkunci"
-              : lang === "en"
-                ? `${level.progress_pct}% complete`
-                : `${level.progress_pct}% selesai`}
+              ? t("dash.level_locked")
+              : t("dash.level_progress").replace("{pct}", String(level.progress_pct))}
         </p>
       </div>
     </div>
