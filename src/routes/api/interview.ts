@@ -111,7 +111,7 @@ export const Route = createFileRoute("/api/interview")({
         }
 
 
-        const apiKey = process.env.LOVABLE_API_KEY;
+        const apiKey = process.env.GEMINI_API_KEY;
         if (!apiKey) return jsonResponse({ error: "SERVER_MISCONFIGURED" }, 500, allowedOrigin);
 
         const explLang = lang === "en" ? "English" : "Indonesian";
@@ -190,19 +190,12 @@ ${
             ];
           }
 
-          const upstream = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${apiKey}`,
-            },
-            body: JSON.stringify({
-              model: "google/gemini-2.5-flash",
-              messages: modelMessages,
-              temperature: mode === "options_only" ? 0.6 : 0.8,
-              max_tokens: wantOptions ? 700 : 320,
-              response_format: { type: "json_object" },
-            }),
+          const { geminiGenerate } = await import("@/lib/gemini.server");
+          const upstream = await geminiGenerate({
+            messages: modelMessages as { role: "system" | "user" | "assistant"; content: string }[],
+            temperature: mode === "options_only" ? 0.6 : 0.8,
+            maxOutputTokens: wantOptions ? 700 : 320,
+            json: true,
           });
 
           if (!upstream.ok) {
@@ -221,8 +214,7 @@ ${
             });
             return jsonResponse({ error: code }, upstream.status, allowedOrigin);
           }
-          const data = await upstream.json();
-          const raw = data?.choices?.[0]?.message?.content?.trim() ?? "";
+          const raw = upstream.text.trim();
           const cleaned = raw
             .replace(/^```(?:json)?\s*/i, "")
             .replace(/\s*```$/i, "")
@@ -310,18 +302,12 @@ Rules:
 - confidence_score reflects clarity, completeness, and willingness to elaborate.
 - If the candidate barely used Japanese (mostly romaji / English / Indonesian), set all scores low (0-30) and explain in ${explLang}.`;
 
-        const upstream = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${apiKey}`,
-          },
-          body: JSON.stringify({
-            model: "google/gemini-2.5-flash",
-            messages: [{ role: "user", content: feedbackPrompt }],
-            temperature: 0.3,
-            max_tokens: 1200,
-          }),
+        const { geminiGenerate: geminiGenerateFb } = await import("@/lib/gemini.server");
+        const upstream = await geminiGenerateFb({
+          messages: [{ role: "user", content: feedbackPrompt }],
+          temperature: 0.3,
+          maxOutputTokens: 1200,
+          json: true,
         });
         if (!upstream.ok) {
           const code =
@@ -332,8 +318,7 @@ Rules:
                 : "AI_UNAVAILABLE";
           return jsonResponse({ error: code }, upstream.status, allowedOrigin);
         }
-        const data = await upstream.json();
-        const raw = data?.choices?.[0]?.message?.content?.trim() ?? "";
+        const raw = upstream.text.trim();
         const cleaned = raw
           .replace(/^```(?:json)?\s*/i, "")
           .replace(/\s*```$/i, "")
