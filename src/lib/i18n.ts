@@ -202,6 +202,36 @@ const ID: Dict = {
   "dash.iv.ongoing": "Berlangsung",
   "dash.pro.title": "Fitur Pro",
 
+  // Dashboard greeting & curriculum
+  "dash.welcome": "Selamat datang kembali, {name} 👋",
+  "dash.continue_from": "Lanjutkan dari {level} · {unit}",
+  "dash.start_from": "Mulai dari {level} · {unit}",
+  "dash.ready": "Siap mulai perjalananmu?",
+  "dash.streak_label": "hari streak",
+  "dash.due_items": "{count} item siap diulang",
+  "dash.keep_going": "Pertahankan momentum belajarmu",
+  "dash.review_today": "Review hari ini",
+  "dash.all_done": "✓ Semua review selesai!",
+  "dash.continue_session": "Lanjutkan sesi",
+  "dash.all_sessions_done": "Semua sesi tersedia sudah selesai!",
+  "dash.new_levels_soon": "Level baru akan dibuka segera.",
+  "dash.sentences_learned": "Kalimat dipelajari",
+  "dash.need_review": "Perlu diulang",
+  "dash.current_level": "Level saat ini",
+  "dash.learning_path": "Jalur belajar",
+  "dash.loading": "Memuat…",
+  "dash.level_lulus": "Lulus",
+  "dash.level_locked": "Terkunci",
+  "dash.level_progress": "{pct}% selesai",
+
+  // Onboarding location
+  "onb.location.q": "Kamu sekarang ada di mana?",
+  "onb.location.desc": "Ini membantu menyesuaikan materi yang paling relevan.",
+  "onb.location.home.title": "Masih di negara asalmu",
+  "onb.location.home.sub": "Sedang persiapan keberangkatan ke Jepang",
+  "onb.location.jp.title": "Sudah di Jepang",
+  "onb.location.jp.sub": "Sudah bekerja atau baru tiba",
+
   // Quick review modal
   "qrm.q": "Ingat ekspresi ini?",
   "qrm.show": "Lihat jawaban",
@@ -274,6 +304,7 @@ const ID: Dict = {
 };
 
 const EN: Dict = {
+  // Nav
   "nav.search": "Search",
   "nav.home": "Home",
   "nav.history": "History",
@@ -289,6 +320,7 @@ const EN: Dict = {
   "nav.interview_short": "Interview",
   "nav.translate_short": "Translator",
 
+  // Home
   "home.title": "Japanese Translator for Work & Life",
   "home.subtitle": "Get 4 levels: Casual, Polite, Workplace, and Keigo — ready to use at your Japanese workplace.",
   "home.inputLabel": "Sentence in English",
@@ -306,6 +338,7 @@ const EN: Dict = {
   "home.errEmpty": "Please enter a sentence first.",
   "home.footer": "Made for learning Japanese ✿",
 
+  // Listener / mood options
   "opt.listener.unknown": "Unknown / not relevant",
   "opt.listener.self": "Myself",
   "opt.listener.friend": "Close friend / peer",
@@ -320,17 +353,20 @@ const EN: Dict = {
   "opt.mood.happy": "Happy / excited",
   "opt.mood.awkward": "Awkward / uncomfortable",
 
+  // Style names
   "style.N4": "Casual",
   "style.N3": "Polite (Desu/Masu)",
   "style.N2": "Workplace",
   "style.N1": "Keigo (敬語)",
   "style.equiv": "JLPT equiv.",
 
+  // Naturalness
   "nat.native": "Very Common",
   "nat.stiff": "Fairly Common",
   "nat.textbook": "Rarely Used",
   "nat.label": "How often it's said:",
 
+  // Intent
   "intent.monolog": "Monologue / thinking to yourself",
   "intent.monolog_short": "Monologue",
   "intent.asking_others": "Asking others",
@@ -342,6 +378,7 @@ const EN: Dict = {
   "intent.joking_relaxed": "Joking / relaxed",
   "intent.joking_relaxed_short": "Joking",
 
+  // Result parts
   "rp.whenUsed": "When to use: ",
   "rp.viewDetails": "View details",
   "rp.hide": "Hide",
@@ -357,21 +394,25 @@ const EN: Dict = {
   "rp.kanjiFreq.umum": "Common",
   "rp.kanjiFreq.khusus": "Specialized",
 
+  // Social analysis
   "sa.title": "Situation Analysis",
   "sa.relationship": "Social relationship",
   "sa.emotion": "Emotion / tone",
   "sa.goal": "Communication goal",
   "sa.risk": "Wrong-context risk",
 
+  // Most natural
   "mn.label": "The most natural",
   "mn.badge": "✓ This is what will sound natural to native speakers",
   "mn.why": "Why is this the most natural?",
   "mn.savedFav": "Saved to Favorites",
   "mn.saveFav": "⭐ Save to Favorites",
 
+  // Alternatives
   "alt.title": "Alternatives by situation",
   "alt.fallback": "Option",
 
+  // Favorites
   "fav.title": "Favorites",
   "fav.filter.all": "All",
   "fav.from": "From:",
@@ -380,12 +421,14 @@ const EN: Dict = {
   "fav.nuance": "Nuance: ",
   "fav.confirmDelete": "Delete this favorite?",
 
+  // History
   "hist.title": "History",
   "hist.searchPlaceholder": "Search a sentence, Japanese expression, or situation...",
   "hist.empty.title": "No saved conversations yet",
   "hist.empty.desc": "Try entering your first situation — e.g. 'I'm so tired today'.",
   "hist.confirmDelete": "Delete this entry?",
 
+  // Dashboard
   "dash.title": "My Level",
   "dash.subtitle": "Track your progress and practice favorite expressions daily.",
   "dash.today": "Today",
@@ -430,12 +473,44 @@ const EN: Dict = {
   "dash.iv.ongoing": "In progress",
   "dash.pro.title": "Pro Features",
 
+  // Dashboard greeting & curriculum
+  "dash.welcome": "Welcome back, {name} 👋",
+  "dash.continue_from": "Continue from {level} · {unit}",
+  "dash.start_from": "Start from {level} · {unit}",
+  "dash.ready": "Ready to start your journey?",
+  "dash.streak_label": "day streak",
+  "dash.due_items": "{count} items ready to review",
+  "dash.keep_going": "Keep your learning momentum going",
+  "dash.review_today": "Review today",
+  "dash.all_done": "✓ All reviews done!",
+  "dash.continue_session": "Continue session",
+  "dash.all_sessions_done": "All available sessions completed!",
+  "dash.new_levels_soon": "New levels coming soon.",
+  "dash.sentences_learned": "Sentences learned",
+  "dash.need_review": "Need review",
+  "dash.current_level": "Current level",
+  "dash.learning_path": "Learning path",
+  "dash.loading": "Loading…",
+  "dash.level_lulus": "Completed",
+  "dash.level_locked": "Locked",
+  "dash.level_progress": "{pct}% done",
+
+  // Onboarding location
+  "onb.location.q": "Where are you right now?",
+  "onb.location.desc": "Helps us tailor the most relevant material.",
+  "onb.location.home.title": "Still in your home country",
+  "onb.location.home.sub": "Preparing to depart for Japan",
+  "onb.location.jp.title": "Already in Japan",
+  "onb.location.jp.sub": "Working or just arrived",
+
+  // Quick review modal
   "qrm.q": "Remember this expression?",
   "qrm.show": "Show answer",
   "qrm.forgot": "Forgot",
   "qrm.remember": "Remember",
   "qrm.close": "Close",
 
+  // Review page
   "rev.title": "Daily Practice",
   "rev.tab.flash": "Review Expressions",
   "rev.tab.situ": "Situation Practice",
@@ -449,6 +524,7 @@ const EN: Dict = {
   "rev.tryRemember": "Try to recall in Japanese",
   "rev.showAnswer": "Show answer",
 
+  // Situasi
   "sit.empty.title": "No challenges available yet",
   "sit.empty.desc": "Search a few expressions first — challenges will be generated from your history.",
   "sit.done": "Challenge session complete!",
@@ -469,6 +545,7 @@ const EN: Dict = {
   "sit.no": "Not yet",
   "sit.yes": "Yes",
 
+  // Errors
   "err.FORBIDDEN_ORIGIN": "Request not allowed. Open the app from the official site.",
   "err.RATE_LIMITED": "Too many requests. Please try again shortly.",
   "err.CREDITS_EXHAUSTED": "Service unavailable. Please try again later.",
@@ -477,6 +554,7 @@ const EN: Dict = {
   "err.SERVER_MISCONFIGURED": "Service not ready. Please try again later.",
   "err.generic": "Failed to process. Please try again.",
 
+  // Examples
   "examples": [
     "What should I eat today?",
     "Can I leave early today?",
@@ -484,12 +562,14 @@ const EN: Dict = {
     "Thank you for your help",
   ],
 
+  // Suggestions per intent (dashboard untried)
   "sugg.monolog": "I'm so tired right now...",
   "sugg.asking_others": "What do you want to eat later?",
   "sugg.casual_conversation": "Hey, long time no see!",
   "sugg.professional_formal": "Has the report been completed?",
   "sugg.joking_relaxed": "Wait, are you serious?",
 
+  // Misc
   "misc.deleteAria": "Delete",
   "misc.poweredBy": "Powered by Gemini",
 };
