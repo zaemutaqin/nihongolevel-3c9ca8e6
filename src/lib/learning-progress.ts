@@ -32,11 +32,28 @@ function canUseStorage() {
 
 export function readLearningProgress(userId: string | null | undefined): LearningProgressMap {
   if (!canUseStorage()) return {};
+  const readKey = (key: string): LearningProgressMap => {
+    try {
+      const raw = window.localStorage.getItem(key);
+      if (!raw) return {};
+      const parsed = JSON.parse(raw) as LearningProgressMap;
+      return parsed && typeof parsed === "object" ? parsed : {};
+    } catch {
+      return {};
+    }
+  };
+
   try {
-    const raw = window.localStorage.getItem(storageKey(userId));
-    if (!raw) return {};
-    const parsed = JSON.parse(raw) as LearningProgressMap;
-    return parsed && typeof parsed === "object" ? parsed : {};
+    if (userId) {
+      return { ...readKey(storageKey(null)), ...readKey(storageKey(userId)) };
+    }
+
+    let merged: LearningProgressMap = {};
+    for (let i = 0; i < window.localStorage.length; i += 1) {
+      const key = window.localStorage.key(i);
+      if (key?.startsWith(`${STORAGE_PREFIX}:`)) merged = { ...merged, ...readKey(key) };
+    }
+    return merged;
   } catch {
     return {};
   }
