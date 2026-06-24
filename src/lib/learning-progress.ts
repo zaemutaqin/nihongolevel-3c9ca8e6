@@ -46,7 +46,7 @@ export function getStoredSessionProgress(
   userId: string | null | undefined,
   sessionId: string,
 ): StoredSessionProgress | null {
-  return readLearningProgress(userId)[sessionId] ?? null;
+  return readLearningProgress(userId)[sessionId] ?? readLearningProgress(null)[sessionId] ?? null;
 }
 
 export function saveStoredSessionProgress(
