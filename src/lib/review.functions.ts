@@ -24,6 +24,14 @@ export const reviewItem = createServerFn({ method: "POST" })
   })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
+    const { data: itemExists, error: itemError } = await supabase
+      .from("learning_items")
+      .select("id")
+      .eq("id", data.itemId)
+      .maybeSingle();
+    if (itemError) throw new Error(itemError.message);
+    if (!itemExists) return { ok: true as const, skipped: true as const };
+
     const { data: prev } = await supabase
       .from("item_progress")
       .select("correct_streak, ease_factor, last_seen_at, next_review_at")
