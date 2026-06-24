@@ -174,9 +174,9 @@ export const Route = createFileRoute("/api/translate")({
           await audit({ event_type: "translate_personal_data_redacted", ip_address: ip, user_id: userId, input_length: sane.value.length, success: true });
         }
 
-        const apiKey = process.env.LOVABLE_API_KEY;
+        const apiKey = process.env.GEMINI_API_KEY;
         if (!apiKey) {
-          console.error("LOVABLE_API_KEY missing");
+          console.error("GEMINI_API_KEY missing");
           return jsonResponse({ error: "server_misconfigured" }, 500, allowedOrigin);
         }
 
@@ -224,32 +224,26 @@ Mood: ${mood || "auto"}
 
 Rules: ${explLang} = ${explLangFull} (write every "${explLang}" field in ${explLangFull}). Exactly ONE expression per japanese field (no "/", no parens). Romaji numbers in full romaji ("san-ji" not "3-ji"). Max 4 kanji, only those appearing in the Japanese output. role_label values stay in Indonesian exactly as listed: ∈ {Paling Umum Digunakan, Lebih Sopan, Untuk Monolog, Untuk Situasi Formal, Pilihan Kasual, Paling Natural}. For monolog use 〜かな, never 〜ですか.`;
 
-        const upstream = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${apiKey}`,
-          },
-          body: JSON.stringify({
-            model: "google/gemini-2.5-flash-lite",
-            messages: [{ role: "user", content: prompt }],
-            temperature: 0.3,
-            stream: true,
-            max_tokens: 3200,
-          }),
+        const { geminiStream, extractDeltaText } = await import("@/lib/gemini.server");
+        const streamRes = await geminiStream({
+          messages: [{ role: "user", content: prompt }],
+          temperature: 0.3,
+          maxOutputTokens: 3200,
+          json: true,
         });
 
-        if (!upstream.ok || !upstream.body) {
+        if (!streamRes.ok || !streamRes.response || !streamRes.response.body) {
           const code =
-            upstream.status === 429
+            streamRes.status === 429
               ? "RATE_LIMITED"
-              : upstream.status === 402
+              : streamRes.status === 402
                 ? "CREDITS_EXHAUSTED"
                 : "AI_UNAVAILABLE";
-          console.error("AI gateway error", upstream.status);
+          console.error("Gemini error", streamRes.status);
           await audit({ event_type: "translate_fail", ip_address: ip, user_id: userId, input_length: inputLength, success: false, error_code: code });
-          return jsonResponse({ error: code }, upstream.status, allowedOrigin);
+          return jsonResponse({ error: code }, streamRes.status, allowedOrigin);
         }
+        const upstream = streamRes.response;
 
 
         const stream = new ReadableStream<Uint8Array>({
@@ -322,8 +316,8 @@ Rules: ${explLang} = ${explLangFull} (write every "${explLang}" field in ${explL
                   if (!data || data === "[DONE]") continue;
                   try {
                     const ev = JSON.parse(data);
-                    const delta = ev?.choices?.[0]?.delta?.content;
-                    if (typeof delta === "string") {
+                    const delta = extractDeltaText(ev);
+                    if (delta) {
                       textBuf += delta;
                       tryEmit();
                     }
