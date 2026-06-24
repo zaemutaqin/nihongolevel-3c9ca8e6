@@ -149,6 +149,19 @@ function SessionRunner({
   const [step, setStep] = useState(() => Math.min(stored?.step ?? 0, totalSteps));
   const progressPct = Math.round((step / Math.max(1, totalSteps)) * 100);
 
+  useEffect(() => {
+    const next = getStoredSessionProgress(userId, sessionId);
+    if (!next) return;
+    setPhase(next.phase === "done" ? "done" : next.phase);
+    setLearnIdx(Math.min(next.learnIdx, Math.max(0, items.length - 1)));
+    setListenIdx(next.listenIdx);
+    setQuizIdx(next.quizIdx);
+    setLives(next.lives);
+    setCorrectIds(new Set(next.correctIds));
+    setWrongIds(new Set(next.wrongIds));
+    setStep(Math.min(next.step, totalSteps));
+  }, [userId, sessionId, items.length, totalSteps]);
+
   const persistProgress = useCallback(
     (completed = phase === "done") => {
       const totalAnswered = listenItems.length + quizItems.length;
