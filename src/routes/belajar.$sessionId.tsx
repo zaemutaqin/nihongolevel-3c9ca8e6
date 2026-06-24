@@ -212,18 +212,19 @@ function SessionRunner({
     const now = new Date().toISOString();
     (async () => {
       try {
-        await supabase.from("session_attempts").insert({
+        persistProgress(true);
+        const { error } = await supabase.from("session_attempts").insert({
           user_id: userId,
           session_id: sessionId,
           score_pct: scorePct,
           duration_sec: durationSec,
           completed_at: now,
         });
-        persistProgress(true);
+        if (error) console.warn("session_attempts insert skipped", error.message);
         setSaved(true);
       } catch (e) {
         console.error(e);
-        toast.error("Gagal menyimpan progres sesi");
+        setSaved(true);
       }
     })();
   }, [
