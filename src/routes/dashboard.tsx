@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useSyncExternalStore } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import {
@@ -33,7 +33,8 @@ import { useAuth } from "@/lib/auth";
 import { SignInButton } from "@/components/SignInButton";
 import { getMyInterviewSessions, type InterviewSessionSummary } from "@/lib/interview-history.functions";
 import { getDueReviews } from "@/lib/review.functions";
-import { getCurriculumOverview, type LevelNode } from "@/lib/curriculum.functions";
+import { getCurriculumOverview, localizeCurriculumOverview, type LevelNode } from "@/lib/curriculum.functions";
+import { applyLearningProgressToOverview, readLearningProgress, subscribeLearningProgress } from "@/lib/learning-progress";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
@@ -58,6 +59,7 @@ export const Route = createFileRoute("/dashboard")({
 
 function DashboardPage() {
   const { t } = useT();
+  const { lang } = useT();
   const { profile, user } = useAuth();
   const [history] = useLocalCollection<HistoryEntry>(getHistory);
   const [favs] = useLocalCollection<FavoriteEntry>(getFavorites);
@@ -88,7 +90,15 @@ function DashboardPage() {
     enabled: !!user,
     staleTime: 30_000,
   });
-  const overview = overviewQuery.data;
+  const progressVersion = useSyncExternalStore(
+    subscribeLearningProgress,
+    () => JSON.stringify(readLearningProgress(user?.id ?? null)),
+    () => "{}",
+  );
+  const overview = useMemo(
+    () => localizeCurriculumOverview(applyLearningProgressToOverview(overviewQuery.data, JSON.parse(progressVersion)), lang),
+    [overviewQuery.data, progressVersion, lang],
+  );
 
   if (!user) {
     return (
@@ -173,10 +183,16 @@ function DashboardPage() {
       </h1>
       <p className="text-sm text-muted-foreground mb-6">
         {overview?.last_session
-          ? `Lanjutkan dari ${overview.last_session.level_name} · ${overview.last_session.unit_name}`
+          ? lang === "en"
+            ? `Continue from ${overview.last_session.level_name} · ${overview.last_session.unit_name}`
+            : `Lanjutkan dari ${overview.last_session.level_name} · ${overview.last_session.unit_name}`
           : overview?.next_session
-            ? `Mulai dari ${overview.next_session.level_name} · ${overview.next_session.unit_name}`
-            : "Siap mulai perjalananmu?"}
+            ? lang === "en"
+              ? `Start from ${overview.next_session.level_name} · ${overview.next_session.unit_name}`
+              : `Mulai dari ${overview.next_session.level_name} · ${overview.next_session.unit_name}`
+            : lang === "en"
+              ? "Ready to start your journey?"
+              : "Siap mulai perjalananmu?"}
       </p>
 
       {/* 2. Streak banner */}
@@ -226,7 +242,7 @@ function DashboardPage() {
             params={{ sessionId: overview.next_session.session_id }}
             className="inline-flex items-center gap-2 rounded-xl bg-lime-500 hover:bg-lime-400 px-5 py-3 text-sm font-bold text-violet-900 transition"
           >
-            Lanjutkan sesi <ArrowRight className="w-4 h-4" />
+            {lang === "en" ? "Continue session" : "Lanjutkan sesi"} <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
       ) : overviewQuery.isLoading ? (
@@ -234,8 +250,8 @@ function DashboardPage() {
       ) : (
         <div className="rounded-2xl bg-lime-100 border border-lime-300 p-6 mb-6 text-center">
           <Trophy className="w-8 h-8 text-lime-700 mx-auto mb-2" />
-          <p className="font-bold text-violet-900">Semua sesi tersedia sudah selesai!</p>
-          <p className="text-sm text-violet-900/70 mt-1">Level baru akan dibuka segera.</p>
+          <p className="font-bold text-violet-900">{lang === "en" ? "All available sessions are complete!" : "Semua sesi tersedia sudah selesai!"}</p>
+          <p className="text-sm text-violet-900/70 mt-1">{lang === "en" ? "New levels will open soon." : "Level baru akan dibuka segera."}</p>
         </div>
       )}
 
@@ -243,29 +259,29 @@ function DashboardPage() {
       <div className="grid grid-cols-3 gap-3 mb-8">
         <MiniStat
           icon={<BookOpen className="w-4 h-4" />}
-          label="Kalimat dipelajari"
+          label={lang === "en" ? "Items learned" : "Kalimat dipelajari"}
           value={overview?.items_learned ?? 0}
         />
         <MiniStat
           icon={<RefreshCw className="w-4 h-4" />}
-          label="Perlu diulang"
+          label={lang === "en" ? "Need review" : "Perlu diulang"}
           value={dueItems.length}
         />
         <MiniStat
           icon={<Trophy className="w-4 h-4" />}
-          label="Level saat ini"
+          label={lang === "en" ? "Current level" : "Level saat ini"}
           value={currentLevel ? `L${currentLevel.order_index}` : "—"}
         />
       </div>
 
       {/* 5. Jalur belajar */}
-      <Section title="Jalur belajar">
+      <Section title={lang === "en" ? "Learning path" : "Jalur belajar"}>
         {overviewQuery.isLoading ? (
           <p className="text-sm text-muted-foreground">Memuat…</p>
         ) : (
           <div className="space-y-3">
             {(overview?.levels ?? []).map((lvl) => (
-              <LevelRow key={lvl.id} level={lvl} />
+              <LevelRow key={lvl.id} level={lvl} lang={lang} />
             ))}
           </div>
         )}
