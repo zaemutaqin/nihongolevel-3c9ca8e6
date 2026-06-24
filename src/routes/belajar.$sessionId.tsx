@@ -7,7 +7,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { SpeakerButton } from "@/components/SpeakerButton";
 import { useAuth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
-import { toast } from "sonner";
 import {
   DoneScreen,
   ListenStage,
