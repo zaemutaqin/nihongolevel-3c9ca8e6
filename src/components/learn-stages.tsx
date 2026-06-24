@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Volume2, Check, ArrowRight, RotateCw, Trophy } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useT } from "@/lib/i18n";
 
 export type LearnItem = {
   id: string;
@@ -59,6 +60,7 @@ export function ListenStage({
   onDone: () => void;
   onIndexChange?: (index: number) => void;
 }) {
+  const { lang } = useT();
   const [i, setI] = useState(() => Math.min(initialIndex, Math.max(0, queue.length - 1)));
   const item = queue[i];
   const choices = useMemo(() => pickChoices(allItems, item, "content_jp"), [allItems, item]);
@@ -88,7 +90,7 @@ export function ListenStage({
   return (
     <div className="w-full max-w-xl flex flex-col items-center gap-8">
       <p className="text-sm uppercase tracking-wide text-violet-700/70 font-semibold">
-        Dengar dan pilih
+        {lang === "en" ? "Listen and choose" : "Dengar dan pilih"}
       </p>
       <button
         onClick={() => speak(item.content_jp)}
@@ -139,6 +141,7 @@ export function QuizStage({
   onDone: () => void;
   onIndexChange?: (index: number) => void;
 }) {
+  const { lang } = useT();
   const [i, setI] = useState(() => Math.min(initialIndex, Math.max(0, queue.length - 1)));
   const item = queue[i];
   const field: "content_romaji" | "content_meaning" = item.content_romaji
@@ -170,7 +173,7 @@ export function QuizStage({
   return (
     <div className="w-full max-w-xl flex flex-col items-center gap-8">
       <p className="text-sm uppercase tracking-wide text-violet-700/70 font-semibold">
-        Pilih arti yang tepat
+        {lang === "en" ? "Choose the correct meaning" : "Pilih arti yang tepat"}
       </p>
       <div className="rounded-3xl bg-violet-50 border border-violet-100 px-12 py-10 text-center">
         <div className="text-7xl sm:text-8xl font-bold text-violet-900">{item.content_jp}</div>
@@ -211,6 +214,7 @@ export function Stat({
   value: string | number;
   accent?: boolean;
 }) {
+  const { lang } = useT();
   return (
     <div
       className={cn(
@@ -255,7 +259,7 @@ export function DoneScreen({
         {subtitle && <p className="mt-1 text-violet-900/70">{subtitle}</p>}
       </div>
       <div className="grid grid-cols-3 gap-3 w-full">
-        <Stat label="Dikuasai" value={mastered} />
+        <Stat label={lang === "en" ? "Mastered" : "Dikuasai"} value={mastered} />
         <Stat label="XP" value={`+${xp}`} accent />
         <Stat label="Streak" value="🔥 1" />
       </div>
@@ -272,7 +276,7 @@ export function DoneScreen({
           onClick={onRetry}
           className="px-5 py-3 rounded-xl border border-violet-200 text-violet-900 font-semibold inline-flex items-center justify-center gap-2"
         >
-          <RotateCw className="h-4 w-4" /> Ulangi
+          <RotateCw className="h-4 w-4" /> {lang === "en" ? "Retry" : "Ulangi"}
         </button>
       </div>
     </div>
