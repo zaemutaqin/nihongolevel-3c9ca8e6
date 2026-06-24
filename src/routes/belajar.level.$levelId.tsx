@@ -1,10 +1,12 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useEffect } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { ArrowLeft, CheckCircle2, Circle, Lock } from "lucide-react";
-import { getCurriculumOverview } from "@/lib/curriculum.functions";
+import { getCurriculumOverview, localizeCurriculumOverview } from "@/lib/curriculum.functions";
 import { useAuth } from "@/lib/auth";
+import { useT } from "@/lib/i18n";
+import { applyLearningProgressToOverview, readLearningProgress, subscribeLearningProgress } from "@/lib/learning-progress";
 
 export const Route = createFileRoute("/belajar/level/$levelId")({
   head: () => ({
@@ -22,8 +24,14 @@ export const Route = createFileRoute("/belajar/level/$levelId")({
 
 function LevelDetailPage() {
   const { levelId } = Route.useParams();
+  const { lang } = useT();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const progressVersion = useSyncExternalStore(
+    subscribeLearningProgress,
+    () => JSON.stringify(readLearningProgress(user?.id ?? null)),
+    () => "{}",
+  );
   const fetchOverview = useServerFn(getCurriculumOverview);
   const q = useQuery({
     queryKey: ["curriculum-overview", user?.id ?? "anon"],
@@ -35,7 +43,11 @@ function LevelDetailPage() {
     if (!user && !q.isLoading) navigate({ to: "/auth" });
   }, [user, q.isLoading, navigate]);
 
-  const level = q.data?.levels.find((l) => l.id === levelId);
+  const overview = localizeCurriculumOverview(
+    applyLearningProgressToOverview(q.data, JSON.parse(progressVersion)),
+    lang,
+  );
+  const level = overview?.levels.find((l) => l.id === levelId);
   const locked = level?.status === "locked";
 
   return (
@@ -62,14 +74,14 @@ function LevelDetailPage() {
         <>
           <h1 className="text-2xl font-bold text-violet-900">{level.name}</h1>
           <p className="text-sm text-muted-foreground mb-6">
-            Progress: {level.progress_pct}% · Lulus minimal {level.unlock_threshold_pct}%
+            {lang === "en" ? "Progress" : "Progress"}: {level.progress_pct}% · {lang === "en" ? "Unlock target" : "Lulus minimal"} {level.unlock_threshold_pct}%
           </p>
 
           <div className="space-y-6">
             {level.units.map((u) => (
               <section key={u.id}>
                 <h2 className="text-sm font-bold uppercase tracking-wide text-violet-900/70 mb-2">
-                  Unit {u.order_index + 1} — {u.name}
+                  {lang === "en" ? "Unit" : "Unit"} {u.order_index + 1} — {u.name}
                 </h2>
                 <div className="space-y-2">
                   {u.sessions.map((s) => (
@@ -88,7 +100,7 @@ function LevelDetailPage() {
                         <p className="text-sm font-medium text-violet-900 truncate">{s.title}</p>
                         {s.best_score !== null && (
                           <p className="text-[11px] text-muted-foreground">
-                            Skor terbaik: {s.best_score}%
+                            {lang === "en" ? "Best score" : "Skor terbaik"}: {s.best_score}%
                           </p>
                         )}
                       </div>
