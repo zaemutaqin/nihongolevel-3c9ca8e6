@@ -41,19 +41,8 @@ export const Route = createFileRoute("/api/interview")({
       OPTIONS: async ({ request }) => preflightResponse(pickAllowedOrigin(request)),
 
       POST: async ({ request }) => {
-        // --- AWAL BAGIAN YANG DIGANTI ---
-        const allowedOrigins = ["https://nihongolive.lovable.app", "https://nihongo.live", "https://www.nihongo.live"];
-
-        let allowedOrigin = pickAllowedOrigin(request);
-        const requestOrigin = request.headers.get("origin");
-
-        if (!allowedOrigin && requestOrigin && allowedOrigins.includes(requestOrigin)) {
-          allowedOrigin = requestOrigin;
-        }
-
+        const allowedOrigin = pickAllowedOrigin(request);
         if (!allowedOrigin) return jsonResponse({ error: "FORBIDDEN_ORIGIN" }, 403, null);
-        // --- AKHIR BAGIAN YANG DIGANTI ---
-
         const ip = clientIp(request);
 
         let body: unknown;
@@ -81,7 +70,9 @@ export const Route = createFileRoute("/api/interview")({
         // Auth — usually required, but allow guest demo for iv_kaigo (chat mode, max 3 user turns)
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const authHeader = request.headers.get("authorization") ?? "";
-        const token = authHeader.toLowerCase().startsWith("bearer ") ? authHeader.slice(7).trim() : "";
+        const token = authHeader.toLowerCase().startsWith("bearer ")
+          ? authHeader.slice(7).trim()
+          : "";
         const userTurnCount = messages.filter((m) => m.role === "user").length;
         const isGuestDemo =
           !token &&
@@ -97,7 +88,11 @@ export const Route = createFileRoute("/api/interview")({
           const { data: udata } = await supabaseAdmin.auth.getUser(token);
           if (!udata?.user) return jsonResponse({ error: "AUTH_REQUIRED" }, 401, allowedOrigin);
           userId = udata.user.id;
-          const { data: prof } = await supabaseAdmin.from("profiles").select("is_pro").eq("id", userId).maybeSingle();
+          const { data: prof } = await supabaseAdmin
+            .from("profiles")
+            .select("is_pro")
+            .eq("id", userId)
+            .maybeSingle();
           isPro = !!prof?.is_pro;
         }
 
@@ -106,11 +101,15 @@ export const Route = createFileRoute("/api/interview")({
           const dayAgo = hoursAgoIso(24);
           const used = await countEventsForUser(userId, ["interview_feedback"], dayAgo);
           if (used >= FREE_DAY_SESSIONS) {
-            return jsonResponse({ error: "DAILY_LIMIT", retry_after: 86400 }, 429, allowedOrigin, {
-              "Retry-After": "86400",
-            });
+            return jsonResponse(
+              { error: "DAILY_LIMIT", retry_after: 86400 },
+              429,
+              allowedOrigin,
+              { "Retry-After": "86400" },
+            );
           }
         }
+
 
         const apiKey = process.env.GEMINI_API_KEY;
         if (!apiKey) return jsonResponse({ error: "SERVER_MISCONFIGURED" }, 500, allowedOrigin);
@@ -185,7 +184,10 @@ ${
 - One short Japanese sentence per option (under 60 chars).`
     : ""
 }`;
-            modelMessages = [{ role: "system", content: systemPrompt }, ...messages];
+            modelMessages = [
+              { role: "system", content: systemPrompt },
+              ...messages,
+            ];
           }
 
           const { geminiGenerate } = await import("@/lib/gemini.server");
@@ -253,13 +255,15 @@ ${
                 romaji: parsedReply.romaji ?? null,
                 translation: parsedReply.translation ?? null,
                 options: Array.isArray(parsedReply.options) ? parsedReply.options.slice(0, 4) : null,
-                correct_index: typeof parsedReply.correct_index === "number" ? parsedReply.correct_index : 0,
+                correct_index:
+                  typeof parsedReply.correct_index === "number" ? parsedReply.correct_index : 0,
               },
             },
             200,
             allowedOrigin,
           );
         }
+
 
         // mode === "feedback" — generate evaluation + save session (auth required, guarded above)
         if (!userId) return jsonResponse({ error: "AUTH_REQUIRED" }, 401, allowedOrigin);
@@ -307,7 +311,11 @@ Rules:
         });
         if (!upstream.ok) {
           const code =
-            upstream.status === 429 ? "RATE_LIMITED" : upstream.status === 402 ? "CREDITS_EXHAUSTED" : "AI_UNAVAILABLE";
+            upstream.status === 429
+              ? "RATE_LIMITED"
+              : upstream.status === 402
+                ? "CREDITS_EXHAUSTED"
+                : "AI_UNAVAILABLE";
           return jsonResponse({ error: code }, upstream.status, allowedOrigin);
         }
         const raw = upstream.text.trim();
@@ -372,7 +380,11 @@ Rules:
           metadata: { scenarioId, turns: messages.length },
         });
 
-        return jsonResponse({ evaluation: evalObj, sessionId: savedId }, 200, allowedOrigin);
+        return jsonResponse(
+          { evaluation: evalObj, sessionId: savedId },
+          200,
+          allowedOrigin,
+        );
       },
     },
   },

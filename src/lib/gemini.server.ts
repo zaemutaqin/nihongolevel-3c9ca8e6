@@ -8,7 +8,10 @@ export type ChatMessage = { role: "system" | "user" | "assistant"; content: stri
 
 type GeminiContent = { role: "user" | "model"; parts: { text: string }[] };
 
-function toGeminiContents(messages: ChatMessage[]) {
+function toGeminiContents(messages: ChatMessage[]): {
+  contents: GeminiContent[];
+  systemInstruction?: { parts: { text: string }[] };
+} {
   const systems: string[] = [];
   const contents: GeminiContent[] = [];
   for (const m of messages) {
@@ -23,7 +26,9 @@ function toGeminiContents(messages: ChatMessage[]) {
   }
   return {
     contents,
-    systemInstruction: systems.length ? { parts: [{ text: systems.join("\n\n") }] } : undefined,
+    systemInstruction: systems.length
+      ? { parts: [{ text: systems.join("\n\n") }] }
+      : undefined,
   };
 }
 
@@ -49,7 +54,7 @@ function buildBody(opts: GeminiOptions) {
 }
 
 function getKey(): string | null {
-  return process.env.GEMINI_API_KEY?.trim() ?? null;
+  return process.env.GEMINI_API_KEY ?? null;
 }
 
 export async function geminiGenerate(opts: GeminiOptions): Promise<{
@@ -58,31 +63,21 @@ export async function geminiGenerate(opts: GeminiOptions): Promise<{
   text: string;
 }> {
   const key = getKey();
-  if (!key) return { ok: false, status: 500, text: "API Key not found on server" };
-
-  try {
-    const res = await fetch(`${GEMINI_BASE}:generateContent?key=${encodeURIComponent(key)}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(buildBody(opts)),
-    });
-
-    if (!res.ok) {
-      // INI BAGIAN PENTING: Menangkap pesan error asli dari Google
-      const errorText = await res.text();
-      console.error("Gemini API Error:", errorText);
-      // Mengirimkan error ke frontend agar bisa kita baca di Inspect Element
-      return { ok: false, status: res.status, text: `GOOGLE_ERROR: ${errorText}` };
-    }
-
-    const data = (await res.json()) as {
-      candidates?: { content?: { parts?: { text?: string }[] } }[];
-    };
-    const text = data?.candidates?.[0]?.content?.parts?.map((p) => p.text ?? "").join("") ?? "";
-    return { ok: true, status: 200, text };
-  } catch (e: any) {
-    return { ok: false, status: 500, text: `SERVER_ERROR: ${e.message}` };
+  if (!key) return { ok: false, status: 500, text: "" };
+  const res = await fetch(`${GEMINI_BASE}:generateContent?key=${encodeURIComponent(key)}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(buildBody(opts)),
+  });
+  if (!res.ok) {
+    return { ok: false, status: res.status, text: "" };
   }
+  const data = (await res.json()) as {
+    candidates?: { content?: { parts?: { text?: string }[] } }[];
+  };
+  const text =
+    data?.candidates?.[0]?.content?.parts?.map((p) => p.text ?? "").join("") ?? "";
+  return { ok: true, status: 200, text };
 }
 
 /**
@@ -96,21 +91,16 @@ export async function geminiStream(opts: GeminiOptions): Promise<{
 }> {
   const key = getKey();
   if (!key) return { ok: false, status: 500, response: null };
-
-  const res = await fetch(`${GEMINI_BASE}:streamGenerateContent?alt=sse&key=${encodeURIComponent(key)}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(buildBody(opts)),
-  });
-
-  if (!res.ok) {
-    const errorText = await res.text();
-    console.error("Gemini Stream Error:", errorText);
-    return {
-      ok: false,
-      status: res.status,
-      response: new Response(`GOOGLE_ERROR: ${errorText}`, { status: res.status }),
-    };
+  const res = await fetch(
+    `${GEMINI_BASE}:streamGenerateContent?alt=sse&key=${encodeURIComponent(key)}`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(buildBody(opts)),
+    },
+  );
+  if (!res.ok || !res.body) {
+    return { ok: false, status: res.status, response: null };
   }
   return { ok: true, status: 200, response: res };
 }
