@@ -130,6 +130,7 @@ function SessionRunner({
   startedAt: number;
   onClose: () => void;
 }) {
+  const { lang } = useT();
   const review = useServerFn(reviewItem);
   const stored = useMemo(() => getStoredSessionProgress(userId, sessionId), [userId, sessionId]);
   const [phase, setPhase] = useState<Phase>(() => (stored?.phase === "done" ? "done" : stored?.phase ?? "learn"));
@@ -305,13 +306,21 @@ function SessionRunner({
         )}
         {phase === "done" && (
           <DoneScreen
-            title="Sesi selesai"
+            title={lang === "en" ? "Session complete" : "Sesi selesai"}
             subtitle={title}
             mastered={correctIds.size}
             xp={correctIds.size * 10}
             primaryHref={nextSessionId ? "/belajar/$sessionId" : "/dashboard"}
             primaryParams={nextSessionId ? { sessionId: nextSessionId } : undefined}
-            primaryLabel={nextSessionId ? "Lanjut ke sesi berikutnya" : "Selesaikan unit"}
+            primaryLabel={
+              nextSessionId
+                ? lang === "en"
+                  ? "Continue to next session"
+                  : "Lanjut ke sesi berikutnya"
+                : lang === "en"
+                  ? "Finish unit"
+                  : "Selesaikan unit"
+            }
             onRetry={() => window.location.reload()}
           />
         )}
