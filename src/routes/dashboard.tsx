@@ -58,8 +58,7 @@ export const Route = createFileRoute("/dashboard")({
 
 
 function DashboardPage() {
-  const { t } = useT();
-  const { lang } = useT();
+  const { t, lang } = useT();
   const { profile, user } = useAuth();
   const [history] = useLocalCollection<HistoryEntry>(getHistory);
   const [favs] = useLocalCollection<FavoriteEntry>(getFavorites);
@@ -421,7 +420,7 @@ function DashboardPage() {
   );
 }
 
-function LevelRow({ level }: { level: LevelNode }) {
+function LevelRow({ level, lang }: { level: LevelNode; lang: "id" | "en" }) {
   const locked = level.status === "locked";
   const completed = level.status === "completed";
   const current = level.status === "current";
@@ -463,10 +462,16 @@ function LevelRow({ level }: { level: LevelNode }) {
         </div>
         <p className="text-[11px] text-muted-foreground mt-1">
           {completed
-            ? "Lulus"
+            ? lang === "en"
+              ? "Completed"
+              : "Lulus"
             : locked
-              ? "Terkunci"
-              : `${level.progress_pct}% selesai`}
+              ? lang === "en"
+                ? "Locked"
+                : "Terkunci"
+              : lang === "en"
+                ? `${level.progress_pct}% complete`
+                : `${level.progress_pct}% selesai`}
         </p>
       </div>
     </div>
