@@ -47,15 +47,19 @@ export function pickChoices(
 export function ListenStage({
   allItems,
   queue,
+  initialIndex = 0,
   onAnswer,
   onDone,
+  onIndexChange,
 }: {
   allItems: LearnItem[];
   queue: LearnItem[];
+  initialIndex?: number;
   onAnswer: (item: LearnItem, correct: boolean) => void;
   onDone: () => void;
+  onIndexChange?: (index: number) => void;
 }) {
-  const [i, setI] = useState(0);
+  const [i, setI] = useState(() => Math.min(initialIndex, Math.max(0, queue.length - 1)));
   const item = queue[i];
   const choices = useMemo(() => pickChoices(allItems, item, "content_jp"), [allItems, item]);
   const [picked, setPicked] = useState<string | null>(null);
@@ -73,7 +77,11 @@ export function ListenStage({
     setTimeout(() => {
       onAnswer(item, correct);
       if (i >= queue.length - 1) onDone();
-      else setI((x) => x + 1);
+      else {
+        const next = i + 1;
+        setI(next);
+        onIndexChange?.(next);
+      }
     }, 900);
   }
 
@@ -119,15 +127,19 @@ export function ListenStage({
 export function QuizStage({
   allItems,
   queue,
+  initialIndex = 0,
   onAnswer,
   onDone,
+  onIndexChange,
 }: {
   allItems: LearnItem[];
   queue: LearnItem[];
+  initialIndex?: number;
   onAnswer: (item: LearnItem, correct: boolean) => void;
   onDone: () => void;
+  onIndexChange?: (index: number) => void;
 }) {
-  const [i, setI] = useState(0);
+  const [i, setI] = useState(() => Math.min(initialIndex, Math.max(0, queue.length - 1)));
   const item = queue[i];
   const field: "content_romaji" | "content_meaning" = item.content_romaji
     ? "content_romaji"
@@ -147,7 +159,11 @@ export function QuizStage({
     setTimeout(() => {
       onAnswer(item, correct);
       if (i >= queue.length - 1) onDone();
-      else setI((x) => x + 1);
+      else {
+        const next = i + 1;
+        setI(next);
+        onIndexChange?.(next);
+      }
     }, 900);
   }
 
