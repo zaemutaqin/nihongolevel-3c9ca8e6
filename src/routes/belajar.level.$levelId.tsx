@@ -56,19 +56,23 @@ function LevelDetailPage() {
         to="/dashboard"
         className="inline-flex items-center gap-1 text-sm text-violet-700 hover:text-violet-900 mb-4"
       >
-        <ArrowLeft className="w-4 h-4" /> Kembali ke Levelku
+        <ArrowLeft className="w-4 h-4" /> {lang === "en" ? "Back to My Level" : "Kembali ke Levelku"}
       </Link>
 
       {q.isLoading ? (
-        <p className="text-sm text-muted-foreground">Memuat…</p>
+        <p className="text-sm text-muted-foreground">{lang === "en" ? "Loading…" : "Memuat…"}</p>
       ) : !level ? (
         <div className="rounded-2xl border border-border bg-muted p-6 text-center">
-          <p className="text-sm">Level tidak ditemukan.</p>
+          <p className="text-sm">{lang === "en" ? "Level not found." : "Level tidak ditemukan."}</p>
         </div>
       ) : locked ? (
         <div className="rounded-2xl border border-border bg-muted p-6 text-center">
           <Lock className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
-          <p className="text-sm">Level ini masih terkunci. Selesaikan level sebelumnya dulu.</p>
+          <p className="text-sm">
+            {lang === "en"
+              ? "This level is still locked. Finish the previous level first."
+              : "Level ini masih terkunci. Selesaikan level sebelumnya dulu."}
+          </p>
         </div>
       ) : (
         <>
