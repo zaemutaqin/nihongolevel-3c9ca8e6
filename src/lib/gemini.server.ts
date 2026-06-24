@@ -8,10 +8,7 @@ export type ChatMessage = { role: "system" | "user" | "assistant"; content: stri
 
 type GeminiContent = { role: "user" | "model"; parts: { text: string }[] };
 
-function toGeminiContents(messages: ChatMessage[]): {
-  contents: GeminiContent[];
-  systemInstruction?: { parts: { text: string }[] };
-} {
+function toGeminiContents(messages: ChatMessage[]) {
   const systems: string[] = [];
   const contents: GeminiContent[] = [];
   for (const m of messages) {
@@ -26,9 +23,7 @@ function toGeminiContents(messages: ChatMessage[]): {
   }
   return {
     contents,
-    systemInstruction: systems.length
-      ? { parts: [{ text: systems.join("\n\n") }] }
-      : undefined,
+    systemInstruction: systems.length ? { parts: [{ text: systems.join("\n\n") }] } : undefined,
   };
 }
 
@@ -54,7 +49,9 @@ function buildBody(opts: GeminiOptions) {
 }
 
 function getKey(): string | null {
-  return process.env.GEMINI_API_KEY ?? null;
+  // BAGIAN INI TELAH DIPERBARUI:
+  // Menambahkan .trim() untuk otomatis menghapus spasi/enter yang tidak disengaja dari Secret Lovable
+  return process.env.GEMINI_API_KEY?.trim() ?? null;
 }
 
 export async function geminiGenerate(opts: GeminiOptions): Promise<{
@@ -75,8 +72,7 @@ export async function geminiGenerate(opts: GeminiOptions): Promise<{
   const data = (await res.json()) as {
     candidates?: { content?: { parts?: { text?: string }[] } }[];
   };
-  const text =
-    data?.candidates?.[0]?.content?.parts?.map((p) => p.text ?? "").join("") ?? "";
+  const text = data?.candidates?.[0]?.content?.parts?.map((p) => p.text ?? "").join("") ?? "";
   return { ok: true, status: 200, text };
 }
 
@@ -91,14 +87,11 @@ export async function geminiStream(opts: GeminiOptions): Promise<{
 }> {
   const key = getKey();
   if (!key) return { ok: false, status: 500, response: null };
-  const res = await fetch(
-    `${GEMINI_BASE}:streamGenerateContent?alt=sse&key=${encodeURIComponent(key)}`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(buildBody(opts)),
-    },
-  );
+  const res = await fetch(`${GEMINI_BASE}:streamGenerateContent?alt=sse&key=${encodeURIComponent(key)}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(buildBody(opts)),
+  });
   if (!res.ok || !res.body) {
     return { ok: false, status: res.status, response: null };
   }
