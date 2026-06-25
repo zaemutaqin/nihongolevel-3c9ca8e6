@@ -52,7 +52,7 @@ function buildBody(opts: GeminiOptions) {
 }
 
 function getKey(): string | null {
-  return process.env.GEMINI_API_KEY ?? null;
+  return process.env.GEMINI_API_KEY?.trim() ?? null;
 }
 
 export async function geminiGenerate(opts: GeminiOptions): Promise<{
