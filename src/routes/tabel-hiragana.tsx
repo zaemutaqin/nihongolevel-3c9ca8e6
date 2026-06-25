@@ -212,7 +212,7 @@ function TabelHiraganaPage() {
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       <header className="flex items-center justify-between px-6 py-4 border-b border-border">
         <Link to="/" className="font-bold text-lg">
-          Nihongo<span className="text-primary">Level</span>
+          Nihongo<span className="text-primary">Live</span>
         </Link>
         <Link
           to="/"
