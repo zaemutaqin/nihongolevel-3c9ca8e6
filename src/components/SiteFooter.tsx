@@ -6,7 +6,7 @@ export function SiteFooter() {
   return (
     <footer className="border-t border-border bg-background/60">
       <div className="mx-auto max-w-3xl px-4 py-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
-        <div>© {new Date().getFullYear()} zaenal mutaqin · NihongoLevel</div>
+        <div>© 2026 Nihongolive</div>
         <nav className="flex flex-wrap items-center gap-x-4 gap-y-2">
           <Link to="/panduan-wisata" className="hover:text-foreground transition">
             {lang === "id" ? "Panduan Wisata" : "Travel Guide"}

@@ -11,7 +11,7 @@ import { applyLearningProgressToOverview, readLearningProgress, subscribeLearnin
 export const Route = createFileRoute("/belajar/level/$levelId")({
   head: () => ({
     meta: [
-      { title: "Daftar Unit — NihongoLevel" },
+      { title: "Daftar Unit — Nihongolive" },
       {
         name: "description",
         content:

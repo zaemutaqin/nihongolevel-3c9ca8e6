@@ -13,7 +13,7 @@ SELECT cron.schedule(
   '17 * * * *',
   $$
   SELECT net.http_post(
-    url := 'https://nihongolevel.lovable.app/api/public/payments/reconcile',
+    url := 'https://nihongo.live/api/public/payments/reconcile',
     headers := jsonb_build_object(
       'Content-Type', 'application/json',
       'apikey', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRndmNocXdnd3dlZmt1ZmlkcmZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5NzQ1ODgsImV4cCI6MjA5NjU1MDU4OH0.W2wOgQ1bjRDVkX8I2t7IpTxGKip0DY193w6BCcul7bw'

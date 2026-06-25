@@ -32,13 +32,13 @@ type SessionRow = {
 export const Route = createFileRoute("/interview/")({
   head: () => ({
     meta: [
-      { title: "Interview Simulator — Wawancara Kerja Jepang | NihongoLevel" },
+      { title: "Interview Simulator — Wawancara Kerja Jepang | Nihongolive" },
       {
         name: "description",
         content:
           "Latihan interview bahasa Jepang dengan AI: Tokutei Ginou, staff restoran, dan lainnya. Dapat skor grammar, naturalness, confidence + saran perbaikan.",
       },
-      { property: "og:title", content: "AI Interview Simulator — NihongoLevel" },
+      { property: "og:title", content: "AI Interview Simulator — Nihongolive" },
       {
         property: "og:description",
         content:

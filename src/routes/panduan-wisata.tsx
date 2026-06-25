@@ -17,7 +17,7 @@ export const Route = createFileRoute("/panduan-wisata")({
     meta: [
       {
         title:
-          "Panduan Bahasa Jepang untuk Wisatawan — NihongoLevel",
+          "Panduan Bahasa Jepang untuk Wisatawan — Nihongolive",
       },
       {
         name: "description",
@@ -26,7 +26,7 @@ export const Route = createFileRoute("/panduan-wisata")({
       },
       {
         property: "og:title",
-        content: "Panduan Bahasa Jepang untuk Wisatawan — NihongoLevel",
+        content: "Panduan Bahasa Jepang untuk Wisatawan — Nihongolive",
       },
       {
         property: "og:description",
@@ -47,22 +47,22 @@ export const Route = createFileRoute("/panduan-wisata")({
           headline: "Panduan Bahasa Jepang Natural untuk Wisatawan",
           description:
             "Kosakata dan ekspresi bahasa Jepang untuk traveling dengan tingkat kesopanan N4–N1.",
-          url: "https://nihongolevel.lovable.app/panduan-wisata",
+          url: "https://nihongo.live/panduan-wisata",
           author: {
             "@type": "Organization",
-            name: "NihongoLevel",
+            name: "Nihongolive",
           },
           publisher: {
             "@type": "Organization",
-            name: "NihongoLevel",
+            name: "Nihongolive",
             logo: {
               "@type": "ImageObject",
-              url: "https://nihongolevel.lovable.app/favicon.ico",
+              url: "https://nihongo.live/favicon.ico",
             },
           },
           mainEntityOfPage: {
             "@type": "WebPage",
-            "@id": "https://nihongolevel.lovable.app/panduan-wisata",
+            "@id": "https://nihongo.live/panduan-wisata",
           },
         }),
       },
@@ -524,8 +524,8 @@ function PanduanWisataPage() {
           </h3>
           <p className="mt-2 text-sm text-muted-foreground max-w-md mx-auto">
             {isId
-              ? "Masukkan situasimu sendiri dan NihongoLevel akan memberikan ekspresi natural di semua level kesopanan — dengan analisis situasi lengkap."
-              : "Enter your own situation and NihongoLevel will give you natural expressions at all politeness levels — with full situation analysis."}
+              ? "Masukkan situasimu sendiri dan Nihongolive akan memberikan ekspresi natural di semua level kesopanan — dengan analisis situasi lengkap."
+              : "Enter your own situation and Nihongolive will give you natural expressions at all politeness levels — with full situation analysis."}
           </p>
           <Link
             to="/"

@@ -107,7 +107,7 @@ export const Route = createFileRoute("/interview/$scenarioId")({
     const s = getInterviewScenario(params.scenarioId);
     return {
       meta: [
-        { title: s ? `${s.title_en} — Interview Simulator | NihongoLevel` : "Interview Simulator" },
+        { title: s ? `${s.title_en} — Interview Simulator | Nihongolive` : "Interview Simulator" },
         { name: "description", content: s?.description_en ?? "Latih wawancara Jepang dengan AI." },
         { name: "robots", content: "noindex" },
       ],
