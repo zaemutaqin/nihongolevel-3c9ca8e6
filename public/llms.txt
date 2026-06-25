@@ -1,8 +1,8 @@
-# NihongoLevel
+# Nihongolive
 
 > Belajar berbicara seperti orang Jepang — alat untuk menemukan ekspresi paling natural dalam setiap situasi, lengkap dengan level kesopanan (N1–N4) dan analisis konteks sosial.
 
-NihongoLevel membantu pembelajar bahasa Jepang melampaui terjemahan kaku ala buku teks. Ketik kalimat dalam bahasa Indonesia atau Inggris, dan dapatkan beberapa cara natural mengucapkannya dalam bahasa Jepang, masing-masing dengan konteks penggunaannya.
+Nihongolive membantu pembelajar bahasa Jepang melampaui terjemahan kaku ala buku teks. Ketik kalimat dalam bahasa Indonesia atau Inggris, dan dapatkan beberapa cara natural mengucapkannya dalam bahasa Jepang, masing-masing dengan konteks penggunaannya.
 
 ## Pages
 

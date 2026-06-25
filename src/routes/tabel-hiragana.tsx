@@ -7,7 +7,7 @@ import { useLang } from "@/lib/i18n";
 export const Route = createFileRoute("/tabel-hiragana")({
   head: () => ({
     meta: [
-      { title: "Tabel Hiragana Lengkap & Cara Baca — NihongoLevel" },
+      { title: "Tabel Hiragana Lengkap & Cara Baca — Nihongolive" },
       {
         name: "description",
         content:
@@ -15,18 +15,18 @@ export const Route = createFileRoute("/tabel-hiragana")({
       },
       {
         property: "og:title",
-        content: "Tabel Huruf Hiragana Lengkap — NihongoLevel",
+        content: "Tabel Huruf Hiragana Lengkap — Nihongolive",
       },
       {
         property: "og:description",
         content:
           "Referensi interaktif huruf hiragana untuk pemula: dengarkan pelafalan, lihat romaji, dan pelajari semua varian dengan mudah.",
       },
-      { property: "og:url", content: "https://nihongolevel.lovable.app/tabel-hiragana" },
+      { property: "og:url", content: "https://nihongo.live/tabel-hiragana" },
       { property: "og:type", content: "article" },
     ],
     links: [
-      { rel: "canonical", href: "https://nihongolevel.lovable.app/tabel-hiragana" },
+      { rel: "canonical", href: "https://nihongo.live/tabel-hiragana" },
     ],
     scripts: [
       {
@@ -38,21 +38,21 @@ export const Route = createFileRoute("/tabel-hiragana")({
           description:
             "Tabel hiragana lengkap dengan romaji dan pelafalan audio untuk pemula bahasa Jepang.",
           inLanguage: "id",
-          url: "https://nihongolevel.lovable.app/tabel-hiragana",
+          url: "https://nihongo.live/tabel-hiragana",
           datePublished: "2025-06-12",
           dateModified: "2025-06-12",
-          author: { "@type": "Organization", name: "NihongoLevel" },
+          author: { "@type": "Organization", name: "Nihongolive" },
           publisher: {
             "@type": "Organization",
-            name: "NihongoLevel",
+            name: "Nihongolive",
             logo: {
               "@type": "ImageObject",
-              url: "https://nihongolevel.lovable.app/favicon.ico",
+              url: "https://nihongo.live/favicon.ico",
             },
           },
           mainEntityOfPage: {
             "@type": "WebPage",
-            "@id": "https://nihongolevel.lovable.app/tabel-hiragana",
+            "@id": "https://nihongo.live/tabel-hiragana",
           },
         }),
       },
@@ -212,7 +212,7 @@ function TabelHiraganaPage() {
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       <header className="flex items-center justify-between px-6 py-4 border-b border-border">
         <Link to="/" className="font-bold text-lg">
-          Nihongo<span className="text-primary">Level</span>
+          Nihongo<span className="text-primary">Live</span>
         </Link>
         <Link
           to="/"

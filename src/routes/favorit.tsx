@@ -18,13 +18,13 @@ import { LockedFeature } from "@/components/LockedFeature";
 export const Route = createFileRoute("/favorit")({
   head: () => ({
     meta: [
-      { title: "Favorit — NihongoLevel" },
+      { title: "Favorit — Nihongolive" },
       {
         name: "description",
         content:
           "Kumpulan ekspresi bahasa Jepang yang kamu tandai favorit — siap diulang kapan saja untuk memperkuat ingatan.",
       },
-      { property: "og:title", content: "Favorit — NihongoLevel" },
+      { property: "og:title", content: "Favorit — Nihongolive" },
       { property: "og:description", content: "Ekspresi bahasa Jepang favorit kamu, siap diulang kapan saja." },
       { property: "og:url", content: "/favorit" },
     ],

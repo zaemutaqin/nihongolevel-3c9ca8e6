@@ -22,11 +22,11 @@ export const Route = createFileRoute("/belajar/$sessionId")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Sesi belajar — NihongoLevel" },
+      { title: "Sesi belajar — Nihongolive" },
       {
         name: "description",
         content:
-          "Sesi belajar interaktif NihongoLevel — pelajari kosakata dan kalimat Jepang baru lewat tahap learn, listen, dan quiz singkat.",
+          "Sesi belajar interaktif Nihongolive — pelajari kosakata dan kalimat Jepang baru lewat tahap learn, listen, dan quiz singkat.",
       },
       { name: "robots", content: "noindex" },
     ],

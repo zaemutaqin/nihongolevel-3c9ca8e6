@@ -3,17 +3,17 @@ import { SiteFooter } from "@/components/SiteFooter";
 
 export const privacyHead = () => ({
   meta: [
-    { title: "Privacy Policy — NihongoLevel" },
+    { title: "Privacy Policy — Nihongolive" },
     {
       name: "description",
       content:
-        "How NihongoLevel collects, uses, and shares your data, including Paddle as Merchant of Record, and your rights.",
+        "How Nihongolive collects, uses, and shares your data, including Paddle as Merchant of Record, and your rights.",
     },
-    { property: "og:title", content: "Privacy Policy — NihongoLevel" },
+    { property: "og:title", content: "Privacy Policy — Nihongolive" },
     {
       property: "og:description",
       content:
-        "How NihongoLevel handles your personal data, including data sharing with Paddle as our Merchant of Record.",
+        "How Nihongolive handles your personal data, including data sharing with Paddle as our Merchant of Record.",
     },
     { property: "og:url", content: "/privacy-policy" },
   ],
@@ -23,17 +23,17 @@ export const privacyHead = () => ({
 export const Route = createFileRoute("/privacy")({
   head: () => ({
     meta: [
-      { title: "Privacy — NihongoLevel" },
+      { title: "Privacy — Nihongolive" },
       {
         name: "description",
         content:
-          "NihongoLevel privacy summary. See the full Privacy Policy for data collection, Paddle billing, and your rights.",
+          "Nihongolive privacy summary. See the full Privacy Policy for data collection, Paddle billing, and your rights.",
       },
-      { property: "og:title", content: "Privacy — NihongoLevel (short alias)" },
+      { property: "og:title", content: "Privacy — Nihongolive (short alias)" },
       {
         property: "og:description",
         content:
-          "Short alias for NihongoLevel's Privacy Policy. View the full policy at /privacy-policy.",
+          "Short alias for Nihongolive's Privacy Policy. View the full policy at /privacy-policy.",
       },
       { property: "og:url", content: "/privacy-policy" },
     ],
@@ -47,7 +47,7 @@ export function PrivacyPage() {
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       <header className="flex items-center justify-between px-6 py-4 border-b border-border">
         <Link to="/" className="font-bold text-lg">
-          Nihongo<span className="text-primary">Level</span>
+          Nihongo<span className="text-primary">Live</span>
         </Link>
         <Link to="/" className="text-sm font-medium text-muted-foreground hover:text-foreground">
           Back
@@ -60,7 +60,7 @@ export function PrivacyPage() {
 
         <h2>1. Who is the data controller</h2>
         <p>
-          NihongoLevel ("the Service") is provided by <strong>zaenal mutaqin</strong>. zaenal mutaqin is the data controller for personal data processed through the Service and decides why and how it is processed.
+          Nihongolive ("the Service") is provided by <strong>zaenal mutaqin</strong>. zaenal mutaqin is the data controller for personal data processed through the Service and decides why and how it is processed.
         </p>
 
         <h2>2. What personal data we collect</h2>
