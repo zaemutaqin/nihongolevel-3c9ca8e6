@@ -1,8 +1,9 @@
 // Direct Google Gemini API helper (server-only).
 // Replaces the Lovable AI Gateway for interview + translator features.
 
-const GEMINI_MODEL = "gemini-1.5-flash"; // Kembali ke nama standar yang paling aman
-const GEMINI_BASE = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}`;
+// Gunakan versi model spesifik terbaru dan jalur API stabil (v1)
+const GEMINI_MODEL = "gemini-1.5-flash-002";
+const GEMINI_BASE = `https://generativelanguage.googleapis.com/v1/models/${GEMINI_MODEL}`;
 
 export type ChatMessage = { role: "system" | "user" | "assistant"; content: string };
 
