@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
-import { cleanJapanese } from "@/lib/translate.functions";
 import {
   audit,
   clientIp,
@@ -16,11 +15,10 @@ import {
   securityHeaders,
 } from "@/lib/security.server";
 
-// Limit dinaikkan agar bebas
+// Limit dinaikkan 100.000 agar tidak kena blokir
 const GUEST_DAY_MAX = 100000;
 const FREE_DAY_MAX = 100000;
 const PRO_DAY_MAX = 100000;
-const IP_HOUR_BLOCK = 100000;
 
 const InputSchema = z.object({
   sentence: z.string().trim().min(1).max(500),
@@ -39,26 +37,28 @@ export const Route = createFileRoute("/api/translate")({
         const ip = clientIp(request);
 
         let body: unknown;
-        try {
-          body = await request.json();
-        } catch {
-          return jsonResponse({ error: "bad_json" }, 400, allowedOrigin);
-        }
+        try { body = await request.json(); } catch { return jsonResponse({ error: "bad_json" }, 400, allowedOrigin); }
         const parsed = InputSchema.safeParse(body);
         if (!parsed.success) return jsonResponse({ error: "invalid_input" }, 400, allowedOrigin);
+        
+        const sane = sanitizeInput(parsed.data.sentence);
+        if (!sane.ok) return jsonResponse({ error: "invalid_input" }, 400, allowedOrigin);
 
+        // API Key Check
         const apiKey = process.env.GEMINI_API_KEY;
         if (!apiKey) return jsonResponse({ error: "no_key" }, 500, allowedOrigin);
 
-        const prompt = `Japanese communication coach. Return ONLY raw JSON (no markdown).
-Input sentence: "${parsed.data.sentence}"
-Listener: ${parsed.data.listener || "auto"}
+        // Content
+        const { lang } = parsed.data;
+        const explLang = lang === "en" ? "English" : "Indonesian";
+        const prompt = `Japanese communication coach. Return ONLY valid JSON (no markdown).
+Input: "${sane.value}"
 Mood: ${parsed.data.mood || "auto"}
 
 {
-  "intent": { "type": "casual", "explanation": "Short explanation" },
-  "social_analysis": { "relationship": "...", "emotion": "...", "communication_goal": "...", "wrong_context_risk": "..." },
-  "most_natural": { "japanese": "...", "romaji": "...", "reason": "...", "native_note": "..." },
+  "intent": { "type": "casual_conversation", "explanation": "Short ${explLang} explanation" },
+  "social_analysis": { "relationship": "${explLang}", "emotion": "${explLang}", "communication_goal": "${explLang}", "wrong_context_risk": "Short ${explLang} warning" },
+  "most_natural": { "japanese": "...", "romaji": "...", "reason": "Short ${explLang} reason", "native_note": "Short ${explLang} note" },
   "styles": {
     "dasar": { "japanese": "-", "romaji": "-", "naturalness": "stiff", "when_to_use": "-", "suitable_for": "-", "impression": "-", "why_this_style": "-", "grammar": [], "kanji": [], "jlpt_reference": "N4" },
     "sehari_hari": { "japanese": "-", "romaji": "-", "naturalness": "stiff", "when_to_use": "-", "suitable_for": "-", "impression": "-", "why_this_style": "-", "grammar": [], "kanji": [], "jlpt_reference": "N3" },
@@ -72,49 +72,41 @@ Mood: ${parsed.data.mood || "auto"}
   ]
 }
 
-Rules: Keep ALL explanations extremely concise (MAX 10 words). DO NOT generate content for 'styles' object content (use placeholders).`;
+Rules: Keep JSON compact. Use placeholders for 'styles'.`;
 
-        const { geminiStream } = await import("@/lib/gemini.server");
-        const streamRes = await geminiStream({
-          messages: [{ role: "user", content: prompt }],
-          temperature: 0.3,
-          maxOutputTokens: 8192,
-          json: true,
-        });
-
-        if (!streamRes.ok || !streamRes.response || !streamRes.response.body) {
-          console.error("Gemini stream error", streamRes.status);
-          return jsonResponse({ error: "AI_UNAVAILABLE" }, 502, allowedOrigin);
-        }
-
-        const reader = streamRes.response.body.getReader();
-        const decoder = new TextDecoder();
-        let fullText = "";
-
+        // Direct fetch to Gemini API (Stable, no streaming)
         try {
-          while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
-            const chunk = decoder.decode(value, { stream: true });
-            // Cukup ambil teksnya saja tanpa memproses JSON yang rumit untuk sekarang
-            fullText += chunk;
+          const response = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                contents: [{ parts: [{ text: prompt }] }],
+                generationConfig: { responseMimeType: "application/json" }
+              }),
+            }
+          );
+
+          const result = await response.json();
+          
+          if (!response.ok) {
+            console.error("Gemini Error:", JSON.stringify(result));
+            return jsonResponse({ error: "AI_UNAVAILABLE" }, 502, allowedOrigin);
           }
-        } catch (e) {
-          console.error("Stream read error", e);
-        }
 
-        // Pembersihan string yang aman (tanpa RegExp rumit)
-        let cleaned = fullText.replace(/data: /g, "").replace(/\[DONE\]/g, "");
-        cleaned = cleaned.split("```json").join("").split("```").join("").trim();
+          const rawText = result.candidates[0].content.parts[0].text;
+          const cleanedText = rawText.replace(/```json/g, "").replace(/
+```/g, "").trim();
+          const finalData = JSON.parse(cleanedText);
 
-        try {
-          const finalData = JSON.parse(cleaned);
           return new Response(JSON.stringify(finalData), {
             headers: { "Content-Type": "application/json", ...securityHeaders(allowedOrigin) },
           });
+
         } catch (e) {
-          console.error("JSON Parse Error. Raw output:", cleaned);
-          return jsonResponse({ error: "INVALID_RESPONSE" }, 502, allowedOrigin);
+          console.error("Fetch/Parse Error:", e);
+          return jsonResponse({ error: "AI_UNAVAILABLE" }, 502, allowedOrigin);
         }
       },
     },
