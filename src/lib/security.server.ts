@@ -9,6 +9,9 @@ const ALLOWED_ORIGIN_SUFFIXES = [
 ];
 const ALLOWED_EXACT = new Set<string>([
   "https://nihongolevel.lovable.app",
+  "https://nihongolive.lovable.app",
+  "https://nihongo.live",
+  "https://www.nihongo.live",
 ]);
 
 export function pickAllowedOrigin(request: Request): string | null {
