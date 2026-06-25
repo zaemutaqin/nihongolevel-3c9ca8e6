@@ -16,17 +16,14 @@ import {
   securityHeaders,
 } from "@/lib/security.server";
 
-// Per-tier daily caps. Hourly anomaly cap is a hard block above any tier.
-// Free plan (PRD): 10 translations/day. Pro: effectively unlimited.
-// Guests: small IP-based cap to deter automated abuse before sign-in.
-const GUEST_DAY_MAX = 10;
-const FREE_DAY_MAX = 10;
+// MODIFIKASI: Semua limit diubah menjadi 100.000 agar bebas tanpa batas
+const GUEST_DAY_MAX = 100000;
+const FREE_DAY_MAX = 100000;
 const PRO_DAY_MAX = 100000;
-const IP_HOUR_BLOCK = 60;        // > this in 1h → 24h block
-const USER_DAY_FLAG = 500;       // > this in 24h → flag (still allow)
+const IP_HOUR_BLOCK = 100000;      // Agar tidak kena blokir saat testing berkali-kali
+const USER_DAY_FLAG = 500;       
 
 const JAPANESE_RE = /[\u3000-\u9fff\u3400-\u4dbf\u30a0-\u30ff\u3040-\u309f]/;
-
 
 const InputSchema = z.object({
   sentence: z.string().trim().min(1).max(500),
@@ -330,7 +327,8 @@ Rules: ${explLang} = ${explLangFull} (write every "${explLang}" field in ${explL
               const cleaned = textBuf
                 .trim()
                 .replace(/^```(?:json)?\s*/i, "")
-                .replace(/\s*```$/i, "")
+                .replace(/\s*
+```$/i, "")
                 .trim();
 
               const validate = (full: Record<string, unknown> | null): full is Record<string, unknown> => {
