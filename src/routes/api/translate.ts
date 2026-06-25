@@ -16,11 +16,11 @@ import {
   securityHeaders,
 } from "@/lib/security.server";
 
-// MODIFIKASI: Semua limit diubah menjadi 100.000 agar bebas tanpa batas
+// Limit diubah menjadi 100.000 agar bebas tanpa batas
 const GUEST_DAY_MAX = 100000;
 const FREE_DAY_MAX = 100000;
 const PRO_DAY_MAX = 100000;
-const IP_HOUR_BLOCK = 100000; // Agar tidak kena blokir saat testing berkali-kali
+const IP_HOUR_BLOCK = 100000;
 const USER_DAY_FLAG = 500;
 
 const JAPANESE_RE = /[\u3000-\u9fff\u3400-\u4dbf\u30a0-\u30ff\u3040-\u309f]/;
@@ -271,7 +271,8 @@ Rules: ${explLang} = ${explLangFull} (write every "${explLang}" field in ${explL
         const streamRes = await geminiStream({
           messages: [{ role: "user", content: prompt }],
           temperature: 0.3,
-          maxOutputTokens: 3200,
+          // MODIFIKASI: Kapasitas token dinaikkan dari 3200 ke maksimal (8192) agar JSON tidak terpotong
+          maxOutputTokens: 8192,
           json: true,
         });
 
@@ -374,7 +375,6 @@ Rules: ${explLang} = ${explLangFull} (write every "${explLang}" field in ${explL
                 }
               }
 
-              // MODIFIKASI: Menggunakan RegExp yang kebal copy-paste
               const cleaned = textBuf
                 .trim()
                 .replace(new RegExp("^`{3}(?:json)?\\s*", "i"), "")
@@ -429,7 +429,8 @@ Rules: ${explLang} = ${explLangFull} (write every "${explLang}" field in ${explL
                 });
               } else {
                 console.error("Failed to validate final JSON, RAW:", cleaned);
-                emit({ type: "error", code: "INVALID_RESPONSE" });
+                // MODIFIKASI: Memasukkan teks aslinya ke dalam balasan error agar kita bisa langsung melihatnya jika masih gagal
+                emit({ type: "error", code: "INVALID_RESPONSE", details: cleaned });
                 await audit({
                   event_type: "translate_fail",
                   ip_address: ip,
