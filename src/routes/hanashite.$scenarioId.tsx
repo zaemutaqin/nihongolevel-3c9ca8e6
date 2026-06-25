@@ -46,7 +46,7 @@ export const Route = createFileRoute("/hanashite/$scenarioId")({
     const title = s ? `${s.title_en} — Hanashite Room` : "Hanashite Room";
     return {
       meta: [
-        { title: `${title} | NihongoLevel` },
+        { title: `${title} | Nihongolive` },
         { name: "description", content: s?.situation_en ?? "Latih bicara Jepang dengan AI." },
         { name: "robots", content: "noindex" }, // chat page is dynamic / per-user
       ],

@@ -35,7 +35,7 @@ export const Route = createFileRoute("/api/public/hooks/daily-streak-push")({
 
         const sent = await sendPushToSubscriptions(subs, {
           title: "Saatnya belajar! 🔥",
-          body: "Jaga streak kamu — buka NihongoLevel dan cari 1 kata hari ini.",
+          body: "Jaga streak kamu — buka Nihongolive dan cari 1 kata hari ini.",
           url: "/translate",
           tag: "daily-streak",
         });

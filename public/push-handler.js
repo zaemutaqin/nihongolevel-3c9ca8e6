@@ -6,9 +6,9 @@ self.addEventListener("push", (event) => {
   try {
     payload = event.data ? event.data.json() : {};
   } catch {
-    payload = { title: "NihongoLevel", body: event.data ? event.data.text() : "" };
+    payload = { title: "Nihongolive", body: event.data ? event.data.text() : "" };
   }
-  const title = payload.title || "NihongoLevel";
+  const title = payload.title || "Nihongolive";
   const options = {
     body: payload.body || "Saatnya belajar bahasa Jepang hari ini!",
     icon: payload.icon || "/icon-192.png",

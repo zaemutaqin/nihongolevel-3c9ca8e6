@@ -21,13 +21,13 @@ import { LockedFeature } from "@/components/LockedFeature";
 export const Route = createFileRoute("/review")({
   head: () => ({
     meta: [
-      { title: "Latihan Harian — NihongoLevel" },
+      { title: "Latihan Harian — Nihongolive" },
       {
         name: "description",
         content:
           "Latihan harian berbasis spaced repetition untuk ekspresi favorit bahasa Jepang kamu — ulang yang paling perlu diingat setiap hari.",
       },
-      { property: "og:title", content: "Latihan Harian — NihongoLevel" },
+      { property: "og:title", content: "Latihan Harian — Nihongolive" },
       { property: "og:description", content: "Spaced repetition harian untuk ekspresi favorit bahasa Jepang." },
       { property: "og:url", content: "/review" },
     ],

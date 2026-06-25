@@ -15,7 +15,7 @@ export const Route = createFileRoute("/kamus-slang/$slug")({
     if (!e) return { meta: [{ title: "Tidak ditemukan" }] };
     return {
       meta: [
-        { title: `Arti ${e.romaji} (${e.jp}) — Bahasa Jepang | NihongoLevel` },
+        { title: `Arti ${e.romaji} (${e.jp}) — Bahasa Jepang | Nihongolive` },
         {
           name: "description",
           content: `${e.romaji} (${e.jp}) artinya: ${e.meaning_id}. ${e.context_id} Lihat contoh kalimat lengkap.`,
@@ -35,8 +35,8 @@ export const Route = createFileRoute("/kamus-slang/$slug")({
             description: e.meaning_id,
             inDefinedTermSet: {
               "@type": "DefinedTermSet",
-              name: "Kamus Slang Jepang — NihongoLevel",
-              url: "https://nihongolevel.lovable.app/kamus-slang",
+              name: "Kamus Slang Jepang — Nihongolive",
+              url: "https://nihongo.live/kamus-slang",
             },
           }),
         },
