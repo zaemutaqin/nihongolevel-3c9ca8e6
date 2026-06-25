@@ -20,8 +20,8 @@ import {
 const GUEST_DAY_MAX = 100000;
 const FREE_DAY_MAX = 100000;
 const PRO_DAY_MAX = 100000;
-const IP_HOUR_BLOCK = 100000;      // Agar tidak kena blokir saat testing berkali-kali
-const USER_DAY_FLAG = 500;       
+const IP_HOUR_BLOCK = 100000; // Agar tidak kena blokir saat testing berkali-kali
+const USER_DAY_FLAG = 500;
 
 const JAPANESE_RE = /[\u3000-\u9fff\u3400-\u4dbf\u30a0-\u30ff\u3040-\u309f]/;
 
@@ -40,7 +40,6 @@ const STYLE_TO_LEVEL: Record<(typeof STYLE_KEYS)[number], "N4" | "N3" | "N2" | "
   mendekati_native: "N1",
 };
 
-// Find the index of the matching close brace/bracket for the open at startIdx.
 function findBalanced(buf: string, startIdx: number): number {
   const open = buf[startIdx];
   if (open !== "{" && open !== "[") return -1;
@@ -66,12 +65,7 @@ function findBalanced(buf: string, startIdx: number): number {
   return -1;
 }
 
-// Try to extract a complete JSON value at `"key":` inside buf.
-function tryExtract(
-  buf: string,
-  key: string,
-  expectArray = false,
-): { value: unknown } | null {
+function tryExtract(buf: string, key: string, expectArray = false): { value: unknown } | null {
   const re = new RegExp(`"${key}"\\s*:\\s*`);
   const m = re.exec(buf);
   if (!m) return null;
@@ -100,10 +94,16 @@ export const Route = createFileRoute("/api/translate")({
         }
         const ip = clientIp(request);
 
-        // ---- Body + input sanitization ----
         let body: unknown;
-        try { body = await request.json(); } catch {
-          await audit({ event_type: "translate_invalid_input", ip_address: ip, success: false, error_code: "bad_json" });
+        try {
+          body = await request.json();
+        } catch {
+          await audit({
+            event_type: "translate_invalid_input",
+            ip_address: ip,
+            success: false,
+            error_code: "bad_json",
+          });
           return jsonResponse({ error: "invalid_input" }, 400, allowedOrigin);
         }
         const parsed = InputSchema.safeParse(body);
@@ -113,21 +113,30 @@ export const Route = createFileRoute("/api/translate")({
         }
         const sane = sanitizeInput(parsed.data.sentence);
         if (!sane.ok) {
-          await audit({ event_type: "translate_invalid_input", ip_address: ip, success: false, error_code: "sanitize" });
+          await audit({
+            event_type: "translate_invalid_input",
+            ip_address: ip,
+            success: false,
+            error_code: "sanitize",
+          });
           return jsonResponse({ error: "invalid_input" }, 400, allowedOrigin);
         }
 
-        // ---- Auth resolution ----
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const authHeader = request.headers.get("authorization") ?? "";
-        const token = authHeader.toLowerCase().startsWith("bearer ")
-          ? authHeader.slice(7).trim() : "";
+        const token = authHeader.toLowerCase().startsWith("bearer ") ? authHeader.slice(7).trim() : "";
         let userId: string | null = null;
         let isPro = false;
         if (token) {
           const { data: udata, error: uerr } = await supabaseAdmin.auth.getUser(token);
           if (uerr || !udata.user) {
-            await audit({ event_type: "auth_failure", ip_address: ip, success: false, error_code: "invalid_token", metadata: { route: "translate" } });
+            await audit({
+              event_type: "auth_failure",
+              ip_address: ip,
+              success: false,
+              error_code: "invalid_token",
+              metadata: { route: "translate" },
+            });
             return jsonResponse({ error: "unauthorized" }, 401, allowedOrigin);
           }
           userId = udata.user.id;
@@ -135,14 +144,21 @@ export const Route = createFileRoute("/api/translate")({
           isPro = !!prof?.is_pro;
         }
 
-        // ---- Hourly IP anomaly block (applies to everyone, even logged-in) ----
         const ipHour = await countEventsForIp(ip, ["translate_success", "translate_fail"], hoursAgoIso(1));
         if (ipHour > IP_HOUR_BLOCK) {
-          await audit({ event_type: "translate_anomaly", ip_address: ip, user_id: userId, success: false, error_code: "ip_hourly", metadata: { count: ipHour } });
-          return jsonResponse({ error: "rate_limit_exceeded", retry_after: 86400 }, 429, allowedOrigin, { "Retry-After": "86400" });
+          await audit({
+            event_type: "translate_anomaly",
+            ip_address: ip,
+            user_id: userId,
+            success: false,
+            error_code: "ip_hourly",
+            metadata: { count: ipHour },
+          });
+          return jsonResponse({ error: "rate_limit_exceeded", retry_after: 86400 }, 429, allowedOrigin, {
+            "Retry-After": "86400",
+          });
         }
 
-        // ---- Per-tier daily caps ----
         const dayAgo = hoursAgoIso(24);
         let dayCount = 0;
         let cap = GUEST_DAY_MAX;
@@ -153,22 +169,51 @@ export const Route = createFileRoute("/api/translate")({
           dayCount = await countEventsForIp(ip, ["translate_success", "translate_fail"], dayAgo);
         }
         if (dayCount >= cap) {
-          await audit({ event_type: "translate_rate_limited", ip_address: ip, user_id: userId, success: false, error_code: userId ? "user_daily" : "guest_daily", metadata: { count: dayCount, cap } });
-          return jsonResponse({ error: userId ? "rate_limit_exceeded" : "limit_reached", retry_after: 86400 }, 429, allowedOrigin, { "Retry-After": "86400" });
+          await audit({
+            event_type: "translate_rate_limited",
+            ip_address: ip,
+            user_id: userId,
+            success: false,
+            error_code: userId ? "user_daily" : "guest_daily",
+            metadata: { count: dayCount, cap },
+          });
+          return jsonResponse(
+            { error: userId ? "rate_limit_exceeded" : "limit_reached", retry_after: 86400 },
+            429,
+            allowedOrigin,
+            { "Retry-After": "86400" },
+          );
         }
         if (userId && dayCount > USER_DAY_FLAG) {
-          // Flag (log) but continue.
-          await audit({ event_type: "translate_anomaly", ip_address: ip, user_id: userId, success: true, error_code: "user_high_volume", metadata: { count: dayCount } });
+          await audit({
+            event_type: "translate_anomaly",
+            ip_address: ip,
+            user_id: userId,
+            success: true,
+            error_code: "user_high_volume",
+            metadata: { count: dayCount },
+          });
         }
 
-        // ---- Content moderation: redact PII, block obvious abuse ----
         if (isInappropriate(sane.value)) {
-          await audit({ event_type: "translate_inappropriate", ip_address: ip, user_id: userId, input_length: sane.value.length, success: false });
+          await audit({
+            event_type: "translate_inappropriate",
+            ip_address: ip,
+            user_id: userId,
+            input_length: sane.value.length,
+            success: false,
+          });
           return jsonResponse({ error: "inappropriate_content" }, 400, allowedOrigin);
         }
         const { value: cleanedInput, redacted } = redactPersonalData(sane.value);
         if (redacted) {
-          await audit({ event_type: "translate_personal_data_redacted", ip_address: ip, user_id: userId, input_length: sane.value.length, success: true });
+          await audit({
+            event_type: "translate_personal_data_redacted",
+            ip_address: ip,
+            user_id: userId,
+            input_length: sane.value.length,
+            success: true,
+          });
         }
 
         const apiKey = process.env.GEMINI_API_KEY;
@@ -178,14 +223,17 @@ export const Route = createFileRoute("/api/translate")({
         }
 
         const { lang } = parsed.data;
-        // Sanitize listener/mood the same way as `sentence` to prevent prompt injection.
         const sanitizeOptional = (raw: string | undefined): string | undefined => {
           if (!raw) return undefined;
           const s = sanitizeInput(raw);
           if (!s.ok) return undefined;
           if (isInappropriate(s.value)) return undefined;
-          // Strip characters commonly used in prompt-injection attempts.
-          return s.value.replace(/[\r\n`{}<>]/g, " ").slice(0, 100).trim() || undefined;
+          return (
+            s.value
+              .replace(/[\r\n`{}<>]/g, " ")
+              .slice(0, 100)
+              .trim() || undefined
+          );
         };
         const listener = sanitizeOptional(parsed.data.listener);
         const mood = sanitizeOptional(parsed.data.mood);
@@ -201,8 +249,6 @@ export const Route = createFileRoute("/api/translate")({
           ? `The user is writing in English. Translate and analyze the English input into Japanese expressions. Return all explanation fields in English.\n`
           : "";
 
-        // Compact prompt — schema-only, minimal prose, to reduce both input
-        // and output tokens.
         const prompt = `Japanese communication coach. Return ONLY raw JSON, no markdown.
 ${englishNote}
 Input sentence (${inputLangLabel}): "${sentence}"
@@ -237,11 +283,17 @@ Rules: ${explLang} = ${explLangFull} (write every "${explLang}" field in ${explL
                 ? "CREDITS_EXHAUSTED"
                 : "AI_UNAVAILABLE";
           console.error("Gemini error", streamRes.status);
-          await audit({ event_type: "translate_fail", ip_address: ip, user_id: userId, input_length: inputLength, success: false, error_code: code });
+          await audit({
+            event_type: "translate_fail",
+            ip_address: ip,
+            user_id: userId,
+            input_length: inputLength,
+            success: false,
+            error_code: code,
+          });
           return jsonResponse({ error: code }, streamRes.status, allowedOrigin);
         }
         const upstream = streamRes.response;
-
 
         const stream = new ReadableStream<Uint8Array>({
           async start(controller) {
@@ -272,8 +324,6 @@ Rules: ${explLang} = ${explLangFull} (write every "${explLang}" field in ${explL
 
               const stylesMatch = /"styles"\s*:\s*\{/.exec(textBuf);
               if (stylesMatch) {
-                // Include the opening "{" so nested key extraction works on a
-                // balanced substring.
                 const inner = textBuf.slice(stylesMatch.index + stylesMatch[0].length - 1);
                 for (const sk of STYLE_KEYS) {
                   if (emittedStyle.has(sk)) continue;
@@ -324,11 +374,11 @@ Rules: ${explLang} = ${explLangFull} (write every "${explLang}" field in ${explL
                 }
               }
 
+              // MODIFIKASI: Menggunakan RegExp yang kebal copy-paste
               const cleaned = textBuf
                 .trim()
-                .replace(/^```(?:json)?\s*/i, "")
-                .replace(/\s*
-```$/i, "")
+                .replace(new RegExp("^`{3}(?:json)?\\s*", "i"), "")
+                .replace(new RegExp("\\s*`{3}$", "i"), "")
                 .trim();
 
               const validate = (full: Record<string, unknown> | null): full is Record<string, unknown> => {
@@ -343,7 +393,6 @@ Rules: ${explLang} = ${explLangFull} (write every "${explLang}" field in ${explL
               try {
                 finalFull = JSON.parse(cleaned);
               } catch {
-                // Fallback: reassemble from extracted pieces (handles truncation).
                 const intent = tryExtract(textBuf, "intent")?.value;
                 const social = tryExtract(textBuf, "social_analysis")?.value;
                 const most = tryExtract(textBuf, "most_natural")?.value;
@@ -370,16 +419,37 @@ Rules: ${explLang} = ${explLangFull} (write every "${explLang}" field in ${explL
 
               if (validate(finalFull)) {
                 emit({ type: "done", full: finalFull });
-                await audit({ event_type: "translate_success", ip_address: ip, user_id: userId, input_length: inputLength, success: true, metadata: { lang } });
+                await audit({
+                  event_type: "translate_success",
+                  ip_address: ip,
+                  user_id: userId,
+                  input_length: inputLength,
+                  success: true,
+                  metadata: { lang },
+                });
               } else {
                 console.error("Failed to validate final JSON, RAW:", cleaned);
                 emit({ type: "error", code: "INVALID_RESPONSE" });
-                await audit({ event_type: "translate_fail", ip_address: ip, user_id: userId, input_length: inputLength, success: false, error_code: "invalid_response" });
+                await audit({
+                  event_type: "translate_fail",
+                  ip_address: ip,
+                  user_id: userId,
+                  input_length: inputLength,
+                  success: false,
+                  error_code: "invalid_response",
+                });
               }
             } catch (e) {
               console.error("Stream error", e);
               emit({ type: "error", code: "AI_UNAVAILABLE" });
-              await audit({ event_type: "translate_fail", ip_address: ip, user_id: userId, input_length: inputLength, success: false, error_code: "stream_error" });
+              await audit({
+                event_type: "translate_fail",
+                ip_address: ip,
+                user_id: userId,
+                input_length: inputLength,
+                success: false,
+                error_code: "stream_error",
+              });
             } finally {
               controller.close();
             }
@@ -394,7 +464,6 @@ Rules: ${explLang} = ${explLangFull} (write every "${explLang}" field in ${explL
             ...securityHeaders(allowedOrigin),
           },
         });
-
       },
     },
   },
