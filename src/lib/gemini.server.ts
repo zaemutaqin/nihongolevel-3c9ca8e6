@@ -3,7 +3,7 @@
 
 // Gunakan versi model spesifik terbaru dan jalur API stabil (v1)
 const GEMINI_MODEL = "gemini-1.5-flash-002";
-const GEMINI_BASE = `https://generativelanguage.googleapis.com/v1/models/${GEMINI_MODEL}`;
+const GEMINI_BASE = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}`;
 
 export type ChatMessage = { role: "system" | "user" | "assistant"; content: string };
 
