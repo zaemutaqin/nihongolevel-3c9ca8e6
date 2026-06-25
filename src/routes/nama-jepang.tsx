@@ -7,7 +7,7 @@ import { HanashiteTeaserBanner } from "@/components/HanashiteTeaserBanner";
 export const Route = createFileRoute("/nama-jepang")({
   head: () => ({
     meta: [
-      { title: "Generator Nama Jepang — Ubah Namamu ke Katakana & Kanji | Nihongolive" },
+      { title: "Generator Nama Jepang — Ubah Namamu ke Katakana & Kanji | NihongoLevel" },
       {
         name: "description",
         content:
@@ -48,7 +48,7 @@ function buildMeishiSVG(name: string, r: Result, atejiIdx: number): string {
   <text x="48" y="290" font-family="Inter, system-ui, sans-serif" font-size="12" font-weight="700" fill="${PALETTE.accent}" letter-spacing="3">ATEJI · 当て字</text>
   <text x="48" y="370" font-family="'Noto Sans JP', serif" font-size="84" font-weight="900" fill="${PALETTE.ink}">${safe(ateji.kanji)}</text>
   <text x="48" y="400" font-family="Inter, system-ui, sans-serif" font-size="16" font-weight="500" fill="${PALETTE.ink}" opacity="0.75">${safe(ateji.reading)} — ${safe(ateji.meaning)}</text>
-  <text x="752" y="450" text-anchor="end" font-family="Inter, system-ui, sans-serif" font-size="12" font-weight="700" fill="${PALETTE.ink}" opacity="0.5">${safe(name)}  ·  nihongo.live</text>
+  <text x="752" y="450" text-anchor="end" font-family="Inter, system-ui, sans-serif" font-size="12" font-weight="700" fill="${PALETTE.ink}" opacity="0.5">${safe(name)}  ·  nihongolevel.lovable.app</text>
 </svg>`;
 }
 

@@ -7,7 +7,7 @@ import { HanashiteTeaserBanner } from "@/components/HanashiteTeaserBanner";
 export const Route = createFileRoute("/game-kana")({
   head: () => ({
     meta: [
-      { title: "Kana Speed Drop — Game Belajar Hiragana | Nihongolive" },
+      { title: "Kana Speed Drop — Game Belajar Hiragana | NihongoLevel" },
       {
         name: "description",
         content:

@@ -3,17 +3,17 @@ import { SiteFooter } from "@/components/SiteFooter";
 
 export const termsHead = () => ({
     meta: [
-      { title: "Terms of Service — Nihongolive" },
+      { title: "Terms of Service — NihongoLevel" },
       {
         name: "description",
         content:
-          "Terms of Service for Nihongolive: rules for using the service, payment terms, and Paddle as Merchant of Record.",
+          "Terms of Service for NihongoLevel: rules for using the service, payment terms, and Paddle as Merchant of Record.",
       },
-      { property: "og:title", content: "Terms of Service — Nihongolive" },
+      { property: "og:title", content: "Terms of Service — NihongoLevel" },
       {
         property: "og:description",
         content:
-          "The rules and conditions for using Nihongolive, operated by zaenal mutaqin.",
+          "The rules and conditions for using NihongoLevel, operated by zaenal mutaqin.",
       },
       { property: "og:url", content: "/terms-of-service" },
     ],
@@ -23,17 +23,17 @@ export const termsHead = () => ({
 export const Route = createFileRoute("/terms")({
   head: () => ({
     meta: [
-      { title: "Terms — Nihongolive" },
+      { title: "Terms — NihongoLevel" },
       {
         name: "description",
         content:
-          "Nihongolive terms summary. See the full Terms of Service for usage rules and Paddle payment details.",
+          "NihongoLevel terms summary. See the full Terms of Service for usage rules and Paddle payment details.",
       },
-      { property: "og:title", content: "Terms — Nihongolive (short alias)" },
+      { property: "og:title", content: "Terms — NihongoLevel (short alias)" },
       {
         property: "og:description",
         content:
-          "Short alias for Nihongolive's Terms of Service. View the full document at /terms-of-service.",
+          "Short alias for NihongoLevel's Terms of Service. View the full document at /terms-of-service.",
       },
       { property: "og:url", content: "/terms-of-service" },
     ],
@@ -47,7 +47,7 @@ export function TermsPage() {
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       <header className="flex items-center justify-between px-6 py-4 border-b border-border">
         <Link to="/" className="font-bold text-lg">
-          Nihongo<span className="text-primary">Live</span>
+          Nihongo<span className="text-primary">Level</span>
         </Link>
         <Link to="/" className="text-sm font-medium text-muted-foreground hover:text-foreground">
           Back
@@ -60,7 +60,7 @@ export function TermsPage() {
 
         <h2>1. Who we are</h2>
         <p>
-          Nihongolive ("the Service") is provided by <strong>zaenal mutaqin</strong> ("we", "us", "our"). By using the Service you are entering into a contract with zaenal mutaqin.
+          NihongoLevel ("the Service") is provided by <strong>zaenal mutaqin</strong> ("we", "us", "our"). By using the Service you are entering into a contract with zaenal mutaqin.
         </p>
 
         <h2>2. Acceptance of these terms</h2>
@@ -75,7 +75,7 @@ export function TermsPage() {
 
         <h2>4. What the Service is</h2>
         <p>
-          Nihongolive is a Japanese-language learning tool that lets you look up natural Japanese expressions, save favorites, review your history, and practice. Pro plans unlock additional features such as unlimited searches, full history, favorites, dashboard, and daily practice.
+          NihongoLevel is a Japanese-language learning tool that lets you look up natural Japanese expressions, save favorites, review your history, and practice. Pro plans unlock additional features such as unlimited searches, full history, favorites, dashboard, and daily practice.
         </p>
 
         <h2>5. Acceptable use</h2>
@@ -98,7 +98,7 @@ export function TermsPage() {
           <a href="https://www.paddle.com/legal/checkout-buyer-terms" target="_blank" rel="noopener noreferrer">Buyer Terms</a>.
         </p>
         <p>
-          Nihongolive Pro is sold as a one-time purchase that grants lifetime access to Pro features for the purchasing account. There are no recurring charges, no renewals, and no automatic billing. Prices, fees, and applicable taxes are shown at checkout.
+          NihongoLevel Pro is sold as a one-time purchase that grants lifetime access to Pro features for the purchasing account. There are no recurring charges, no renewals, and no automatic billing. Prices, fees, and applicable taxes are shown at checkout.
         </p>
 
         <h2>8. Refunds</h2>

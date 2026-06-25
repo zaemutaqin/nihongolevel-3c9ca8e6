@@ -35,13 +35,13 @@ export const Route = createFileRoute("/")({
   validateSearch: zodValidator(searchSchema),
   head: () => ({
     meta: [
-      { title: "Nihongolive — Siap Kerja & Hidup di Jepang dengan AI" },
+      { title: "NihongoLevel — Siap Kerja & Hidup di Jepang dengan AI" },
       {
         name: "description",
         content:
           "Dari nol sampai siap interview kerja di Jepang. Kurikulum bertahap, latihan AI, dan translator natural dalam satu aplikasi.",
       },
-      { property: "og:title", content: "Nihongolive — Siap Kerja & Hidup di Jepang dengan AI" },
+      { property: "og:title", content: "NihongoLevel — Siap Kerja & Hidup di Jepang dengan AI" },
       {
         property: "og:description",
         content:
@@ -551,7 +551,7 @@ function WelcomeBack({ isId }: { isId: boolean }) {
             日
           </span>
           <span className="text-xl font-black tracking-tight text-violet-900">
-            Nihongolive
+            NihongoLevel
           </span>
         </div>
 

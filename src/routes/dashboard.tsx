@@ -39,13 +39,13 @@ import { applyLearningProgressToOverview, readLearningProgress, subscribeLearnin
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
     meta: [
-      { title: "Levelku — Nihongolive" },
+      { title: "Levelku — NihongoLevel" },
       {
         name: "description",
         content:
           "Pantau progress kurikulum, streak harian, dan item yang perlu diulang dalam dashboard belajar bahasa Jepang kamu.",
       },
-      { property: "og:title", content: "Levelku — Nihongolive" },
+      { property: "og:title", content: "Levelku — NihongoLevel" },
       { property: "og:description", content: "Progress kurikulum, streak, dan review harian." },
       { property: "og:url", content: "/dashboard" },
     ],

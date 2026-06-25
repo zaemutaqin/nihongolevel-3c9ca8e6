@@ -64,13 +64,13 @@ import {
 export const Route = createFileRoute("/translate")({
   head: () => ({
     meta: [
-      { title: "Cari Ekspresi Jepang Natural — Nihongolive" },
+      { title: "Cari Ekspresi Jepang Natural — NihongoLevel" },
       {
         name: "description",
         content:
           "Cari ekspresi bahasa Jepang paling natural untuk setiap situasi sehari-hari — lengkap dengan level kesopanan (N1–N4) dan analisis konteks sosial.",
       },
-      { property: "og:title", content: "Cari Ekspresi Jepang Natural — Nihongolive" },
+      { property: "og:title", content: "Cari Ekspresi Jepang Natural — NihongoLevel" },
       {
         property: "og:description",
         content:

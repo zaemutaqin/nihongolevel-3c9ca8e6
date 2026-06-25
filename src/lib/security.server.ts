@@ -8,7 +8,7 @@ const ALLOWED_ORIGIN_SUFFIXES = [
   ".lovable.dev",
 ];
 const ALLOWED_EXACT = new Set<string>([
-  "https://nihongo.live",
+  "https://nihongolevel.lovable.app",
   "https://nihongolive.lovable.app",
   "https://nihongo.live",
   "https://www.nihongo.live",

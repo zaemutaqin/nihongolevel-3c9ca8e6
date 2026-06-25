@@ -17,7 +17,7 @@ export const Route = createFileRoute("/belajar/review")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Latihan ulang — Nihongolive" },
+      { title: "Latihan ulang — NihongoLevel" },
       { name: "robots", content: "noindex" },
     ],
   }),

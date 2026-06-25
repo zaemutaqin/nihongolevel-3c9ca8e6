@@ -8,7 +8,7 @@ import { HanashiteTeaserBanner } from "@/components/HanashiteTeaserBanner";
 export const Route = createFileRoute("/kamus-slang/")({
   head: () => ({
     meta: [
-      { title: "Kamus Slang Jepang — Arti Kata Gaul Anime | Nihongolive" },
+      { title: "Kamus Slang Jepang — Arti Kata Gaul Anime | NihongoLevel" },
       {
         name: "description",
         content:
@@ -28,16 +28,16 @@ export const Route = createFileRoute("/kamus-slang/")({
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "CollectionPage",
-          name: "Kamus Slang Jepang — Arti Kata Gaul Anime & Dorama | Nihongolive",
+          name: "Kamus Slang Jepang — Arti Kata Gaul Anime & Dorama | NihongoLevel",
           description: "Kumpulan arti kata gaul Jepang yang sering muncul di anime, dorama, dan manga.",
-          url: "https://nihongo.live/kamus-slang",
+          url: "https://nihongolevel.lovable.app/kamus-slang",
           mainEntity: {
             "@type": "ItemList",
             itemListElement: SLANG.map((s, i) => ({
               "@type": "ListItem",
               position: i + 1,
               name: s.jp,
-              url: `https://nihongo.live/kamus-slang/${s.slug}`,
+              url: `https://nihongolevel.lovable.app/kamus-slang/${s.slug}`,
             })),
           },
         }),

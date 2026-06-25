@@ -17,7 +17,7 @@ export const Route = createFileRoute("/panduan-wisata")({
     meta: [
       {
         title:
-          "Panduan Bahasa Jepang untuk Wisatawan — Nihongolive",
+          "Panduan Bahasa Jepang untuk Wisatawan — NihongoLevel",
       },
       {
         name: "description",
@@ -26,7 +26,7 @@ export const Route = createFileRoute("/panduan-wisata")({
       },
       {
         property: "og:title",
-        content: "Panduan Bahasa Jepang untuk Wisatawan — Nihongolive",
+        content: "Panduan Bahasa Jepang untuk Wisatawan — NihongoLevel",
       },
       {
         property: "og:description",
@@ -47,22 +47,22 @@ export const Route = createFileRoute("/panduan-wisata")({
           headline: "Panduan Bahasa Jepang Natural untuk Wisatawan",
           description:
             "Kosakata dan ekspresi bahasa Jepang untuk traveling dengan tingkat kesopanan N4–N1.",
-          url: "https://nihongo.live/panduan-wisata",
+          url: "https://nihongolevel.lovable.app/panduan-wisata",
           author: {
             "@type": "Organization",
-            name: "Nihongolive",
+            name: "NihongoLevel",
           },
           publisher: {
             "@type": "Organization",
-            name: "Nihongolive",
+            name: "NihongoLevel",
             logo: {
               "@type": "ImageObject",
-              url: "https://nihongo.live/favicon.ico",
+              url: "https://nihongolevel.lovable.app/favicon.ico",
             },
           },
           mainEntityOfPage: {
             "@type": "WebPage",
-            "@id": "https://nihongo.live/panduan-wisata",
+            "@id": "https://nihongolevel.lovable.app/panduan-wisata",
           },
         }),
       },
@@ -388,7 +388,7 @@ function PanduanWisataPage() {
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       <header className="flex items-center justify-between px-6 py-4 border-b border-border">
         <Link to="/" className="font-bold text-lg">
-          Nihongo<span className="text-primary">Live</span>
+          Nihongo<span className="text-primary">Level</span>
         </Link>
         <Link
           to="/"
@@ -524,8 +524,8 @@ function PanduanWisataPage() {
           </h3>
           <p className="mt-2 text-sm text-muted-foreground max-w-md mx-auto">
             {isId
-              ? "Masukkan situasimu sendiri dan Nihongolive akan memberikan ekspresi natural di semua level kesopanan — dengan analisis situasi lengkap."
-              : "Enter your own situation and Nihongolive will give you natural expressions at all politeness levels — with full situation analysis."}
+              ? "Masukkan situasimu sendiri dan NihongoLevel akan memberikan ekspresi natural di semua level kesopanan — dengan analisis situasi lengkap."
+              : "Enter your own situation and NihongoLevel will give you natural expressions at all politeness levels — with full situation analysis."}
           </p>
           <Link
             to="/"

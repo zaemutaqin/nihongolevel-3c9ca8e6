@@ -17,8 +17,8 @@ export const Route = createFileRoute("/auth")({
   validateSearch: (s) => searchSchema.parse(s),
   head: () => ({
     meta: [
-      { title: "Masuk — Nihongolive" },
-      { name: "description", content: "Masuk atau daftar untuk menyimpan progress interview & translator Nihongolive." },
+      { title: "Masuk — NihongoLevel" },
+      { name: "description", content: "Masuk atau daftar untuk menyimpan progress interview & translator NihongoLevel." },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -49,8 +49,8 @@ function AuthPage() {
 
   const isId = lang === "id";
   const labels = {
-    signinTitle: isId ? "Masuk ke Nihongolive" : "Sign in to Nihongolive",
-    signupTitle: isId ? "Buat akun Nihongolive" : "Create your Nihongolive account",
+    signinTitle: isId ? "Masuk ke NihongoLevel" : "Sign in to NihongoLevel",
+    signupTitle: isId ? "Buat akun NihongoLevel" : "Create your NihongoLevel account",
     subtitle: isId
       ? "Simpan progress interview & riwayat translator."
       : "Save your interview progress and translator history.",
