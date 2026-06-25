@@ -26,11 +26,8 @@ const InputSchema = z.object({
   messages: z.array(MessageSchema).min(0).max(60),
   mode: z.enum(["chat", "feedback", "options_only"]).default("chat"),
   lang: z.enum(["id", "en"]).optional().default("id"),
-  // langMode controls what extras (romaji / translation) the API computes for the next question.
   langMode: z.enum(["translate", "romaji", "fullJp"]).optional().default("translate"),
-  // answerMode === "mcq" → API also generates 4 candidate options + correct_index for the new question.
   answerMode: z.enum(["mcq", "mic", "type"]).optional().default("type"),
-  // For mode === "options_only": question to generate options for.
   questionJp: z.string().trim().max(800).optional(),
   sessionId: z.string().uuid().optional(),
 });
@@ -58,7 +55,6 @@ export const Route = createFileRoute("/api/interview")({
         const scenario = getInterviewScenario(scenarioId);
         if (!scenario) return jsonResponse({ error: "INVALID_INPUT" }, 400, allowedOrigin);
 
-        // Sanitize all user messages
         for (const m of messages) {
           const s = sanitizeInput(m.content);
           if (!s.ok || isInappropriate(s.value)) {
@@ -67,12 +63,9 @@ export const Route = createFileRoute("/api/interview")({
           m.content = s.value;
         }
 
-        // Auth — usually required, but allow guest demo for iv_kaigo (chat mode, max 3 user turns)
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const authHeader = request.headers.get("authorization") ?? "";
-        const token = authHeader.toLowerCase().startsWith("bearer ")
-          ? authHeader.slice(7).trim()
-          : "";
+        const token = authHeader.toLowerCase().startsWith("bearer ") ? authHeader.slice(7).trim() : "";
         const userTurnCount = messages.filter((m) => m.role === "user").length;
         const isGuestDemo =
           !token &&
@@ -88,28 +81,19 @@ export const Route = createFileRoute("/api/interview")({
           const { data: udata } = await supabaseAdmin.auth.getUser(token);
           if (!udata?.user) return jsonResponse({ error: "AUTH_REQUIRED" }, 401, allowedOrigin);
           userId = udata.user.id;
-          const { data: prof } = await supabaseAdmin
-            .from("profiles")
-            .select("is_pro")
-            .eq("id", userId)
-            .maybeSingle();
+          const { data: prof } = await supabaseAdmin.from("profiles").select("is_pro").eq("id", userId).maybeSingle();
           isPro = !!prof?.is_pro;
         }
 
-        // Daily session cap for free users — counted by feedback events (= completed sessions).
         if (userId && !isPro && mode === "feedback") {
           const dayAgo = hoursAgoIso(24);
           const used = await countEventsForUser(userId, ["interview_feedback"], dayAgo);
           if (used >= FREE_DAY_SESSIONS) {
-            return jsonResponse(
-              { error: "DAILY_LIMIT", retry_after: 86400 },
-              429,
-              allowedOrigin,
-              { "Retry-After": "86400" },
-            );
+            return jsonResponse({ error: "DAILY_LIMIT", retry_after: 86400 }, 429, allowedOrigin, {
+              "Retry-After": "86400",
+            });
           }
         }
-
 
         const apiKey = process.env.GEMINI_API_KEY;
         if (!apiKey) return jsonResponse({ error: "SERVER_MISCONFIGURED" }, 500, allowedOrigin);
@@ -121,7 +105,6 @@ export const Route = createFileRoute("/api/interview")({
           const wantTranslation = langMode === "translate";
           const wantOptions = answerMode === "mcq" || mode === "options_only";
 
-          // Build the JSON schema-style template inside the prompt.
           const extras: string[] = [`"japanese": "<Japanese question, hiragana/katakana/kanji only>"`];
           if (wantRomaji) extras.push(`"romaji": "<Hepburn romaji of japanese, lowercase>"`);
           if (wantTranslation) extras.push(`"translation": "<${explLang} translation of japanese>"`);
@@ -184,10 +167,7 @@ ${
 - One short Japanese sentence per option (under 60 chars).`
     : ""
 }`;
-            modelMessages = [
-              { role: "system", content: systemPrompt },
-              ...messages,
-            ];
+            modelMessages = [{ role: "system", content: systemPrompt }, ...messages];
           }
 
           const { geminiGenerate } = await import("@/lib/gemini.server");
@@ -212,14 +192,14 @@ ${
               success: false,
               error_code: code,
             });
-            // MODIFIKASI: Menambahkan pesan asli Google di sini!
             return jsonResponse({ error: code, google_detail: upstream.text }, upstream.status, allowedOrigin);
           }
+
           const raw = upstream.text.trim();
+          // Kode aman dari error enter saat di paste
           const cleaned = raw
-            .replace(/^```(?:json)?\s*/i, "")
-            .replace(/\s*
-```$/i, "")
+            .replace(new RegExp("^`{3}(?:json)?\\s*", "i"), "")
+            .replace(new RegExp("\\s*`{3}$", "i"), "")
             .trim();
 
           let parsedReply: {
@@ -232,7 +212,6 @@ ${
           try {
             parsedReply = JSON.parse(cleaned);
           } catch {
-            // Fallback: treat the raw output as the japanese question.
             parsedReply = { japanese: raw };
           }
           const japanese = (parsedReply.japanese ?? "").trim();
@@ -250,15 +229,13 @@ ${
 
           return jsonResponse(
             {
-              // Back-compat: top-level `reply` is the japanese string.
               reply: japanese,
               structured: {
                 japanese,
                 romaji: parsedReply.romaji ?? null,
                 translation: parsedReply.translation ?? null,
                 options: Array.isArray(parsedReply.options) ? parsedReply.options.slice(0, 4) : null,
-                correct_index:
-                  typeof parsedReply.correct_index === "number" ? parsedReply.correct_index : 0,
+                correct_index: typeof parsedReply.correct_index === "number" ? parsedReply.correct_index : 0,
               },
             },
             200,
@@ -266,8 +243,6 @@ ${
           );
         }
 
-
-        // mode === "feedback" — generate evaluation + save session (auth required, guarded above)
         if (!userId) return jsonResponse({ error: "AUTH_REQUIRED" }, 401, allowedOrigin);
         if (messages.length === 0) {
           return jsonResponse({ error: "INVALID_INPUT" }, 400, allowedOrigin);
@@ -311,21 +286,18 @@ Rules:
           maxOutputTokens: 1200,
           json: true,
         });
+
         if (!upstream.ok) {
           const code =
-            upstream.status === 429
-              ? "RATE_LIMITED"
-              : upstream.status === 402
-                ? "CREDITS_EXHAUSTED"
-                : "AI_UNAVAILABLE";
-          // MODIFIKASI: Menambahkan pesan asli Google di sini juga!
+            upstream.status === 429 ? "RATE_LIMITED" : upstream.status === 402 ? "CREDITS_EXHAUSTED" : "AI_UNAVAILABLE";
           return jsonResponse({ error: code, google_detail: upstream.text }, upstream.status, allowedOrigin);
         }
+
         const raw = upstream.text.trim();
+        // Kode aman dari error enter saat di paste
         const cleaned = raw
-          .replace(/^```(?:json)?\s*/i, "")
-          .replace(/\s*
-```$/i, "")
+          .replace(new RegExp("^`{3}(?:json)?\\s*", "i"), "")
+          .replace(new RegExp("\\s*`{3}$", "i"), "")
           .trim();
 
         let evalObj: {
@@ -342,7 +314,6 @@ Rules:
           return jsonResponse({ error: "INVALID_RESPONSE" }, 502, allowedOrigin);
         }
 
-        // Persist session
         const row = {
           user_id: userId,
           scenario_id: scenario.id,
@@ -384,11 +355,7 @@ Rules:
           metadata: { scenarioId, turns: messages.length },
         });
 
-        return jsonResponse(
-          { evaluation: evalObj, sessionId: savedId },
-          200,
-          allowedOrigin,
-        );
+        return jsonResponse({ evaluation: evalObj, sessionId: savedId }, 200, allowedOrigin);
       },
     },
   },
