@@ -1,7 +1,7 @@
 // Direct Google Gemini API helper (server-only).
 // Replaces the Lovable AI Gateway for interview + translator features.
 
-const GEMINI_MODEL = "gemini-1.5-flash-latest";
+const GEMINI_MODEL = "gemini-1.5-flash"; // Kembali ke nama standar yang paling aman
 const GEMINI_BASE = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}`;
 
 export type ChatMessage = { role: "system" | "user" | "assistant"; content: string };
@@ -61,15 +61,20 @@ export async function geminiGenerate(opts: GeminiOptions): Promise<{
   text: string;
 }> {
   const key = getKey();
-  if (!key) return { ok: false, status: 500, text: "" };
+  if (!key) return { ok: false, status: 500, text: "API Key is empty or missing" };
+
   const res = await fetch(`${GEMINI_BASE}:generateContent?key=${encodeURIComponent(key)}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(buildBody(opts)),
   });
+
   if (!res.ok) {
-    return { ok: false, status: res.status, text: "" };
+    // INI YANG PALING PENTING: Menangkap jawaban asli Google
+    const errText = await res.text();
+    return { ok: false, status: res.status, text: errText };
   }
+
   const data = (await res.json()) as {
     candidates?: { content?: { parts?: { text?: string }[] } }[];
   };
@@ -77,10 +82,6 @@ export async function geminiGenerate(opts: GeminiOptions): Promise<{
   return { ok: true, status: 200, text };
 }
 
-/**
- * Streams Gemini output. Returns the raw upstream Response (SSE) plus a helper
- * to extract the text delta from a parsed event JSON.
- */
 export async function geminiStream(opts: GeminiOptions): Promise<{
   ok: boolean;
   status: number;
