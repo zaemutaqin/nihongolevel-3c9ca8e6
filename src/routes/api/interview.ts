@@ -212,12 +212,14 @@ ${
               success: false,
               error_code: code,
             });
-            return jsonResponse({ error: code }, upstream.status, allowedOrigin);
+            // MODIFIKASI: Menambahkan pesan asli Google di sini!
+            return jsonResponse({ error: code, google_detail: upstream.text }, upstream.status, allowedOrigin);
           }
           const raw = upstream.text.trim();
           const cleaned = raw
             .replace(/^```(?:json)?\s*/i, "")
-            .replace(/\s*```$/i, "")
+            .replace(/\s*
+```$/i, "")
             .trim();
 
           let parsedReply: {
@@ -316,12 +318,14 @@ Rules:
               : upstream.status === 402
                 ? "CREDITS_EXHAUSTED"
                 : "AI_UNAVAILABLE";
-          return jsonResponse({ error: code }, upstream.status, allowedOrigin);
+          // MODIFIKASI: Menambahkan pesan asli Google di sini juga!
+          return jsonResponse({ error: code, google_detail: upstream.text }, upstream.status, allowedOrigin);
         }
         const raw = upstream.text.trim();
         const cleaned = raw
           .replace(/^```(?:json)?\s*/i, "")
-          .replace(/\s*```$/i, "")
+          .replace(/\s*
+```$/i, "")
           .trim();
 
         let evalObj: {
