@@ -30,6 +30,7 @@ export const Route = createFileRoute("/sitemap.xml")({
           { path: "/kamus-slang", changefreq: "weekly", priority: "0.9" },
           ...SLANG_SLUGS.map((slug) => ({ path: `/kamus-slang/${slug}`, changefreq: "monthly" as const, priority: "0.7" })),
           { path: "/panduan-wisata", changefreq: "monthly", priority: "0.8" },
+          { path: "/panduan-tokutei-ginou", changefreq: "monthly", priority: "0.85" },
           { path: "/tabel-hiragana", changefreq: "monthly", priority: "0.8" },
           { path: "/interview", changefreq: "weekly", priority: "0.8" },
           ...INTERVIEW_SCENARIOS.map((s) => ({ path: `/interview/${s.id}`, changefreq: "monthly" as const, priority: "0.7" })),

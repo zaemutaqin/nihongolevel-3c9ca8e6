@@ -22,6 +22,7 @@ import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PanduanWisataRouteImport } from './routes/panduan-wisata'
+import { Route as PanduanTokuteiGinouRouteImport } from './routes/panduan-tokutei-ginou'
 import { Route as NamaJepangRouteImport } from './routes/nama-jepang'
 import { Route as GameKanaRouteImport } from './routes/game-kana'
 import { Route as FavoritRouteImport } from './routes/favorit'
@@ -108,6 +109,11 @@ const PricingRoute = PricingRouteImport.update({
 const PanduanWisataRoute = PanduanWisataRouteImport.update({
   id: '/panduan-wisata',
   path: '/panduan-wisata',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PanduanTokuteiGinouRoute = PanduanTokuteiGinouRouteImport.update({
+  id: '/panduan-tokutei-ginou',
+  path: '/panduan-tokutei-ginou',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NamaJepangRoute = NamaJepangRouteImport.update({
@@ -231,6 +237,7 @@ export interface FileRoutesByFullPath {
   '/favorit': typeof FavoritRoute
   '/game-kana': typeof GameKanaRoute
   '/nama-jepang': typeof NamaJepangRoute
+  '/panduan-tokutei-ginou': typeof PanduanTokuteiGinouRoute
   '/panduan-wisata': typeof PanduanWisataRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
@@ -268,6 +275,7 @@ export interface FileRoutesByTo {
   '/favorit': typeof FavoritRoute
   '/game-kana': typeof GameKanaRoute
   '/nama-jepang': typeof NamaJepangRoute
+  '/panduan-tokutei-ginou': typeof PanduanTokuteiGinouRoute
   '/panduan-wisata': typeof PanduanWisataRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
@@ -306,6 +314,7 @@ export interface FileRoutesById {
   '/favorit': typeof FavoritRoute
   '/game-kana': typeof GameKanaRoute
   '/nama-jepang': typeof NamaJepangRoute
+  '/panduan-tokutei-ginou': typeof PanduanTokuteiGinouRoute
   '/panduan-wisata': typeof PanduanWisataRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
@@ -345,6 +354,7 @@ export interface FileRouteTypes {
     | '/favorit'
     | '/game-kana'
     | '/nama-jepang'
+    | '/panduan-tokutei-ginou'
     | '/panduan-wisata'
     | '/pricing'
     | '/privacy'
@@ -382,6 +392,7 @@ export interface FileRouteTypes {
     | '/favorit'
     | '/game-kana'
     | '/nama-jepang'
+    | '/panduan-tokutei-ginou'
     | '/panduan-wisata'
     | '/pricing'
     | '/privacy'
@@ -419,6 +430,7 @@ export interface FileRouteTypes {
     | '/favorit'
     | '/game-kana'
     | '/nama-jepang'
+    | '/panduan-tokutei-ginou'
     | '/panduan-wisata'
     | '/pricing'
     | '/privacy'
@@ -457,6 +469,7 @@ export interface RootRouteChildren {
   FavoritRoute: typeof FavoritRoute
   GameKanaRoute: typeof GameKanaRoute
   NamaJepangRoute: typeof NamaJepangRoute
+  PanduanTokuteiGinouRoute: typeof PanduanTokuteiGinouRoute
   PanduanWisataRoute: typeof PanduanWisataRoute
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
@@ -579,6 +592,13 @@ declare module '@tanstack/react-router' {
       path: '/panduan-wisata'
       fullPath: '/panduan-wisata'
       preLoaderRoute: typeof PanduanWisataRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/panduan-tokutei-ginou': {
+      id: '/panduan-tokutei-ginou'
+      path: '/panduan-tokutei-ginou'
+      fullPath: '/panduan-tokutei-ginou'
+      preLoaderRoute: typeof PanduanTokuteiGinouRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/nama-jepang': {
@@ -745,6 +765,7 @@ const rootRouteChildren: RootRouteChildren = {
   FavoritRoute: FavoritRoute,
   GameKanaRoute: GameKanaRoute,
   NamaJepangRoute: NamaJepangRoute,
+  PanduanTokuteiGinouRoute: PanduanTokuteiGinouRoute,
   PanduanWisataRoute: PanduanWisataRoute,
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
