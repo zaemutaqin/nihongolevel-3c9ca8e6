@@ -1,8 +1,12 @@
 // Direct Google Gemini API helper (server-only).
-// Replaces the Lovable AI Gateway for interview + translator features.
+// Primary: gemini-2.5-flash | Fallback: gemini-2.5-flash-lite (auto on 429)
 
-const GEMINI_MODEL = "gemini-2.5-flash"; // Menggunakan model generasi terbaru yang aktif
-const GEMINI_BASE = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}`;
+const MODELS = {
+  primary: "gemini-2.5-flash",
+  fallback: "gemini-2.5-flash-lite",
+} as const;
+
+const BASE = "https://generativelanguage.googleapis.com/v1beta/models";
 
 export type ChatMessage = { role: "system" | "user" | "assistant"; content: string };
 
@@ -55,49 +59,76 @@ function getKey(): string | null {
   return process.env.GEMINI_API_KEY?.trim() ?? null;
 }
 
+// --- Non-streaming (with auto fallback) ---
 export async function geminiGenerate(opts: GeminiOptions): Promise<{
   ok: boolean;
   status: number;
   text: string;
+  model?: string;
 }> {
   const key = getKey();
   if (!key) return { ok: false, status: 500, text: "API Key is empty or missing" };
 
-  const res = await fetch(`${GEMINI_BASE}:generateContent?key=${encodeURIComponent(key)}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(buildBody(opts)),
-  });
+  // Try primary model first, fallback to lite on rate limit (429) or overload (503)
+  for (const model of [MODELS.primary, MODELS.fallback]) {
+    const res = await fetch(`${BASE}/${model}:generateContent?key=${encodeURIComponent(key)}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(buildBody(opts)),
+    });
 
-  if (!res.ok) {
-    // INI YANG PALING PENTING: Menangkap jawaban asli Google
-    const errText = await res.text();
-    return { ok: false, status: res.status, text: errText };
+    // On rate limit or overload, try fallback model
+    if ((res.status === 429 || res.status === 503) && model === MODELS.primary) {
+      console.warn(`[gemini] ${model} returned ${res.status}, falling back to ${MODELS.fallback}`);
+      continue;
+    }
+
+    if (!res.ok) {
+      const errText = await res.text();
+      return { ok: false, status: res.status, text: errText, model };
+    }
+
+    const data = (await res.json()) as {
+      candidates?: { content?: { parts?: { text?: string }[] } }[];
+    };
+    const text = data?.candidates?.[0]?.content?.parts?.map((p) => p.text ?? "").join("") ?? "";
+    return { ok: true, status: 200, text, model };
   }
 
-  const data = (await res.json()) as {
-    candidates?: { content?: { parts?: { text?: string }[] } }[];
-  };
-  const text = data?.candidates?.[0]?.content?.parts?.map((p) => p.text ?? "").join("") ?? "";
-  return { ok: true, status: 200, text };
+  // Both models failed
+  return { ok: false, status: 429, text: "Rate limit reached on all models. Please try again shortly." };
 }
 
+// --- Streaming (with auto fallback) ---
 export async function geminiStream(opts: GeminiOptions): Promise<{
   ok: boolean;
   status: number;
   response: Response | null;
+  model?: string;
 }> {
   const key = getKey();
   if (!key) return { ok: false, status: 500, response: null };
-  const res = await fetch(`${GEMINI_BASE}:streamGenerateContent?alt=sse&key=${encodeURIComponent(key)}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(buildBody(opts)),
-  });
-  if (!res.ok || !res.body) {
-    return { ok: false, status: res.status, response: null };
+
+  for (const model of [MODELS.primary, MODELS.fallback]) {
+    const res = await fetch(`${BASE}/${model}:streamGenerateContent?alt=sse&key=${encodeURIComponent(key)}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(buildBody(opts)),
+    });
+
+    if ((res.status === 429 || res.status === 503) && model === MODELS.primary) {
+      console.warn(`[gemini] stream ${model} returned ${res.status}, falling back to ${MODELS.fallback}`);
+      continue;
+    }
+
+    if (!res.ok || !res.body) {
+      return { ok: false, status: res.status, response: null, model };
+    }
+
+    return { ok: true, status: 200, response: res, model };
   }
-  return { ok: true, status: 200, response: res };
+
+  return { ok: false, status: 429, response: null };
 }
 
 export function extractDeltaText(ev: unknown): string {
